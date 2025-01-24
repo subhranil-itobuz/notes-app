@@ -9,7 +9,7 @@ const userSchema = new mongoose.Schema({
   email: {
     type: String,
     required: true,
-    unique : true
+    unique: true
   },
 
   password: {
@@ -17,16 +17,17 @@ const userSchema = new mongoose.Schema({
     required: true
   },
 
-  verified : {
-    type : Boolean
+  verified: {
+    type: Boolean,
+    default: false
   },
 
-  token : {
-    type : String
+  token: {
+    type: String
   }
 
 }, { timestamps: true })
 
-const userModel =  mongoose.model('user', userSchema)
+const userModel = mongoose.model('users', userSchema)
 
 export default userModel

@@ -1,6 +1,6 @@
 import { mailSender } from "../mail/transporter.js"
 import userModel from "../models/userModel.js"
-import { loginCredValidation, userSchemaValidation } from "../validator/zodValidate.js"
+import { loginCredValidation, userSchemaValidation } from "../validator/userValidate.js"
 import bcrypt from 'bcryptjs'
 import jwt from 'jsonwebtoken'
 
@@ -13,7 +13,6 @@ export const signUp = async (req, res) => {
       throw new Error("Extra fields");
 
     const userDetails = { userName, email, password }
-
     const validUser = userSchemaValidation.safeParse(userDetails)
 
     if (!validUser.success) {
@@ -30,7 +29,9 @@ export const signUp = async (req, res) => {
       })
     }
 
-    const oldUser = await userModel.findOne({ email })
+    const oldUser = await userModel.findOne({
+      email: email.toLowerCase()
+    })
 
     if (oldUser) {
       return res.status(400).json({
@@ -48,7 +49,7 @@ export const signUp = async (req, res) => {
 
     const user = await userModel.create({
       userName,
-      email,
+      email: email.toLowerCase(),
       password: hashedPassword,
       verified: false,
       token: token
@@ -63,7 +64,7 @@ export const signUp = async (req, res) => {
   } catch (error) {
     return res.status(500).json({
       success: false,
-      message: 'Server error' + ", " + error.message
+      message: error.message
     })
   }
 }
@@ -79,7 +80,9 @@ export const verifyUser = async (req, res) => {
     }
     else {
       const email = decoded.data
-      const user = await userModel.findOne({ email })
+      const user = await userModel.findOne({
+        email: email.toLowerCase()
+      })
 
       user.verified = true
       user.token = ''
@@ -94,13 +97,14 @@ export const verifyUser = async (req, res) => {
 //resend verification link function
 export const resendVerificationLink = async (req, res) => {
   try {
-
     const { email } = req.body;
 
     if (Object.keys(req.body).length > 1)
       throw new Error("Extra fields");
 
-    const user = await userModel.findOne({ email })
+    const user = await userModel.findOne({
+      email: email.toLowerCase()
+    })
 
     if (!user) {
       return res.status(404).json({
@@ -126,7 +130,7 @@ export const resendVerificationLink = async (req, res) => {
   } catch (error) {
     return res.status(500).json({
       success: false,
-      message: 'Server error' + ", " + error.message
+      message: error.message
     })
   }
 }
@@ -148,7 +152,9 @@ export const login = async (req, res) => {
       })
     }
 
-    const user = await userModel.findOne({ email })
+    const user = await userModel.findOne({
+      email: email.toLowerCase()
+    })
 
     if (!user) {
       return res.status(404).json({
@@ -180,13 +186,13 @@ export const login = async (req, res) => {
       .cookie('token', token, { maxAge: 1 * 24 * 60 * 60 * 1000, httpsOnly: true, sameSite: 'strict' })
       .json({
         success: true,
-        message: `Wellcome ${user.userName}`
+        message: `Welcome ${user.userName}`
       })
 
   } catch (error) {
     return res.status(500).json({
       success: false,
-      message: 'Server error' + ", " + error.message
+      message: error.message
     })
   }
 }
@@ -204,7 +210,7 @@ export const logout = async (req, res) => {
   } catch (error) {
     return res.status(500).json({
       success: false,
-      message: "Server error"
+      message: error.message
     })
   }
 }
