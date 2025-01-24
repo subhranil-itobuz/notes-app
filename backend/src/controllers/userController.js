@@ -1,15 +1,25 @@
+import { mailSender } from "../mail/transporter.js"
 import userModel from "../models/userModel.js"
-import userSchemaValidation from "../validator/zodValidate.js"
+import { loginCredValidation, userSchemaValidation } from "../validator/zodValidate.js"
+import bcrypt from 'bcryptjs'
+import jwt from 'jsonwebtoken'
 
 //signup function
 export const signUp = async (req, res) => {
   try {
     const { userName, email, password, confirmPassword } = req.body
 
-    if (!userName || !email || !password) {
+    if (Object.keys(req.body).length > 4)
+      throw new Error("Extra fields");
+
+    const userDetails = { userName, email, password }
+
+    const validUser = userSchemaValidation.safeParse(userDetails)
+
+    if (!validUser.success) {
       return res.status(400).json({
         success: false,
-        message: "Something is missing"
+        message: validUser.error
       })
     }
 
@@ -29,55 +39,167 @@ export const signUp = async (req, res) => {
       })
     }
 
-    const user = {
-      userName ,
+    const salt = await bcrypt.genSalt(10);
+    const hashedPassword = await bcrypt.hash(password, salt);
+
+    const token = jwt.sign({ data: email }, process.env.SECRET_KEY, { expiresIn: '10m' })
+
+    mailSender(token, email)
+
+    const user = await userModel.create({
+      userName,
       email,
-      password
-    }
+      password: hashedPassword,
+      verified: false,
+      token: token
+    })
 
-    const validUser = userSchemaValidation.safeParse(user)
+    return res.status(200).json({
+      success: true,
+      message: 'Account created successfully. Please verify your email at earliest',
+      data: user
+    })
 
-    if (validUser.success) {
-      await userModel.create(user)
-
-      return res.status(200).json({
-        success: true,
-        message: 'Account created successfully',
-        data: user
-      })
-    }
-    else {
-      console.log(validUser.success)
-      return res.status(400).json({
-        success: false,
-        message: validUser.error
-      })
-    }
   } catch (error) {
     return res.status(500).json({
       success: false,
-      message: 'Server error'
+      message: 'Server error' + ", " + error.message
     })
   }
 }
 
+//email verify function
+export const verifyUser = async (req, res) => {
+  const { token } = req.params
+
+  jwt.verify(token, process.env.SECRET_KEY, async (error, decoded) => {
+    if (error) {
+      console.log(error)
+      res.send('"Email verification failed, possibly the link is invalid or expired"')
+    }
+    else {
+      const email = decoded.data
+      const user = await userModel.findOne({ email })
+
+      user.verified = true
+      user.token = ''
+
+      await user.save()
+
+      res.send(`Email verified successfully, ${user.userName}`)
+    }
+  })
+}
+
+//resend verification link function
+export const resendVerificationLink = async (req, res) => {
+  try {
+
+    const { email } = req.body;
+
+    if (Object.keys(req.body).length > 1)
+      throw new Error("Extra fields");
+
+    const user = await userModel.findOne({ email })
+
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: "Please register yourself."
+      })
+    }
+
+    if (user.verified) {
+      return res.status(400).json({
+        success: false,
+        message: "Your are already verified. Please Log in to your account"
+      })
+    }
+
+    const token = jwt.sign({ data: email }, process.env.SECRET_KEY, { expiresIn: '10m' })
+    mailSender(token, email)
+
+    return res.status(200).json({
+      success: true,
+      message: "Email send successfully"
+    })
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      message: 'Server error' + ", " + error.message
+    })
+  }
+}
+
+//login function
 export const login = async (req, res) => {
   try {
     const { email, password } = req.body
-    if (!email || !password) {
+
+    if (Object.keys(req.body).length > 2)
+      throw new Error("Extra fields");
+
+    const validCred = loginCredValidation.safeParse({ email, password })
+
+    if (!validCred.success) {
       return res.status(400).json({
         success: false,
-        message: "Something is missing"
+        message: validCred.error
       })
     }
 
     const user = await userModel.findOne({ email })
-    console.log(user.userName)
 
-    return res.status(200).json({
-      success: true,
-      message: `Wellcome ${user.userName}`
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: "User not found"
+      })
+    }
+
+    const comparePassword = await bcrypt.compare(password, user.password);
+
+    if (!comparePassword) {
+      return res.status(400).json({
+        success: false,
+        message: "Password is not matching"
+      })
+    }
+
+    if (!user.verified) {
+      return res.status(400).json({
+        success: false,
+        message: "Please verify your email first"
+      })
+    }
+
+    const tokenData = { userId: user._id }
+    const token = jwt.sign(tokenData, process.env.SECRET_KEY, { expiresIn: '1d' })
+
+    return res.status(200)
+      .cookie('token', token, { maxAge: 1 * 24 * 60 * 60 * 1000, httpsOnly: true, sameSite: 'strict' })
+      .json({
+        success: true,
+        message: `Wellcome ${user.userName}`
+      })
+
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      message: 'Server error' + ", " + error.message
     })
+  }
+}
+
+//logout function
+export const logout = async (req, res) => {
+  try {
+    return res.status(200)
+      .cookie('token', '', { maxAge: 0 })
+      .json({
+        success: true,
+        message: 'Logout Successfully'
+      })
 
   } catch (error) {
     return res.status(500).json({

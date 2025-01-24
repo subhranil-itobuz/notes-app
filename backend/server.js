@@ -1,7 +1,7 @@
 import express from 'express'
 import env from 'dotenv'
 import { dbConnect } from './src/utils/dbConnect.js'
-import route from './src/routes/userRoute.js'
+import userRoute from './src/routes/userRoute.js'
 
 env.config()
 
@@ -12,8 +12,9 @@ const port = process.env.PORT || 5000
 
 dbConnect()
 
-app.use('/', route)
+//all api
+app.use('/api/user', userRoute)
 
-app.listen(port, () => { 
+app.listen(port, () => {
   console.log(`server is running in port ${port}`)
- })
+})
