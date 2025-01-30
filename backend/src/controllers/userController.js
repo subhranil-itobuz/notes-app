@@ -1,5 +1,6 @@
 import { mailSender } from "../mail/transporter.js"
 import userModel from "../models/userModel.js"
+import { passwordRegexValidation, userNameRegexValidation } from "../utils/regexMatch.js"
 import { loginCredValidation, userSchemaValidation } from "../validator/userValidate.js"
 import bcrypt from 'bcryptjs'
 import jwt from 'jsonwebtoken'
@@ -12,17 +13,25 @@ export const signUp = async (req, res) => {
     if (Object.keys(req.body).length > 4)
       throw new Error("Extra fields");
 
-    const userDetails = { userName, email, password }
+    userNameRegexValidation(userName.replace(/\s/g, '').trim())
+    passwordRegexValidation(password.replace(/\s/g, '').trim())
+
+    const userDetails = {
+      userName: userName.replace(/\s/g, '').trim(),
+      email,
+      password: password.replace(/\s/g, '').trim()
+    }
+
     const validUser = userSchemaValidation.safeParse(userDetails)
 
     if (!validUser.success) {
       return res.status(400).json({
         success: false,
-        message: validUser.error
+        message: `${validNotes.error.issues[0].message} --> ${validNotes.error.issues[0].path}`
       })
     }
 
-    if (password !== confirmPassword) {
+    if (password.replace(/\s/g, '').trim() !== confirmPassword.replace(/\s/g, '').trim()) {
       return res.status(400).json({
         success: false,
         message: 'password is not maching'
@@ -41,14 +50,16 @@ export const signUp = async (req, res) => {
     }
 
     const salt = await bcrypt.genSalt(10);
-    const hashedPassword = await bcrypt.hash(password, salt);
+    const hashedPassword = await bcrypt.hash(password.replace(/\s/g, '').trim(), salt);
 
     const token = jwt.sign({ data: email }, process.env.SECRET_KEY, { expiresIn: '10m' })
 
-    mailSender(token, email)
+    const error = mailSender(token, email)
+
+    console.log(error);
 
     const user = await userModel.create({
-      userName,
+      userName: userName.replace(/\s/g, '').trim(),
       email: email.toLowerCase(),
       password: hashedPassword,
       verified: false,
@@ -57,7 +68,8 @@ export const signUp = async (req, res) => {
 
     return res.status(200).json({
       success: true,
-      message: 'Account created successfully. Please verify your email at earliest',
+      message: 'Account created successfully',
+      advice: 'Please verify your email at earliest, you have 10 minuits to verify yourself',
       data: user
     })
 
@@ -90,6 +102,11 @@ export const verifyUser = async (req, res) => {
       await user.save()
 
       res.send(`Email verified successfully, ${user.userName}`)
+
+      setTimeout(() => {
+
+        res.redirect('http://localhost:5500/login.html')
+      }, 3000);
     }
   })
 }
@@ -143,12 +160,15 @@ export const login = async (req, res) => {
     if (Object.keys(req.body).length > 2)
       throw new Error("Extra fields");
 
-    const validCred = loginCredValidation.safeParse({ email, password })
+    const validCred = loginCredValidation.safeParse({
+      email,
+      password: password.replace(/\s/g, '').trim()
+    })
 
     if (!validCred.success) {
       return res.status(400).json({
         success: false,
-        message: validCred.error
+        message: `${validNotes.error.issues[0].message} --> ${validNotes.error.issues[0].path}`
       })
     }
 
@@ -163,7 +183,7 @@ export const login = async (req, res) => {
       })
     }
 
-    const comparePassword = await bcrypt.compare(password, user.password);
+    const comparePassword = await bcrypt.compare(password.replace(/\s/g, '').trim(), user.password);
 
     if (!comparePassword) {
       return res.status(400).json({
@@ -183,7 +203,11 @@ export const login = async (req, res) => {
     const token = jwt.sign(tokenData, process.env.SECRET_KEY, { expiresIn: '1d' })
 
     return res.status(200)
-      .cookie('token', token, { maxAge: 1 * 24 * 60 * 60 * 1000, httpsOnly: true, sameSite: 'strict' })
+      .cookie('token', token, {
+        maxAge: 1 * 24 * 60 * 60 * 1000,
+        secure: false,
+        sameSite: "strict"
+      })
       .json({
         success: true,
         message: `Welcome ${user.userName}`
@@ -201,11 +225,57 @@ export const login = async (req, res) => {
 export const logout = async (req, res) => {
   try {
     return res.status(200)
-      .cookie('token', '', { maxAge: 0 })
+      .clearCookie('token', {
+        path: '/',
+        httpOnly: true
+      })
       .json({
         success: true,
         message: 'Logout Successfully'
       })
+
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      message: error.message
+    })
+  }
+}
+
+export const getUserDetails = async (req, res) => {
+  try {
+    const token = req.cookies.token
+
+    if (!token) {
+      return res.status(404).json({
+        success: false,
+        message: "Token not found"
+      })
+    }
+
+    jwt.verify(token, process.env.SECRET_KEY, async (error, decoded) => {
+      if (error) {
+        throw new Error(error.message);
+      }
+      else {
+        const userId = decoded.userId
+
+        const user = await userModel.findById(userId)
+
+        if (!user) {
+          return res.status(404).json({
+            success: false,
+            message: "User not found"
+          })
+        }
+
+        return res.status(200).json({
+          success: true,
+          message: "User fetched successfully",
+          data: user
+        })
+      }
+    })
 
   } catch (error) {
     return res.status(500).json({

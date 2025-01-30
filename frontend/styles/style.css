@@ -1,0 +1,222 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+::-webkit-scrollbar {
+  width: 8px;
+  height: 3px;
+}
+
+::-webkit-scrollbar-button {
+  background-color: #666;
+}
+
+::-webkit-scrollbar-track {
+  background-color: #646464;
+}
+
+::-webkit-scrollbar-track-piece {
+  background-color: #000;
+}
+
+::-webkit-scrollbar-thumb {
+  height: 50px;
+  background-color: #666;
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-corner {
+  background-color: #646464;
+}
+
+::-webkit-resizer {
+  background-color: #666;
+}
+
+.body-container {
+  max-width: 1440px;
+  background-color: #005f73;
+  height: 100vh;
+}
+@media (min-width: 992px) {
+  .body-container {
+    height: 100vh;
+  }
+}
+.body-container .hamburger-btn:active, .body-container .hamburger-btn:focus {
+  box-shadow: none;
+  outline: none;
+}
+.body-container .heading {
+  color: #e9d8a6;
+}
+.body-container-alert {
+  width: 95vw;
+}
+@media (min-width: 768px) {
+  .body-container-alert {
+    width: 70vw;
+  }
+}
+@media (min-width: 1440px) {
+  .body-container-alert {
+    width: 40vw;
+  }
+}
+.body-container-alert-text {
+  word-wrap: break-word;
+}
+
+.auth-form {
+  background-color: rgba(206, 231, 223, 0.7058823529);
+  width: 95vw;
+}
+@media (min-width: 768px) {
+  .auth-form {
+    width: 60vw;
+    font-size: 20px;
+  }
+}
+@media (min-width: 1440px) {
+  .auth-form {
+    width: 50vw;
+    font-size: 24px;
+  }
+}
+.auth-form-input {
+  background: transparent;
+  border: 1px solid #001219;
+  border-radius: 10px;
+  padding: 5px 30px 5px 10px;
+  box-shadow: 3px 2px 5px #7b8a90;
+}
+.auth-form-input:invalid {
+  border-color: red;
+}
+.auth-form-input:valid {
+  border-color: greenyellow;
+}
+.auth-form-input:focus {
+  border-color: #ee9b00;
+  outline-color: #ee9b00;
+}
+.auth-form-input::-moz-placeholder {
+  font-size: 14px;
+  color: rgba(128, 128, 128, 0.675);
+  font-weight: 100;
+}
+.auth-form-input::placeholder {
+  font-size: 14px;
+  color: rgba(128, 128, 128, 0.675);
+  font-weight: 100;
+}
+@media (min-width: 768px) {
+  .auth-form-input::-moz-placeholder {
+    font-size: 17px;
+  }
+  .auth-form-input::placeholder {
+    font-size: 17px;
+  }
+}
+@media (min-width: 1440px) {
+  .auth-form-input::-moz-placeholder {
+    font-size: 20px;
+  }
+  .auth-form-input::placeholder {
+    font-size: 20px;
+  }
+}
+.auth-form .strength-container {
+  height: 10px;
+}
+.auth-form .strength-container-indicator {
+  width: 1%;
+  background-color: #504d4d;
+  transition: all 0.5s ease-in-out;
+}
+.auth-form-submit {
+  width: 200px;
+  height: 45px;
+}
+.auth-form-submit-text {
+  font-size: 20px;
+}
+
+.auth-link {
+  text-decoration: none;
+}
+
+.main-section {
+  max-width: 99vw;
+}
+@media (min-width: 1440px) {
+  .main-section-form {
+    margin: auto;
+    width: 1200px;
+  }
+}
+.main-section-form-textarea {
+  resize: none;
+  scrollbar-width: none;
+}
+.main-section-form-button {
+  width: 50vw;
+  height: 45px;
+}
+@media (min-width: 1440px) {
+  .main-section-form-button {
+    width: 500px;
+  }
+}
+.main-section-result-header {
+  position: sticky;
+  top: 0;
+  overflow: hidden;
+  z-index: 1;
+  -webkit-backdrop-filter: blur(10px);
+          backdrop-filter: blur(10px);
+}
+.main-section-result .result-container {
+  width: 90%;
+  grid-template-columns: repeat(1, 1fr);
+}
+@media (min-width: 768px) {
+  .main-section-result .result-container {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+@media (min-width: 992px) {
+  .main-section-result .result-container {
+    height: 34vh;
+    grid-template-columns: repeat(3, 1fr);
+    grid-template-rows: repeat(2, 1fr);
+    overflow-y: auto;
+    scrollbar-width: none;
+    scroll-behavior: smooth;
+  }
+}
+.main-section-result .result-container-card {
+  height: 165px;
+}
+.main-section-result .result-container-card-header {
+  height: 22%;
+}
+.main-section-result .result-container-card-body {
+  overflow-y: auto;
+  scrollbar-width: none;
+  line-height: 18px;
+  height: 56%;
+  text-align: justify;
+}
+.main-section-result .result-container-card-footer {
+  height: 22%;
+}
+.main-section-result .result-container-card-footer-tag {
+  text-transform: capitalize;
+}
+.main-section-result .modal-textarea {
+  resize: none;
+  scrollbar-width: none;
+}/*# sourceMappingURL=style.css.map */

@@ -10,9 +10,19 @@ export const createNote = async (req, res) => {
         if (Object.keys(req.body).length > 3)
             throw new Error("Extra fields");
 
+        const noteRegex = /[-!$%^&*()_+|~=`{}\[\]:\/;<>?,.@#]/;
+
+        if (noteRegex.test(title) || noteRegex.test(tag)) {
+            return res.status(400).json({
+                success: false,
+                message: 'Special character is not allowed'
+            })
+        }
+
         const noteDetails = {
-            title: title.replace(/\s+/g, ' '),
-            description
+            title: title?.replace(/\s+/g, ' ').trim(),
+            description: description?.replace(/\s+/g, ' ').trim(),
+            tag: tag?.replace(/\s+/g, ' ').trim() || 'general'
         }
 
         const validNotes = notesSchemaValidation.safeParse(noteDetails)
@@ -20,13 +30,13 @@ export const createNote = async (req, res) => {
         if (!validNotes.success) {
             return res.status(400).json({
                 success: false,
-                message: validNotes.error
+                message: `${validNotes.error.issues[0].message} --> ${validNotes.error.issues[0].path}`
             })
         }
 
         const oldNote = await notesModel.findOne({
             user: userId,
-            title: title.toUpperCase().replace(/\s+/g, ' ').trim()
+            title: title?.toUpperCase().replace(/\s+/g, ' ').trim()
         })
 
         if (oldNote) {
@@ -38,9 +48,9 @@ export const createNote = async (req, res) => {
 
         const note = await notesModel.create({
             user: userId,
-            title: title.toUpperCase().replace(/\s+/g, ' ').trim(),
-            description: description.trim(),
-            tag: tag?.trim()
+            title: title?.toUpperCase().replace(/\s+/g, ' ').trim(),
+            description: description?.replace(/\s+/g, ' ').trim(),
+            tag: tag?.toLowerCase().replace(/\s+/g, ' ').trim() || 'general'
         })
 
         return res.status(200).json({
@@ -62,15 +72,20 @@ export const getAllNotes = async (req, res) => {
     try {
         const userId = req.id
         const keyword = req.query.keyword || ""
+        const { limit = 6, page = 1 } = req.query
 
-        const notes = await notesModel.find({
+        const offset = (page - 1) * limit
+
+        const pageNotes = await notesModel.find({
             user: userId,
             $or: [
                 { title: { $regex: keyword, $options: 'i' } },
                 { description: { $regex: keyword, $options: 'i' } },
                 { tag: { $regex: keyword, $options: "i" } }
             ]
-        }).sort({ createdAt: -1 })
+        }).sort({ createdAt: -1 }).skip(offset).limit(limit * 1)
+
+        const totalNotes = await notesModel.find({ user: userId })
 
         if (!userId) {
             return res.status(404).json({
@@ -79,7 +94,7 @@ export const getAllNotes = async (req, res) => {
             })
         }
 
-        if (notes.length === 0) {
+        if (pageNotes.length === 0 || totalNotes.length === 0) {
             return res.status(404).json({
                 success: false,
                 message: "No notes to display. Please create a note"
@@ -89,7 +104,10 @@ export const getAllNotes = async (req, res) => {
         return res.status(200).json({
             success: true,
             message: "All notes fetched successfully",
-            data: notes
+            pageNo: page,
+            currentResults: pageNotes.length,
+            totalResults: totalNotes.length,
+            data: pageNotes
         })
 
     } catch (error) {
@@ -136,18 +154,46 @@ export const updateNote = async (req, res) => {
         if (Object.keys(req.body).length > 3)
             throw new Error("Extra fields");
 
-        const newNote = {}
+        const regex_symbols = /[-!$%^&*()_+|~=`{}\[\]:\/;<>?,.@#]/;
 
-        if (title) newNote.title = title.replace(/\s+/g, ' ').trim()
-        if (description) newNote.description = description.trim()
-        if (tag) newNote.tag = tag?.trim()
+        if (regex_symbols.test(title) || regex_symbols.test(tag)) {
+            return res.status(400).json({
+                success: false,
+                message: 'Special character is not allowed'
+            })
+        }
 
+        let newNote = {}
         const note = await notesModel.findById(id)
 
         if (!note) {
             return res.status(404).json({
                 success: false,
                 message: "Note not found"
+            })
+        }
+
+        if (title)
+            newNote.title = title.replace(/\s+/g, ' ').trim().toUpperCase()
+        else
+            newNote.title = note.title
+
+        if (description)
+            newNote.description = description?.replace(/\s+/g, ' ').trim()
+        else
+            newNote.description = note.description
+
+        if (tag)
+            newNote.tag = tag?.replace(/\s+/g, ' ').toLowerCase().trim() || 'general'
+        else
+            newNote.tag = note.tag
+
+        const validNotes = notesSchemaValidation.safeParse(newNote)
+
+        if (!validNotes.success) {
+            return res.status(400).json({
+                success: false,
+                message: `${validNotes.error.issues[0].message} --> ${validNotes.error.issues[0].path}`
             })
         }
 
@@ -208,7 +254,7 @@ export const emptyAll = async (req, res) => {
         if (notes.length === 0) {
             return res.status(404).json({
                 success: false,
-                message: "No Notes"
+                message: "No Notes to delete"
             })
         }
 

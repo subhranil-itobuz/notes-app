@@ -10,4 +10,8 @@ export const notesSchemaValidation = z.object({
         required_error: "Description is requreired",
         invalid_type_error: "Description must be a string"
     }).trim().min(4),
+
+    tag: z.string({
+        invalid_type_error: "Tag must be a string"
+    }).trim().min(3).max(8)
 })

@@ -5,7 +5,7 @@ export const mailSender = (token, email) => {
         service: 'gmail',
         auth: {
             user: 'subhranil@itobuz.com',
-            pass: 'cete efrb xqbb zuhr'
+            pass: 'cpbx iwoe wgby fwbu'
         }
     })
 
@@ -20,7 +20,7 @@ export const mailSender = (token, email) => {
 
     transporter.sendMail(mailConfiguration, (error, res) => {
         if (error) {
-            throw new Error("Something went wrong");
+            throw new Error(error.message);
         }
         else {
             console.log('Email sent successfully')

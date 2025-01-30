@@ -18,7 +18,7 @@ const notesSchema = new mongoose.Schema({
 
     tag: {
         type: String,
-        default: "General"
+        default: "general"
     }
 
 }, { timestamps: true })
