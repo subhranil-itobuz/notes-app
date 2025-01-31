@@ -1,4 +1,5 @@
 import nodemailer from 'nodemailer'
+import hbs from 'nodemailer-express-handlebars';
 
 export const mailSender = (token, email) => {
     const transporter = nodemailer.createTransport({
@@ -11,11 +12,25 @@ export const mailSender = (token, email) => {
 
     const authToken = token;
 
+    transporter.use('compile', hbs({
+        viewEngine: {
+            extname: '.hbs',
+            layoutsDir: './template',
+            defaultLayout: false,
+            partialsDir: './template',
+        },
+        viewPath: './src/template',
+        extName: '.hbs'
+    }));
+
     const mailConfiguration = {
         from: 'Subhranil Das',
         to: email,
         subject: 'Email Verification',
-        text: `Please click on the given link to verify your email address => http://localhost:3000/api/user/verify/${authToken}`
+        template: 'email',
+        context: {
+            token: `${token}`
+        }
     }
 
     transporter.sendMail(mailConfiguration, (error, res) => {

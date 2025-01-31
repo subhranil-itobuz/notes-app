@@ -102,11 +102,6 @@ export const verifyUser = async (req, res) => {
       await user.save()
 
       res.send(`Email verified successfully, ${user.userName}`)
-
-      setTimeout(() => {
-
-        res.redirect('http://localhost:5500/login.html')
-      }, 3000);
     }
   })
 }
