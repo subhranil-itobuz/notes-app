@@ -149,6 +149,7 @@ export const getNoteById = async (req, res) => {
 export const updateNote = async (req, res) => {
     try {
         const id = req.params.id
+        const userId = req.id
         const { title, description, tag } = req.body
 
         if (Object.keys(req.body).length > 3)
@@ -194,6 +195,21 @@ export const updateNote = async (req, res) => {
             return res.status(400).json({
                 success: false,
                 message: `${validNotes.error.issues[0].message} --> ${validNotes.error.issues[0].path}`
+            })
+        }
+
+        const sameTitle = await notesModel.findOne({
+            _id: {
+                $nin: id
+            },
+            user: userId,
+            title: newNote.title,
+        })
+
+        if (sameTitle) {
+            return res.status(400).json({
+                success: false,
+                message: "Same title already exists, please try another title"
             })
         }
 
