@@ -19,6 +19,11 @@ const notesSchema = new mongoose.Schema({
     tag: {
         type: String,
         default: "general"
+    },
+
+    fileUrl: {
+        type: String,
+        default: ""
     }
 
 }, { timestamps: true })

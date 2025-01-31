@@ -1,4 +1,5 @@
 import { mailSender } from "../mail/transporter.js"
+import sessionsModel from "../models/sessionSchema.js"
 import userModel from "../models/userModel.js"
 import { passwordRegexValidation, userNameRegexValidation } from "../utils/regexMatch.js"
 import { loginCredValidation, userSchemaValidation } from "../validator/userValidate.js"
@@ -171,6 +172,8 @@ export const login = async (req, res) => {
       email: email.toLowerCase()
     })
 
+    const userId = user._id
+
     if (!user) {
       return res.status(404).json({
         success: false,
@@ -194,19 +197,17 @@ export const login = async (req, res) => {
       })
     }
 
-    const tokenData = { userId: user._id }
-    const token = jwt.sign(tokenData, process.env.SECRET_KEY, { expiresIn: '1d' })
+    const accessToken = jwt.sign({userId}, process.env.SECRET_KEY, { expiresIn: '15m' })
+    const refreshToken = jwt.sign({userId}, process.env.SECRET_KEY, { expiresIn: '1d' })
 
-    return res.status(200)
-      .cookie('token', token, {
-        maxAge: 1 * 24 * 60 * 60 * 1000,
-        secure: false,
-        sameSite: "strict"
-      })
-      .json({
-        success: true,
-        message: `Welcome ${user.userName}`
-      })
+    const session = await sessionsModel.create({userId})
+
+    return res.status(200).json({
+      success: true,
+      message: `Welcome ${user.userName}`,
+      accessToken,
+      refreshToken
+    })
 
   } catch (error) {
     return res.status(500).json({

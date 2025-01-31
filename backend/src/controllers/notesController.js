@@ -67,6 +67,45 @@ export const createNote = async (req, res) => {
     }
 }
 
+//upload note files function
+export const fileUpload = async (req, res) => {
+    try {
+        const file = req.file
+        const noteId = req.params.id
+
+        if (!file) {
+            return res.status(400).json({
+                success: false,
+                message: "No file uploaded"
+            })
+        }
+
+        const note = await notesModel.findById(noteId)
+
+        if (!note) {
+            return res.status(404).json({
+                success: false,
+                message: "Note not found"
+            })
+        }
+
+        note.fileUrl = `http://localhost:3000/uploads/${file.filename}`
+
+        await note.save()
+
+        return res.status(200).json({
+            success: true,
+            message: `${file.filename} uploaded successfully`
+        })
+
+    } catch (error) {
+        return res.status(500).json({
+            success: false,
+            message: error.message
+        })
+    }
+}
+
 //get all notes for a user function
 export const getAllNotes = async (req, res) => {
     try {
