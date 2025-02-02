@@ -54,7 +54,7 @@ export const createNote = async (req, res) => {
             tag: tag?.toLowerCase().replace(/\s+/g, ' ').trim() || 'general'
         })
 
-        return res.status(200).json({
+        return res.status(201).json({
             success: true,
             message: "Note created successfully",
             data: note
@@ -69,7 +69,7 @@ export const createNote = async (req, res) => {
 }
 
 //upload note files function
-export const fileUpload = async (req, res) => {
+export const uploadFile = async (req, res) => {
     try {
         const file = req.file
         const noteId = req.params.id
@@ -94,7 +94,7 @@ export const fileUpload = async (req, res) => {
 
         await note.save()
 
-        return res.status(200).json({
+        return res.status(201).json({
             success: true,
             message: `${file.filename} uploaded successfully`
         })
@@ -107,11 +107,75 @@ export const fileUpload = async (req, res) => {
     }
 }
 
+//update the existing file function
+export const updateFile = async (req, res) => {
+    try {
+        const newFile = req.file
+        const noteId = req.params.id
+
+        const note = await notesModel.findById(noteId)
+
+        if (!note) {
+            return res.status(404).json({
+                success: false,
+                message: "Note not found"
+            })
+        }
+
+        const url = newFile ? newFile.filename : note.fileUrl
+
+        note.fileUrl = `http://localhost:3000/uploads/${url}`
+
+        await note.save()
+
+        return res.status(200).json({
+            success: true,
+            message: 'File updated successfully'
+        })
+
+    } catch (error) {
+        return res.status(500).json({
+            success: false,
+            message: error.message
+        })
+    }
+}
+
+//delete the file function
+export const deleteFile = async (req, res) => {
+    try {
+        const note = await notesModel.findById(req.params.id)
+
+        if (!note) {
+            return res.status(404).json({
+                success: false,
+                message: 'Note not found'
+            })
+        }
+
+        note.fileUrl = ''
+
+        await note.save()
+
+        return res.status(200).json({
+            success: true,
+            message: 'File deleted successfully'
+        })
+    } catch (error) {
+        return res.status(500).json({
+            success: false,
+            message: error.message
+        })
+    }
+}
+
 //get all notes for a user function
 export const getAllNotes = async (req, res) => {
     try {
         const userId = req.id
-        const keyword = req.query.keyword || ""
+        const keyword = req.query.keyword || ''
+        const sortBy = req.query.sortBy || 'createdAt'
+        const order = req.query.order || 'asc'
         const { limit = 6, page = 1 } = req.query
 
         const offset = (page - 1) * limit
@@ -123,7 +187,10 @@ export const getAllNotes = async (req, res) => {
                 { description: { $regex: keyword, $options: 'i' } },
                 { tag: { $regex: keyword, $options: "i" } }
             ]
-        }).sort({ createdAt: -1 }).skip(offset).limit(limit * 1)
+        })
+            .sort({ [sortBy]: order === 'asc' ? -1 : 1 })
+            .skip(offset)
+            .limit(limit * 1)
 
         const totalNotes = await notesModel.find({ user: userId })
 
@@ -240,9 +307,7 @@ export const updateNote = async (req, res) => {
         }
 
         const sameTitle = await notesModel.findOne({
-            _id: {
-                $nin: id
-            },
+            _id: { $nin: id },
             user: userId,
             title: newNote.title,
         })
@@ -256,7 +321,7 @@ export const updateNote = async (req, res) => {
 
         await note.updateOne(newNote)
 
-        return res.status(200).json({
+        return res.status(201).json({
             success: true,
             message: "Note updated successfully",
             data: await notesModel.findById(id)

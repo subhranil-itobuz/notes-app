@@ -8,7 +8,7 @@ import notesModel from "../models/notesModel.js"
 dotenv.config({})
 
 const createDummy = async () => {
-  await mongoose.connect('mongodb://root:example@localhost:4002/notesApp?authSource=admin')
+  await mongoose.connect(process.env.MONGO_URI)
 
   await userModel.deleteMany()
   await notesModel.deleteMany()
@@ -17,5 +17,7 @@ const createDummy = async () => {
 
   await createDummyUser(5)
   await createDummyNote(5)
+
+  await mongoose.disconnect()
 }
 createDummy()

@@ -6,6 +6,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "nodemon --exec \"npx eslint . && nodemon src/index\"",
+    "seed": "node src/faker/seeding.js",
     "precommit": "eslint .",
     "lint": "eslint ./backend --fix"
   },

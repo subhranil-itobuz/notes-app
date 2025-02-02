@@ -7,7 +7,6 @@ const generateNotesModel = async (count = 5) => {
 
   const users = await userModel.find()
 
-  
   for (let i = 0; i < count; i++) {
     const randomUser = Math.floor(Math.random() * users.length)
     notesData.push({
@@ -23,7 +22,7 @@ const generateNotesModel = async (count = 5) => {
 export const createDummyNote = async (dataCount) => {
   let inserted = 0;
   while (inserted < dataCount) {
-    const testData = await generateNotesModel(5)
+    const testData = await generateNotesModel(dataCount)
     await notesModel.insertMany(testData)
     inserted += testData.length
   }

@@ -14,9 +14,6 @@ export const signUp = async (req, res) => {
     if (Object.keys(req.body).length > 4)
       throw new Error("Extra fields");
 
-    userNameRegexValidation(userName.replace(/\s/g, '').trim())
-    passwordRegexValidation(password.replace(/\s/g, '').trim())
-
     const userDetails = {
       userName: userName.replace(/\s/g, '').trim(),
       email,
@@ -31,6 +28,9 @@ export const signUp = async (req, res) => {
         message: `${validUser.error.issues[0].message} --> ${validUser.error.issues[0].path}`
       })
     }
+
+    userNameRegexValidation(userName.replace(/\s/g, '').trim())
+    passwordRegexValidation(password.replace(/\s/g, '').trim())
 
     if (password.replace(/\s/g, '').trim() !== confirmPassword.replace(/\s/g, '').trim()) {
       return res.status(400).json({
@@ -65,12 +65,12 @@ export const signUp = async (req, res) => {
       token: token
     })
 
-    return res.status(200).json({
+    return res.status(201).json({
       success: true,
       message: 'Account created successfully',
       advice: 'Please verify your email at earliest, you have 10 minuits to verify yourself',
-      data: user,
-      token
+      token,
+      data: user
     })
 
   } catch (error) {
@@ -91,6 +91,7 @@ export const verifyUser = async (req, res) => {
       message: "Authorization header not found"
     })
   }
+
   const token = authHeader.split(' ')[1]
 
   if (!token) {
@@ -102,7 +103,10 @@ export const verifyUser = async (req, res) => {
 
   jwt.verify(token, process.env.SECRET_KEY, async (error, decoded) => {
     if (error) {
-      res.send('"Email verification failed, possibly the link is invalid or expired"')
+      return res.status(400).json({
+        success: false,
+        message: `${error.name} => ${error.message}`,
+      }).send('Email verification problem')
     }
     else {
       const email = decoded.data
@@ -211,7 +215,7 @@ export const login = async (req, res) => {
     }
 
     const accessToken = jwt.sign({ userId }, process.env.SECRET_KEY, { expiresIn: '15m' })
-    const refreshToken = jwt.sign({ userId }, process.env.SECRET_KEY, { expiresIn: '1d' })
+    const refreshToken = jwt.sign({ userId }, process.env.SECRET_KEY, { expiresIn: '7d' })
 
     await sessionsModel.create({ userId })
 
@@ -233,6 +237,7 @@ export const login = async (req, res) => {
   }
 }
 
+//regenerate access token function
 export const regenerateAccessToken = async (req, res) => {
   try {
     const authHeader = req.headers.authorization
@@ -265,7 +270,7 @@ export const regenerateAccessToken = async (req, res) => {
 
         const accessToken = jwt.sign({ userId }, process.env.SECRET_KEY, { expiresIn: '15m' })
 
-        return res.status(200).json({
+        return res.status(201).json({
           success: true,
           message: "Access token regenerated",
           accessToken
@@ -291,6 +296,7 @@ export const logout = async (req, res) => {
         message: "Authorization header not found"
       })
     }
+
     const refreshToken = authHeader.split(' ')[1]
 
     if (!refreshToken) {
@@ -299,6 +305,7 @@ export const logout = async (req, res) => {
         message: "Token not found"
       })
     }
+
     jwt.verify(refreshToken, process.env.SECRET_KEY, async (error, decoded) => {
       if (error) {
         return res.status(400).json({
@@ -317,8 +324,6 @@ export const logout = async (req, res) => {
         })
       }
     })
-
-
   } catch (error) {
     return res.status(500).json({
       success: false,
@@ -327,9 +332,18 @@ export const logout = async (req, res) => {
   }
 }
 
+//get user details
 export const getUserDetails = async (req, res) => {
   try {
     const authHeader = req.headers.authorization
+
+    if (!authHeader) {
+      return res.status(400).json({
+        success: false,
+        message: 'Auth header not found'
+      })
+    }
+
     const refreshToken = authHeader.split(' ')[1]
 
     if (!refreshToken) {
@@ -362,7 +376,112 @@ export const getUserDetails = async (req, res) => {
         })
       }
     })
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      message: error.message
+    })
+  }
+}
 
+//update password function
+export const updatePassword = async (req, res) => {
+  try {
+    const userId = req.id
+    const { oldPassword, newPassword, confirmNewPassword } = req.body
+
+    if (Object.keys(req.body).length > 3)
+      throw new Error("Extra fields");
+
+    const user = await userModel.findById(userId)
+
+    const comparePassword = await bcrypt.compare(oldPassword.replace(/\s/g, '').trim(), user.password);
+
+    if (!comparePassword) {
+      return res.status(400).json({
+        success: false,
+        message: "Password is not matching"
+      })
+    }
+
+    const userDetails = {
+      userName: user.userName,
+      email: user.email,
+      password: newPassword.replace(/\s/g, '').trim()
+    }
+
+    const validUser = userSchemaValidation.safeParse(userDetails)
+
+    if (!validUser.success) {
+      return res.status(400).json({
+        success: false,
+        message: `${validUser.error.issues[0].message} --> ${validUser.error.issues[0].path}`
+      })
+    }
+
+    passwordRegexValidation(newPassword.replace(/\s/g, '').trim())
+
+    if (newPassword.replace(/\s/g, '').trim() !== confirmNewPassword.replace(/\s/g, '').trim()) {
+      return res.status(400).json({
+        success: false,
+        message: "New password is not matching with confirm passowrd"
+      })
+    }
+
+    const salt = await bcrypt.genSalt(10);
+    const newHashedPassword = await bcrypt.hash(newPassword.replace(/\s/g, '').trim(), salt);
+
+    user.password = newHashedPassword
+    await user.save()
+
+    return res.status(200).json({
+      success: true,
+      message: "Password updated successfully"
+    })
+
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      message: error.message
+    })
+  }
+}
+
+//update userName function
+export const updateUserName = async (req, res) => {
+  try {
+    const userId = req.id
+    const { newUserName } = req.body
+
+    if (Object.keys(req.body).length > 1)
+      throw new Error("Extra fields");
+
+    const user = await userModel.findById(userId)
+
+    const userDetails = {
+      userName: newUserName.replace(/\s/g, '').trim(),
+      email: user.email,
+      password: user.password
+    }
+
+    const validUser = userSchemaValidation.safeParse(userDetails)
+
+    if (!validUser.success) {
+      return res.status(400).json({
+        success: false,
+        message: `${validUser.error.issues[0].message} --> ${validUser.error.issues[0].path}`
+      })
+    }
+
+    userNameRegexValidation(newUserName.replace(/\s/g, '').trim())
+
+    user.userName = newUserName.replace(/\s/g, '').trim()
+    await user.save()
+
+    return res.status(200).json({
+      success: true,
+      message: 'Username updated successfully'
+    })
   } catch (error) {
     return res.status(500).json({
       success: false,
