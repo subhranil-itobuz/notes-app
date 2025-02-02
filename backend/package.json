@@ -5,12 +5,12 @@
   "main": "server.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "nodemon server.js",
+    "start": "nodemon --exec \"npx eslint . && nodemon src/index\"",
     "precommit": "eslint .",
     "lint": "eslint ./backend --fix"
   },
   "keywords": [],
-  "author": "",
+  "author": "Subhranil Das",
   "license": "ISC",
   "description": "",
   "dependencies": {

@@ -8,7 +8,6 @@ import cookieParser from 'cookie-parser'
 
 env.config({})
 
-const a = 10
 const app = express()
 app.use(express.json())
 app.use(cookieParser())

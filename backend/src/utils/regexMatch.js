@@ -1,3 +1,4 @@
+//eslint-disable-next-line
 const userNameSymbolsRegex = /[-!$%^&*()_+|~=`{}\[\]:\/;<>?,.@#]/
 const upperCaseRegex = /(?=.*?[A-Z])/
 const lowerCaseRegex = /(?=.*?[a-z])/

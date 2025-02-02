@@ -28,7 +28,7 @@ export const signUp = async (req, res) => {
     if (!validUser.success) {
       return res.status(400).json({
         success: false,
-        message: `${validNotes.error.issues[0].message} --> ${validNotes.error.issues[0].path}`
+        message: `${validUser.error.issues[0].message} --> ${validUser.error.issues[0].path}`
       })
     }
 
@@ -55,9 +55,7 @@ export const signUp = async (req, res) => {
 
     const token = jwt.sign({ data: email }, process.env.SECRET_KEY, { expiresIn: '10m' })
 
-    const error = mailSender(token, email)
-
-    console.log(error);
+    mailSender(token, email)
 
     const user = await userModel.create({
       userName: userName.replace(/\s/g, '').trim(),
@@ -71,7 +69,8 @@ export const signUp = async (req, res) => {
       success: true,
       message: 'Account created successfully',
       advice: 'Please verify your email at earliest, you have 10 minuits to verify yourself',
-      data: user
+      data: user,
+      token
     })
 
   } catch (error) {
@@ -84,11 +83,25 @@ export const signUp = async (req, res) => {
 
 //email verify function
 export const verifyUser = async (req, res) => {
-  const { token } = req.params
+  const authHeader = req.headers.authorization
+
+  if (!authHeader) {
+    return res.status(404).json({
+      success: false,
+      message: "Authorization header not found"
+    })
+  }
+  const token = authHeader.split(' ')[1]
+
+  if (!token) {
+    return res.status(404).json({
+      success: false,
+      message: "Token not found"
+    })
+  }
 
   jwt.verify(token, process.env.SECRET_KEY, async (error, decoded) => {
     if (error) {
-      console.log(error)
       res.send('"Email verification failed, possibly the link is invalid or expired"')
     }
     else {
@@ -164,7 +177,7 @@ export const login = async (req, res) => {
     if (!validCred.success) {
       return res.status(400).json({
         success: false,
-        message: `${validNotes.error.issues[0].message} --> ${validNotes.error.issues[0].path}`
+        message: `${validCred.error.issues[0].message} --> ${validCred.error.issues[0].path}`
       })
     }
 
@@ -197,10 +210,13 @@ export const login = async (req, res) => {
       })
     }
 
-    const accessToken = jwt.sign({userId}, process.env.SECRET_KEY, { expiresIn: '15m' })
-    const refreshToken = jwt.sign({userId}, process.env.SECRET_KEY, { expiresIn: '1d' })
+    const accessToken = jwt.sign({ userId }, process.env.SECRET_KEY, { expiresIn: '15m' })
+    const refreshToken = jwt.sign({ userId }, process.env.SECRET_KEY, { expiresIn: '1d' })
 
-    const session = await sessionsModel.create({userId})
+    await sessionsModel.create({ userId })
+
+    user.status = 'online'
+    await user.save()
 
     return res.status(200).json({
       success: true,
@@ -217,18 +233,91 @@ export const login = async (req, res) => {
   }
 }
 
+export const regenerateAccessToken = async (req, res) => {
+  try {
+    const authHeader = req.headers.authorization
+    const refreshToken = authHeader.split(' ')[1]
+
+    if (!refreshToken) {
+      return res.status(400).json({
+        success: false,
+        message: "Unauthorized access."
+      })
+    }
+
+    jwt.verify(refreshToken, process.env.SECRET_KEY, async (error, decoded) => {
+      if (error) {
+        return res.status(400).json({
+          success: false,
+          message: error.message
+        })
+      }
+      else {
+        const userId = decoded.userId
+        const user = await userModel.findById(userId)
+
+        if (!user) {
+          return res.status(404).json({
+            success: false,
+            message: "User not found"
+          })
+        }
+
+        const accessToken = jwt.sign({ userId }, process.env.SECRET_KEY, { expiresIn: '15m' })
+
+        return res.status(200).json({
+          success: true,
+          message: "Access token regenerated",
+          accessToken
+        })
+      }
+    })
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      message: error.message
+    })
+  }
+}
+
 //logout function
 export const logout = async (req, res) => {
   try {
-    return res.status(200)
-      .clearCookie('token', {
-        path: '/',
-        httpOnly: true
+    const authHeader = req.headers.authorization
+
+    if (!authHeader) {
+      return res.status(404).json({
+        success: false,
+        message: "Authorization header not found"
       })
-      .json({
-        success: true,
-        message: 'Logout Successfully'
+    }
+    const refreshToken = authHeader.split(' ')[1]
+
+    if (!refreshToken) {
+      return res.status(404).json({
+        success: false,
+        message: "Token not found"
       })
+    }
+    jwt.verify(refreshToken, process.env.SECRET_KEY, async (error, decoded) => {
+      if (error) {
+        return res.status(400).json({
+          success: false,
+          message: error.message
+        })
+      }
+      else {
+        const { userId } = decoded
+
+        await sessionsModel.deleteMany({ userId })
+
+        return res.status(200).json({
+          success: true,
+          message: 'Logout successfully'
+        })
+      }
+    })
+
 
   } catch (error) {
     return res.status(500).json({
@@ -240,16 +329,17 @@ export const logout = async (req, res) => {
 
 export const getUserDetails = async (req, res) => {
   try {
-    const token = req.cookies.token
+    const authHeader = req.headers.authorization
+    const refreshToken = authHeader.split(' ')[1]
 
-    if (!token) {
+    if (!refreshToken) {
       return res.status(404).json({
         success: false,
         message: "Token not found"
       })
     }
 
-    jwt.verify(token, process.env.SECRET_KEY, async (error, decoded) => {
+    jwt.verify(refreshToken, process.env.SECRET_KEY, async (error, decoded) => {
       if (error) {
         throw new Error(error.message);
       }

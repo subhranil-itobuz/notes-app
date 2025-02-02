@@ -10,6 +10,7 @@ export const createNote = async (req, res) => {
         if (Object.keys(req.body).length > 3)
             throw new Error("Extra fields");
 
+        //eslint-disable-next-line
         const noteRegex = /[-!$%^&*()_+|~=`{}\[\]:\/;<>?,.@#]/;
 
         if (noteRegex.test(title) || noteRegex.test(tag)) {
@@ -194,6 +195,7 @@ export const updateNote = async (req, res) => {
         if (Object.keys(req.body).length > 3)
             throw new Error("Extra fields");
 
+        //eslint-disable-next-line
         const regex_symbols = /[-!$%^&*()_+|~=`{}\[\]:\/;<>?,.@#]/;
 
         if (regex_symbols.test(title) || regex_symbols.test(tag)) {

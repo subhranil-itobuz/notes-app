@@ -2,7 +2,8 @@ import jwt from 'jsonwebtoken'
 
 const isAuthenticated = async (req, res, next) => {
     try {
-        
+        console.log(jwt)
+        next()
     } catch (error) {
         return res.status(500).json({
             success: false,
