@@ -83,16 +83,16 @@ export const signUp = async (req, res) => {
 
 //email verify function
 export const verifyUser = async (req, res) => {
-  const authHeader = req.headers.authorization
+  const { authorization } = req.headers
 
-  if (!authHeader) {
+  if (!authorization) {
     return res.status(404).json({
       success: false,
       message: "Authorization header not found"
     })
   }
 
-  const token = authHeader.split(' ')[1]
+  const token = authorization.split(' ')[1]
 
   if (!token) {
     return res.status(404).json({
@@ -119,7 +119,10 @@ export const verifyUser = async (req, res) => {
 
       await user.save()
 
-      res.send(`Email verified successfully, ${user.userName}`)
+      res.status(200).json({
+        success: true,
+        message: "Email verified successfully"
+      })
     }
   })
 }

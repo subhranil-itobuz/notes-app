@@ -1,39 +1,39 @@
-import React from 'react'
 import { useForm } from 'react-hook-form'
-import { Link, useNavigate } from 'react-router-dom'
+import { Link, } from 'react-router-dom'
 import { yupResolver } from '@hookform/resolvers/yup/src/yup'
 import { signupUserSchema } from '../validations/userSchemaValidate'
+import axios from 'axios'
+import { USER_API_ENDPOINT } from '../utils/endPoints'
+
 
 const SignupPage = () => {
-  const navigate = useNavigate()
+  // const navigate = useNavigate()
   const { register, handleSubmit, formState: { errors }, } = useForm({
     resolver: yupResolver(signupUserSchema)
   });
 
   const handleRegistration = async (data, e) => {
-    console.log('inside registration func')
-    console.log(data)
+    try {
+      console.log('inside registration func')
+      const res = await axios.post(`${USER_API_ENDPOINT}/signup`, data, {
+        headers: { 'Content-type': 'application/json' },
+      })
 
-    const res = await fetch('http://localhost:3000/api/user/signup', {
-      method: 'POST',
-      headers: {
-        'Content-type': 'application/json'
-      },
-      body: JSON.stringify(data),
-    })
+      if (res.data.success) {
+        console.log('inside if part')
+        console.log(res.data.message)
+        e.target.reset()
+        // navigate('/login')
+      }
 
-    const jsonData = await res.json()
-
-    if(jsonData.success) {
-      console.log(jsonData)
-      e.target.reset()
-      navigate('/login')
+    } catch (error) {
+      console.error(error.response.data.message)
     }
   }
 
   return (
     <>
-      <h1 className='text-3xl text-center mt-16 font-mono font-bold'>Sign up here</h1>
+      <h1 className='text-3xl text-center mt-5 2xl:mt-14 font-mono font-bold'>Create Your NotesApp Account</h1>
       <form className='flex flex-col gap-2 md:gap-4 mt-6 border border-slate-900 md:w-[70%] 2xl:max-w-[50%] rounded-xl mx-2 md:mx-auto px-4 py-6'
         onSubmit={handleSubmit(handleRegistration)}>
         <div>
@@ -69,11 +69,11 @@ const SignupPage = () => {
           <input type="password" name='confirmPassword' placeholder='Retype your password' className='border border-slate-600 rounded-md w-full mt-2 p-2 text-xl focus:outline-none' {...register('confirmPassword', { required: true, minLength: 5 })} />
           <p className='text-red-600 font-semibold h-4'>{errors.confirmPassword?.message}</p>
         </div>
+        <button className='bg-slate-900 hover:bg-slate-700 w-[80%] 2xl:w-[60%] py-2 mt-2 mb-1 text-gray-200 outline-0 rounded-lg mx-auto text-xl'>Submit</button>
         <div>
           Already have an account? &nbsp;
           <Link to='/login' className='text-blue-600 hover:text-blue-400'>Login</Link>
         </div>
-        <button className='bg-slate-900 hover:bg-slate-700 w-[80%] 2xl:w-[60%] py-2 mt-2 text-gray-200 outline-0 rounded-lg mx-auto text-xl'>Submit</button>
       </form>
     </>)
 }
