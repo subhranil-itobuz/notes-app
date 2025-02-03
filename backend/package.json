@@ -5,7 +5,7 @@
   "main": "server.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "nodemon --exec \"npx eslint . && nodemon src/index\"",
+    "start": "nodemon --exec \"npx eslint . && nodemon src/server\"",
     "seed": "node src/faker/seeding.js",
     "precommit": "eslint .",
     "lint": "eslint ./backend --fix"
