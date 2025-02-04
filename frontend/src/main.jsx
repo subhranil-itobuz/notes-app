@@ -8,7 +8,19 @@ import { ToastContainer } from 'react-toastify'
 createRoot(document.getElementById('root')).render(
   <StrictMode>
     <BrowserRouter>
-    <ToastContainer/>
+      <ToastContainer
+        position="top-center"
+        autoClose={4000}
+        limit={5}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick={false}
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="dark"
+      />
       <App />
     </BrowserRouter>
   </StrictMode>,

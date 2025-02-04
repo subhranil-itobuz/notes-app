@@ -19,28 +19,30 @@ const LoginPage = () => {
 
   const handleLogin = async (data, e) => {
     try {
-      const res = await axios.post(`${USER_API_ENDPOINT}/login`, data, { headers: { "Content-Type": 'application/json' } })
+      const res = await axios.post(`${USER_API_ENDPOINT}/login`, data)
 
       if (res.data.success) {
         console.log(res.data.message)
-        toast.success(res.data.message)
         e.target.reset()
         loginFunction()
         tokenSetFunction(res.data.accessToken, res.data.refreshToken)
         navigate('/')
+        toast.success(res.data.message)
       }
+      else toast.info(res.data.message)
     }
     catch (error) {
       console.error(error.response.data.message)
+      toast.error(error.response.data.message)
     }
   }
 
   return (
     <>
-      <BackToHome />
       <h1 className='text-3xl text-center mt-14 font-mono font-bold'>Login to NotesApp</h1>
-      <form action="/" className='flex flex-col gap-2 md:gap-4 mt-10 border border-slate-900 md:w-[70%] 2xl:max-w-[50%] rounded-xl mx-2 md:mx-auto px-4 py-6'
+      <form action="/" className='relative flex flex-col gap-2 md:gap-4 mt-10 border border-slate-900 md:w-[70%] 2xl:max-w-[50%] rounded-xl mx-2 md:mx-auto px-4 py-6'
         onSubmit={handleSubmit(handleLogin)}>
+        <BackToHome />
         <div>
           <label htmlFor="email" className='w-full text-xl'>Enter your mail:</label>
           <input type="email" name='email' placeholder='example@example.com' className='border border-slate-600 rounded-md w-full mt-2 p-2 text-xl focus:outline-none'

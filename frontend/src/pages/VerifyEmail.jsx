@@ -1,6 +1,8 @@
+import { toast } from "react-toastify";
 import { useEffect, useState } from "react";
-import { USER_API_ENDPOINT } from "../utils/endPoints";
 import { Link, useParams } from 'react-router-dom'
+
+import { USER_API_ENDPOINT } from "../utils/endPoints";
 
 
 const VerifyEmail = () => {
@@ -23,11 +25,14 @@ const VerifyEmail = () => {
                 if (jsonData.success) {
                     setMessage('Email verified successfully! You can Login now');
                     setVerified(true)
+                    toast.success(jsonData.message)
                 }
+                else toast.info(jsonData.message)
             } catch (error) {
                 console.error(error)
                 setMessage('Verification failed. The link may have expired.');
                 setVerified(false)
+                toast.error(error)
             }
         };
         verify();

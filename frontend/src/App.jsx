@@ -1,20 +1,24 @@
-import './App.css'
+import { Routes, Route } from "react-router-dom";
+
 import Home from './pages/Home.jsx'
 import LoginPage from './pages/LoginPage.jsx';
 import SignupPage from './pages/SignupPage.jsx';
-import { Routes, Route } from "react-router-dom";
-import VerifyEmail from './pages/verifyEmail.jsx';
+import VerifyEmail from './pages/VerifyEmail.jsx';
 import { AuthProvider } from './contexts/AuthContext.jsx';
+import { UserProvider } from "./contexts/UserContext.jsx";
+
 
 function App() {
   return (
     <AuthProvider>
-      <Routes>
-        <Route path='/' element={<Home />} />
-        <Route path='/signup' element={<SignupPage />} />
-        <Route path='/verify/:token' element={<VerifyEmail />} />
-        <Route path='/login' element={<LoginPage />} />
-      </Routes>
+      <UserProvider>
+        <Routes>
+          <Route path='/' element={<Home />} />
+          <Route path='/signup' element={<SignupPage />} />
+          <Route path='/verify/:token' element={<VerifyEmail />} />
+          <Route path='/login' element={<LoginPage />} />
+        </Routes>
+      </UserProvider>
     </AuthProvider>
   )
 }

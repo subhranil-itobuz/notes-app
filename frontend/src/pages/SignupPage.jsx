@@ -1,9 +1,11 @@
+import { toast } from 'react-toastify'
 import { useForm } from 'react-hook-form'
 import { Link, useNavigate } from 'react-router-dom'
 import { yupResolver } from '@hookform/resolvers/yup/src/yup'
-import { signupUserSchema } from '../validations/userSchemaValidate'
 import axios from 'axios'
+
 import { USER_API_ENDPOINT } from '../utils/endPoints'
+import { signupUserSchema } from '../validations/userSchemaValidate'
 import BackToHome from '../components/BackToHome'
 
 
@@ -18,21 +20,29 @@ const SignupPage = () => {
       const res = await axios.post(`${USER_API_ENDPOINT}/signup`, data)
 
       if (res.data.success) {
+        console.log(res)
         e.target.reset()
         navigate('/login')
+        toast.success(res.data.message)
+        toast.warning(res.data.advice)
+      }
+      else {
+        console.log(res)
+        toast.info(res.data.message)
       }
 
     } catch (error) {
+      console.log(error)
       console.error(error.response.data.message)
+      toast.error(error.response.data.message)
     }
   }
 
   return (
     <>
-      <BackToHome/>
       <h1 className='text-3xl text-center mt-5 2xl:mt-14 font-mono font-bold'>Create Your NotesApp Account</h1>
-      <form className='flex flex-col gap-2 md:gap-4 mt-6 border border-slate-900 md:w-[70%] 2xl:max-w-[50%] rounded-xl mx-2 md:mx-auto px-4 py-6'
-        onSubmit={handleSubmit(handleRegistration)}>
+      <form className='relative flex flex-col gap-2 md:gap-4 mt-6 border border-slate-900 md:w-[70%] 2xl:max-w-[50%] rounded-xl mx-2 md:mx-auto px-4 py-6' onSubmit={handleSubmit(handleRegistration)}>
+        <BackToHome />
         <div>
           <label htmlFor="username" className='w-full text-xl'>
             <span className='text-red-500'>*</span>
