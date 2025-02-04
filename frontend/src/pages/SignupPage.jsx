@@ -1,5 +1,5 @@
 import { useForm } from 'react-hook-form'
-import { Link, } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { yupResolver } from '@hookform/resolvers/yup/src/yup'
 import { signupUserSchema } from '../validations/userSchemaValidate'
 import axios from 'axios'
@@ -7,23 +7,20 @@ import { USER_API_ENDPOINT } from '../utils/endPoints'
 
 
 const SignupPage = () => {
-  // const navigate = useNavigate()
+  const navigate = useNavigate()
   const { register, handleSubmit, formState: { errors }, } = useForm({
     resolver: yupResolver(signupUserSchema)
   });
 
   const handleRegistration = async (data, e) => {
     try {
-      console.log('inside registration func')
       const res = await axios.post(`${USER_API_ENDPOINT}/signup`, data, {
         headers: { 'Content-type': 'application/json' },
       })
 
       if (res.data.success) {
-        console.log('inside if part')
-        console.log(res.data.message)
         e.target.reset()
-        // navigate('/login')
+        navigate('/login')
       }
 
     } catch (error) {
