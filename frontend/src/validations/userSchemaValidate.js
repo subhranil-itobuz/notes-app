@@ -25,3 +25,9 @@ export const loginUserSchema = yup.object({
     .required('password is required')
     .min(5)
 }).required()
+
+export const reVerifySchema = yup.object({
+  email: yup.string()
+    .required('email is required')
+    .email('Invalid email format'),
+})

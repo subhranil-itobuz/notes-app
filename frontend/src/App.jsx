@@ -6,6 +6,7 @@ import SignupPage from './pages/SignupPage.jsx';
 import VerifyEmail from './pages/VerifyEmail.jsx';
 import { AuthProvider } from './contexts/AuthContext.jsx';
 import { UserProvider } from "./contexts/UserContext.jsx";
+import ReverifyPage from "./pages/ReverifyPage.jsx";
 
 
 function App() {
@@ -17,6 +18,7 @@ function App() {
           <Route path='/signup' element={<SignupPage />} />
           <Route path='/verify/:token' element={<VerifyEmail />} />
           <Route path='/login' element={<LoginPage />} />
+          <Route path='/reverify' element={<ReverifyPage />} />
         </Routes>
       </UserProvider>
     </AuthProvider>
