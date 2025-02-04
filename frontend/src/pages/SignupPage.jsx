@@ -14,9 +14,7 @@ const SignupPage = () => {
 
   const handleRegistration = async (data, e) => {
     try {
-      const res = await axios.post(`${USER_API_ENDPOINT}/signup`, data, {
-        headers: { 'Content-type': 'application/json' },
-      })
+      const res = await axios.post(`${USER_API_ENDPOINT}/signup`, data)
 
       if (res.data.success) {
         e.target.reset()

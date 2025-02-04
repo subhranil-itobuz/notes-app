@@ -1,12 +1,18 @@
 import { Link, useNavigate } from 'react-router-dom'
 import { useForm } from 'react-hook-form'
 import { yupResolver } from '@hookform/resolvers/yup/src/yup'
-import { loginUserSchema } from '../validations/userSchemaValidate'
 import axios from 'axios'
+
+import { loginUserSchema } from '../validations/userSchemaValidate'
 import { USER_API_ENDPOINT } from '../utils/endPoints'
+import { useContext } from 'react'
+import { AuthContext } from '../contexts/AuthContext'
 
 
 const LoginPage = () => {
+  const { isLoggedIn, loginFunction, tokenSetFunction } = useContext(AuthContext)
+
+  console.log(isLoggedIn)
   const navigate = useNavigate()
   const { register, handleSubmit, formState: { errors }, } = useForm({ resolver: yupResolver(loginUserSchema) });
 
@@ -19,6 +25,8 @@ const LoginPage = () => {
       if (res.data.success) {
         console.log(res.data.message)
         e.target.reset()
+        loginFunction()
+        tokenSetFunction(res.data.accessToken, res.data.refreshToken)
         navigate('/')
       }
     }

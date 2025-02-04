@@ -55,7 +55,7 @@ export const signUp = async (req, res) => {
 
     const token = jwt.sign({ data: email }, process.env.SECRET_KEY, { expiresIn: '10m' })
 
-    mailSender(token, email)
+    await mailSender(token, email)
 
     const user = await userModel.create({
       userName: userName.replace(/\s/g, '').trim(),

@@ -1,7 +1,7 @@
 import nodemailer from 'nodemailer'
 import hbs from 'nodemailer-express-handlebars';
 
-export const mailSender = (token, email) => {
+export const mailSender = async (token, email) => {
     const transporter = nodemailer.createTransport({
         service: 'gmail',
         auth: {

@@ -25,6 +25,7 @@ const VerifyEmail = () => {
                     setVerified(true)
                 }
             } catch (error) {
+                console.error(error)
                 setMessage('Verification failed. The link may have expired.');
                 setVerified(false)
             }
