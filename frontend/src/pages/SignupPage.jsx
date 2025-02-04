@@ -4,6 +4,7 @@ import { yupResolver } from '@hookform/resolvers/yup/src/yup'
 import { signupUserSchema } from '../validations/userSchemaValidate'
 import axios from 'axios'
 import { USER_API_ENDPOINT } from '../utils/endPoints'
+import BackToHome from '../components/BackToHome'
 
 
 const SignupPage = () => {
@@ -28,6 +29,7 @@ const SignupPage = () => {
 
   return (
     <>
+      <BackToHome/>
       <h1 className='text-3xl text-center mt-5 2xl:mt-14 font-mono font-bold'>Create Your NotesApp Account</h1>
       <form className='flex flex-col gap-2 md:gap-4 mt-6 border border-slate-900 md:w-[70%] 2xl:max-w-[50%] rounded-xl mx-2 md:mx-auto px-4 py-6'
         onSubmit={handleSubmit(handleRegistration)}>

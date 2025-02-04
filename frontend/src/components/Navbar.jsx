@@ -17,13 +17,11 @@ const Navbar = () => {
 
   const logoutHandler = async () => {
     try {
-      console.log('logout start')
       const res = await axios.get(`${USER_API_ENDPOINT}/logout`, {
         headers: {
           Authorization: `Bearer ${token}`
         }
       })
-      console.log(res)
       if (res.data.success) {
         console.log(res.data.message)
         logoutFunction()
@@ -91,22 +89,22 @@ const Navbar = () => {
         expandNav &&
         <div className={`h-[100vh] bg-slate-600 backdrop-blur-3xl backdrop-opacity-10 w-52 text-white absolute right-0 z-10 pt-5 text-xl shadow-lg shadow-slate-500 md:hidden ${!user && 'hidden'}`}>
           <div className='flex flex-col items-center justify-between gap-12'>
-                  <ul className='flex flex-col justify-center items-center gap-10'>
-                    <li>
-                      <Link to='/' className='hover:text-blue-400'>Home</Link>
-                    </li>
-                    <li>
-                      <Link to='/profile' className='hover:text-blue-400'>Profile</Link>
-                    </li>
-                    <li>
-                      <Link to='/notes' className='hover:text-blue-400'>Notes</Link>
-                    </li>
-                  </ul>
-                  <div className='flex flex-wrap justify-center items-center gap-8'>
-                    <p>Hello, <span className='text-green-300 cursor-pointer'>{userName}</span></p>
-                    <button className='border border-gray-400 rounded-xl px-2 py-2 hover:bg-red-500 transition-colors ease-in-out' onClick={logoutHandler}>Logout</button>
-                  </div>
-                </div>
+            <ul className='flex flex-col justify-center items-center gap-10'>
+              <li>
+                <Link to='/' className='hover:text-blue-400'>Home</Link>
+              </li>
+              <li>
+                <Link to='/profile' className='hover:text-blue-400'>Profile</Link>
+              </li>
+              <li>
+                <Link to='/notes' className='hover:text-blue-400'>Notes</Link>
+              </li>
+            </ul>
+            <div className='flex flex-wrap justify-center items-center gap-8'>
+              <p>Hello, <span className='text-green-300 cursor-pointer'>{userName}</span></p>
+              <button className='border border-gray-400 rounded-xl px-2 py-2 hover:bg-red-500 transition-colors ease-in-out' onClick={logoutHandler}>Logout</button>
+            </div>
+          </div>
         </div>
       }
     </>
