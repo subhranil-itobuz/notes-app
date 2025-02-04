@@ -8,7 +8,7 @@ const Home = () => {
   return (
     <>
       <Navbar />
-      {
+      { 
         isLoggedIn ? <Notes />
           :
           <div className='text-3xl mt-28 px-2 font-mono text-center text-red-500 font-bold'>

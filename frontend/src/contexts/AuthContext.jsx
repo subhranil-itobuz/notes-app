@@ -21,6 +21,7 @@ const AuthProvider = (props) => {
   const tokenSetFunction = (accessToken, refreshToken) => {
     setAccessToken(accessToken)
     localStorage.setItem('accessToke', accessToken)
+    
     setRefreshToken(refreshToken)
     localStorage.setItem('refreshToken', refreshToken)
   }
