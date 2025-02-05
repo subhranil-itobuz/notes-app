@@ -20,12 +20,12 @@ const CreateNotePage = () => {
   const handleNotesCreate = async (data, e) => {
     const res = await createNotes(data)
     console.log(res)
-    if(res.data.success) {
+    if (res.data.success) {
       console.log(note)
       e.target.reset()
       toast.success(res.data.message)
       navigate('/')
-    } 
+    }
     else {
       toast.warning(res.data.message)
     }
@@ -46,7 +46,7 @@ const CreateNotePage = () => {
             Enter title:
           </label>
           <div>
-            <input type="text" name="title" placeholder="Write your title here" className="w-full border border-slate-600 rounded-lg px-3 py-1 mt-1 text-xl" {...register('title', { required: true, minLength: 4, maxLength: 15 })} />
+            <input type="text" name="title" placeholder="Write your title here" minLength={4} maxLength={15} className="w-full border border-slate-600 rounded-lg px-3 py-1 mt-1 text-xl" {...register('title', { required: true, minLength: 4, maxLength: 15 })} />
             <p className="text-base text-red-600 px-2 h-10 font-semibold">{errors.title?.message}</p>
           </div>
         </div>
@@ -56,14 +56,14 @@ const CreateNotePage = () => {
             Enter description:
           </label>
           <div>
-            <textarea name="description" id="description" placeholder="Write your notes description" className="border border-slate-600 w-full rounded-lg px-3 py-1 mt-1 text-xl" {...register('description', { required: true, minLength: 4 })}></textarea>
+            <textarea name="description" id="description" minLength={4} placeholder="Write your notes description" className="border border-slate-600 w-full rounded-lg px-3 py-1 mt-1 text-xl" {...register('description', { required: true, minLength: 4 })}></textarea>
             <p className="text-base text-red-600 px-2 h-10 -mt-2 font-semibold">{errors.description?.message}</p>
           </div>
         </div>
         <div className="w-full">
           <label htmlFor="tag" className="font-serif">Enter tag:</label>
           <div>
-            <input type="text" name="tag" placeholder="Default:'General'" className="w-full border border-slate-600 rounded-lg px-3 py-1 mt-1 text-xl" {...register('tag', { maxLength: 8 })} />
+            <input type="text" name="tag" placeholder="Default:'General'" maxLength={8} className="w-full border border-slate-600 rounded-lg px-3 py-1 mt-1 text-xl" {...register('tag', { maxLength: 8 })} />
             <p className="text-base text-red-600 px-2 h-10 font-semibold">{errors.tag?.message}</p>
           </div>
         </div>

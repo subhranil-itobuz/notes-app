@@ -8,18 +8,18 @@ const NotesContext = React.createContext()
 
 const NotesProvider = (props) => {
   const [note, setNote] = useState()
-  const[allNotes, setAllNotes] = useState([])
-  const{refreshToken} = useContext(AuthContext)
+  const [allNotes, setAllNotes] = useState([])
+  const { refreshToken } = useContext(AuthContext)
 
   const createNotes = async (data) => {
     try {
       console.log('inside create note func')
       const res = await axios.post(`${NOTES_API_ENDPOINT}/create`, data, {
-        headers:{
-          Authorization:`Bearer ${refreshToken}`
+        headers: {
+          Authorization: `Bearer ${refreshToken}`
         }
       })
-      if(res.data.success) {
+      if (res.data.success) {
         console.log(res.data.message)
         setNote(res.data.data)
         return res
@@ -30,19 +30,26 @@ const NotesProvider = (props) => {
     }
   }
 
-  const getAllNotesFunction = async () => {
+  const getAllNotesFunction = async (keyword, page, limit) => {
     try {
       console.log('inside get all notes')
-      const res = await axios.get(`${NOTES_API_ENDPOINT}/getAllNotes`, {
+      const res = await axios.get(`${NOTES_API_ENDPOINT}/getAllNotes?keyword=${keyword}&page=${page}&limit=${limit}`, {
         headers: {
           Authorization: `Bearer ${refreshToken}`
         }
       })
 
-      console.log(res)
-      setAllNotes(res.data.data)
-      return res.data.data
+      if (res?.data.success) {
+        console.log(res)
+        setAllNotes(res.data.data)
+        return res
+      }
+      else {
+        setAllNotes([])
+      }
     } catch (error) {
+      console.log('inside error')
+      setAllNotes([])
       console.error(error)
     }
   }

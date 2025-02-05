@@ -16,11 +16,12 @@ const Home = () => {
       setUser(user)
     }
     isLoggedIn && getUserDetails()
+
     // eslint-disable-next-line  
   }, [])
   return (
     <>
-      <Navbar user={user}/>
+      <Navbar user={user} />
       {
         isLoggedIn ? <Dashboard />
           :
