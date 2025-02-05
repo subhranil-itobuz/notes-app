@@ -20,7 +20,7 @@ const Home = () => {
     // eslint-disable-next-line  
   }, [])
   return (
-    <>
+    <div className='scroll-smooth'>
       <Navbar user={user} />
       {
         isLoggedIn ? <Dashboard />
@@ -29,7 +29,7 @@ const Home = () => {
             *Please Create an account or login to use this notes App
           </div>
       }
-    </>
+    </div>
   )
 }
 

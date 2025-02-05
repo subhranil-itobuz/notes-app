@@ -9,13 +9,14 @@ import { Link } from "react-router-dom";
 
 import { NotesContext } from "../contexts/NotesContext";
 import NoteCard from '../components/NoteCard'
+import DeleteModal from "./DeleteModal";
 
 
 const Notes = () => {
+  const [openModal, setOpenModal] = useState()
   const nevigationBtnRef = useRef(null)
   const [pageNotes, setPageNotes] = useState([])
   const [totalResults, setTotalResults] = useState(0)
-  const [searchResults, setSearchResults] = useState(0)
   const [keyword, setKeyword] = useState('')
   const [page, setPage] = useState(1)
   const [limit, setLimit] = useState(6)
@@ -30,7 +31,6 @@ const Notes = () => {
         setTotalResults(res?.data.totalResults)
       }
       else {
-        console.log('inside else')
         setPageNotes([])
       }
     }
@@ -40,28 +40,20 @@ const Notes = () => {
   }, [page, keyword, limit])
 
   const increasePageNumber = () => {
-    console.log(page)
     setPage(page + 1)
-    console.log(page)
   }
 
   const decreasePageNumber = () => {
-    console.log(page)
     setPage(page - 1)
-    console.log(page)
   }
 
   const handleSearch = (e) => {
-    console.log(e.target.value)
     setKeyword(e.target.value)
     setPage(0)
     setLimit(0)
-    setSearchResults(pageNotes.length)
-    console.log(searchResults)
     nevigationBtnRef.current.disabled = true
 
     if (e.target.value === '') {
-      console.log('insside length if')
       setLimit(6)
       setPage(1)
       nevigationBtnRef.current.disabled = false
@@ -95,7 +87,9 @@ const Notes = () => {
           <IoCaretBack />
           Back
         </button>
+
         <h1 className="text-2xl sm:text-3xl 2xl:text-4xl font-serif font-semibold py-4 flex justify-center items-center gap-1 sm:gap-3"><CgNotes /><span>Notes ({pageNotes.length})</span></h1>
+
         <button className="flex gap-1 items-center border border-slate-400 rounded-3xl pl-1 md:px-3 bg-sky-200 hover:bg-sky-300 disabled:opacity-25 disabled:cursor-not-allowed" disabled={page === Math.ceil(totalResults / 6) || pageNotes.length === totalResults || pageNotes.length < 6 || totalResults === 6 ? true : false} onClick={increasePageNumber} ref={nevigationBtnRef}>
           Next
           <FaCaretRight />
@@ -106,13 +100,16 @@ const Notes = () => {
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 justify-items-center gap-y-7 lg:gap-y-9 gap-x-2 sm:gap-x-7 px-6 sm:px-8 lg:px-10 mx-auto">
             {pageNotes?.map((element) => {
               return (
-                <NoteCard key={element._id} title={element.title} description={element.description} tag={element.tag} createdAt={element.createdAt} />
+                <NoteCard key={element._id} title={element.title} description={element.description} tag={element.tag} createdAt={element.createdAt} openModal={openModal} setOpenModal={setOpenModal} />
               )
             })
             }:
           </div>
           :
           <div className="text-center text-2xl font-bold text-red-400 font-mono px-5">No Notes to display</div>
+      }
+      {
+        openModal && <DeleteModal openModal={openModal} setOpenModal={setOpenModal} />
       }
     </div >
   )

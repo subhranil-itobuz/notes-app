@@ -1,12 +1,18 @@
 import { MdDelete, MdModeEdit, MdOutlineAttachFile } from "react-icons/md";
 
-const NoteCard = ({ title, description, tag, createdAt }) => {
+const NoteCard = ({ title, description, tag, createdAt, openModal, setOpenModal }) => {
 
   const daysAgoFunction = (mongoDbTime) => {
     const createdAt = new Date(mongoDbTime)
     const currentTime = new Date();
     const timeDifference = currentTime - createdAt
     return Math.floor(timeDifference / (1000 * 24 * 60 * 60))
+  }
+
+  const handleDeletion = () => {
+    console.log('inside delete')
+    setOpenModal(true)
+    console.log(openModal)
   }
 
   return (
@@ -19,7 +25,7 @@ const NoteCard = ({ title, description, tag, createdAt }) => {
         <button className="hover:scale-105"><MdOutlineAttachFile size={25} /></button>
         <div className="flex gap-6">
           <button className="hover:scale-105"><MdModeEdit size={25} /></button>
-          <button className="hover:scale-105"><MdDelete size={25} /></button>
+          <button className="hover:scale-105" onClick={handleDeletion}><MdDelete size={25} /></button>
         </div>
       </div>
       <div className="flex justify-between items-center px-8 pt-1">
