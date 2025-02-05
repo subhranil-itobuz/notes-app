@@ -7,21 +7,28 @@ import VerifyEmail from './pages/VerifyEmail.jsx';
 import { AuthProvider } from './contexts/AuthContext.jsx';
 import { UserProvider } from "./contexts/UserContext.jsx";
 import ReverifyPage from "./pages/ReverifyPage.jsx";
+import CreateNotePage from "./pages/CreateNotePage.jsx";
+import { NotesProvider } from "./contexts/NotesContext.jsx";
 
 
 function App() {
   return (
-    <AuthProvider>
-      <UserProvider>
-        <Routes>
-          <Route path='/' element={<Home />} />
-          <Route path='/signup' element={<SignupPage />} />
-          <Route path='/verify/:token' element={<VerifyEmail />} />
-          <Route path='/login' element={<LoginPage />} />
-          <Route path='/reverify' element={<ReverifyPage />} />
-        </Routes>
-      </UserProvider>
-    </AuthProvider>
+    <div className="max-w-[1440px] mx-auto">
+      <AuthProvider>
+        <UserProvider>
+          <NotesProvider>
+            <Routes>
+              <Route path='/' element={<Home />} />
+              <Route path='/signup' element={<SignupPage />} />
+              <Route path='/verify/:token' element={<VerifyEmail />} />
+              <Route path='/login' element={<LoginPage />} />
+              <Route path='/reverify' element={<ReverifyPage />} />
+              <Route path='/notes/create' element={<CreateNotePage />} />
+            </Routes>
+          </NotesProvider>
+        </UserProvider>
+      </AuthProvider>
+    </div>
   )
 }
 

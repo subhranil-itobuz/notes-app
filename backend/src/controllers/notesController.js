@@ -13,10 +13,16 @@ export const createNote = async (req, res) => {
         //eslint-disable-next-line
         const noteRegex = /[-!$%^&*()_+|~=`{}\[\]:\/;<>?,.@#]/;
 
-        if (noteRegex.test(title) || noteRegex.test(tag)) {
+        if (noteRegex.test(title)) {
             return res.status(400).json({
                 success: false,
-                message: 'Special character is not allowed'
+                message: 'Special character is not allowed in title'
+            })
+        }
+        if (noteRegex.test(tag)) {
+            return res.status(400).json({
+                success: false,
+                message: 'Special character is not allowed in tag'
             })
         }
 
