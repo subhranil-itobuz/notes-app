@@ -7,8 +7,8 @@ import { toast } from 'react-toastify'
 const UserContext = React.createContext()
 
 const UserProvider = (props) => {
-    const [user, setUser] = useState()
     const { refreshToken } = useContext(AuthContext)
+    const [user, setUser] = useState()
 
     const getUser = async () => {
         try {
@@ -22,7 +22,7 @@ const UserProvider = (props) => {
                 console.log(res)
                 console.log(res.data.message)
                 setUser(res.data.data)
-                return user
+                return res.data.data
             }
             else toast.info(res.data.message)
 

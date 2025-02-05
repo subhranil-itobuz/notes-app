@@ -192,14 +192,15 @@ export const login = async (req, res) => {
       email: email.toLowerCase()
     })
 
-    const userId = user._id
-
+    
     if (!user) {
       return res.status(404).json({
         success: false,
         message: "User not found"
       })
     }
+    
+    const userId = user._id
 
     const comparePassword = await bcrypt.compare(password.replace(/\s/g, '').trim(), user.password);
 

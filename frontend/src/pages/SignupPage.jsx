@@ -13,9 +13,10 @@ import eyeSlash from '../assets/eyeSlash.svg'
 
 
 const SignupPage = () => {
-  const [showPassword, setShowPassword] = useState(false)
-  const [showConfirmPassword, setShowConfirmPassword] = useState(false)
+  const [type, setType] = useState('password');
+  const [icon, setIcon] = useState(eyeSlash);
   const navigate = useNavigate()
+
   const { register, handleSubmit, formState: { errors }, } = useForm({
     resolver: yupResolver(signupUserSchema)
   });
@@ -40,6 +41,17 @@ const SignupPage = () => {
       console.log(error)
       console.error(error.response.data.message)
       toast.error(error.response.data.message)
+    }
+  }
+
+  const handleTogglePassword = () => {
+    if (type === 'password') {
+      setIcon(eye)
+      setType('text')
+    }
+    else {
+      setIcon(eyeSlash)
+      setType('password')
     }
   }
 
@@ -71,23 +83,22 @@ const SignupPage = () => {
             Enter password:
           </label>
           <div className='relative'>
-            <input type={showPassword ? 'text' : "password"} name='password' placeholder='Enter password' className='border border-slate-600 rounded-md w-full mt-2 p-2 text-xl focus:outline-none' {...register('password', { required: true, minLength: 5 })} />
-            <button className='absolute w-6 top-1/3 right-3' onClick={() => setShowPassword(!showPassword)}><img src={showPassword ? eyeSlash : eye} alt="eye icon" /></button>
+            <input type={type} name='password' placeholder='Enter password' className='border border-slate-600 rounded-md w-full mt-2 p-2 text-xl focus:outline-none' {...register('password', { required: true, minLength: 5 })} />
+            <span className='absolute w-6 top-1/3 right-3 cursor-pointer' onClick={handleTogglePassword}><img src={icon} alt="eye icon" /></span>
           </div>
           <p className='text-red-600 font-semibold h-10 sm:h-4'>{errors.password?.message}</p>
         </div>
         <div>
           <label htmlFor="confirmassword" className='w-full text-xl'>
             <span className='text-red-500'>*</span>
-            Retype password:
+            Confirm password:
           </label>
           <div className='relative'>
-            <input type={showConfirmPassword ? 'text' : "password"} name='confirmPassword' placeholder='Retype your password' className='border border-slate-600 rounded-md w-full mt-2 p-2 text-xl focus:outline-none' {...register('confirmPassword', { required: true, minLength: 5 })} />
-            <button className='absolute w-6 top-1/3 right-3' onClick={() => setShowConfirmPassword(!showConfirmPassword)}><img src={showConfirmPassword ? eyeSlash : eye} alt="eye icon" /></button>
+            <input type={type} name='confirmPassword' placeholder='Confirm your password' className='border border-slate-600 rounded-md w-full mt-2 p-2 text-xl focus:outline-none' {...register('confirmPassword', { required: true, minLength: 5 })} />
           </div>
           <p className='text-red-600 font-semibold h-4'>{errors.confirmPassword?.message}</p>
         </div>
-        <button className='bg-slate-900 hover:bg-slate-700 w-[80%] 2xl:w-[60%] py-2 mt-2 mb-1 text-gray-200 outline-0 rounded-lg mx-auto text-xl'>Submit</button>
+        <button className='bg-slate-900 hover:bg-slate-700 w-[80%] 2xl:w-[60%] py-2 mt-2 mb-1 text-gray-200 outline-0 rounded-lg mx-auto text-xl' >Submit</button>
         <div>
           Already have an account? &nbsp;
           <Link to='/login' className='text-blue-600 hover:text-blue-400'>Login</Link>

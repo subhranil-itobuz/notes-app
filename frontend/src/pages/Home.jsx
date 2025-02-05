@@ -1,4 +1,4 @@
-import { useContext, useEffect } from 'react'
+import { useContext, useEffect, useState } from 'react'
 import Navbar from '../components/Navbar'
 import Notes from '../components/Notes'
 import { AuthContext } from '../contexts/AuthContext'
@@ -7,11 +7,13 @@ import { UserContext } from '../contexts/UserContext'
 const Home = () => {
   const { isLoggedIn } = useContext(AuthContext)
   const { getUser } = useContext(UserContext)
+  const [user, setUser] = useState()
 
   useEffect(() => {
     const getUserDetails = async () => {
       const user = await getUser()
       console.log(user)
+      setUser(user)
     }
 
     isLoggedIn && getUserDetails()
@@ -19,7 +21,7 @@ const Home = () => {
   }, [])
   return (
     <>
-      <Navbar />
+      <Navbar user={user}/>
       {
         isLoggedIn ? <Notes />
           :

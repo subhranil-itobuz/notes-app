@@ -5,13 +5,17 @@ import axios from 'axios'
 
 import { loginUserSchema } from '../validations/userSchemaValidate'
 import { USER_API_ENDPOINT } from '../utils/endPoints'
-import { useContext } from 'react'
+import { useContext, useState } from 'react'
 import { AuthContext } from '../contexts/AuthContext'
 import BackToHome from '../components/BackToHome'
 import { toast } from 'react-toastify'
+import eye from '../assets/eye.svg'
+import eyeSlash from '../assets/eyeSlash.svg'
 
 
 const LoginPage = () => {
+  const [type, setType] = useState('password');
+  const [icon, setIcon] = useState(eyeSlash);
   const { loginFunction, tokenSetFunction } = useContext(AuthContext)
 
   const navigate = useNavigate()
@@ -37,10 +41,21 @@ const LoginPage = () => {
     }
   }
 
+  const handleTogglePassword = () => {
+    if (type === 'password') {
+      setIcon(eye)
+      setType('text')
+    }
+    else {
+      setIcon(eyeSlash)
+      setType('password')
+    }
+  }
+
   return (
     <>
       <h1 className='text-3xl text-center mt-14 font-mono font-bold'>Login to NotesApp</h1>
-      <form action="/" className='relative flex flex-col gap-2 md:gap-4 mt-10 border border-slate-900 md:w-[70%] 2xl:max-w-[50%] rounded-xl mx-2 md:mx-auto px-4 py-6'
+      <form className='relative flex flex-col gap-2 md:gap-4 mt-10 border border-slate-900 md:w-[70%] 2xl:max-w-[50%] rounded-xl mx-2 md:mx-auto px-4 py-6'
         onSubmit={handleSubmit(handleLogin)}>
         <BackToHome />
         <div>
@@ -49,9 +64,12 @@ const LoginPage = () => {
             {...register('email', { required: true })} />
           <p className='text-red-600 font-semibold h-6'>{errors.email?.message}</p>
         </div>
-        <div>
+        <div className='relative'>
           <label htmlFor="password" className='w-full text-xl'><span className='text-red-500'>*</span>Enter password:</label>
-          <input type="password" name='password' placeholder='Enter password' className='border border-slate-600 rounded-md w-full mt-2 p-2 text-xl focus:outline-none' {...register('password', { required: true, minLength: 5 })} />
+          <div>
+          <input type={type} name='password' placeholder='Enter password' className='border border-slate-600 rounded-md w-full mt-2 p-2 text-xl focus:outline-none' {...register('password', { required: true, minLength: 5 })} />
+          <span className='absolute w-6 top-[39%] right-3 cursor-pointer' onClick={handleTogglePassword}><img src={icon} alt="eye icon" /></span>
+          </div>
           <p className='text-red-600 font-semibold h-10 sm:h-9'>{errors.password?.message}</p>
         </div>
         <button className='bg-slate-900 hover:bg-slate-700 w-[80%] 2xl:w-[60%] py-2 text-gray-200 outline-0 rounded-lg mx-auto text-xl'>Submit</button>
