@@ -2,9 +2,9 @@ import { useContext } from "react";
 import { MdDelete, MdModeEdit, MdOutlineAttachFile } from "react-icons/md";
 import { NotesContext } from "../contexts/NotesContext";
 
-const NoteCard = ({ noteId, title, description, tag, createdAt, setOpenModal }) => {
+const NoteCard = ({ noteId, title, description, tag, createdAt, setOpenDeleteModal, setOpenUpdateModal }) => {
 
-  const { setNoteId } = useContext(NotesContext)
+  const { setNoteId, setUpdatingNote } = useContext(NotesContext)
 
   const daysAgoFunction = (mongoDbTime) => {
     const createdAt = new Date(mongoDbTime)
@@ -13,10 +13,21 @@ const NoteCard = ({ noteId, title, description, tag, createdAt, setOpenModal }) 
     return Math.floor(timeDifference / (1000 * 24 * 60 * 60))
   }
 
-  const handleDeletion = async () => {
+  const handleDeletion = () => {
     console.log('deleteIcon clicked')
-    setOpenModal(true)
+    setOpenDeleteModal(true)
     setNoteId(noteId)
+  }
+
+  const handleUpdation = () => {
+    console.log('edit icon clicked')
+    setOpenUpdateModal(true)
+    setUpdatingNote({
+      title: title,
+      description: description,
+      tag: tag
+    })
+    console.log(title, description, tag)
   }
 
   return (
@@ -28,7 +39,7 @@ const NoteCard = ({ noteId, title, description, tag, createdAt, setOpenModal }) 
       <div className="h-[13%] flex justify-between px-10 border-b border-b-gray-600">
         <button className="hover:scale-105"><MdOutlineAttachFile size={25} /></button>
         <div className="flex gap-6">
-          <button className="hover:scale-105"><MdModeEdit size={25} /></button>
+          <button className="hover:scale-105" onClick={handleUpdation}><MdModeEdit size={25} /></button>
           <button className="hover:scale-105" onClick={handleDeletion}><MdDelete size={25} /></button>
         </div>
       </div>

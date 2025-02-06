@@ -13,18 +13,21 @@ import { NotesContext } from "../contexts/NotesContext";
 import NoteCard from '../components/NoteCard'
 import Modal from './Modal'
 import { toast } from "react-toastify";
+import { GrUpdate } from "react-icons/gr";
+
 
 
 const Notes = () => {
   const backBtnRef = useRef(null)
   const nextBtnRef = useRef(null)
-  const [openModal, setOpenModal] = useState()
+  const [openDeleteModal, setOpenDeleteModal] = useState()
+  const [openUpdateModal, setOpenUpdateModal] = useState()
   const [pageNotes, setPageNotes] = useState([])
   const [keyword, setKeyword] = useState('')
   const [page, setPage] = useState(1)
   const [limit, setLimit] = useState(6)
 
-  const { getAllNotesFunction, totalResults, setTotalResults, deleteNoteFunction, allNotes } = useContext(NotesContext)
+  const { getAllNotesFunction, totalResults, setTotalResults, deleteNoteFunction, allNotes, setNoteId, updatingNote } = useContext(NotesContext)
 
   useEffect(() => {
     const getAllNotes = async () => {
@@ -41,7 +44,7 @@ const Notes = () => {
     getAllNotes()
 
     // eslint-disable-next-line  
-  }, [page, keyword, limit, openModal])
+  }, [page, keyword, limit, openDeleteModal])
 
   const increasePageNumber = () => {
     setPage(page + 1)
@@ -72,12 +75,13 @@ const Notes = () => {
 
     if (res.data.success) {
       toast.success(res.data.message)
-      console.log('open modal value=>', openModal)
-      setOpenModal(false)
+      console.log('open modal value=>', openDeleteModal)
+      setOpenDeleteModal(false)
       console.log(allNotes.length)
 
       totalResults % 6 === 1 && page > 1 ? setPage(page - 1) : ''
       totalResults === 1 ? setTotalResults(0) : ''
+      setNoteId('')
     }
     else {
       toast.error(res.data.message)
@@ -102,7 +106,7 @@ const Notes = () => {
             </button>
           </Link>
         </div>
-        <div className="w-full border border-black rounded-lg flex items-center gap-1 py-3 px-2">
+        <div className="w-full h-14 border border-black rounded-lg flex items-center gap-1 px-2">
           <span className="w-6"><FaSearch size={25} /></span>
           <input type="search" placeholder="search note" className="w-[95%] h-full focus:outline-none px-2 text-xl disabled:opacity-50" disabled={totalResults === 0 ? true : false} onInput={handleSearch} />
         </div>
@@ -124,7 +128,7 @@ const Notes = () => {
         pageNotes.length > 0 ? <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 justify-items-center gap-y-7 lg:gap-y-9 gap-x-2 sm:gap-x-7 px-6 sm:px-8 lg:px-10 mx-auto">
           {pageNotes?.map((element) => {
             return (
-              <NoteCard key={element._id} noteId={element._id} title={element.title} description={element.description} tag={element.tag} createdAt={element.createdAt} openModal={openModal} setOpenModal={setOpenModal} />
+              <NoteCard key={element._id} noteId={element._id} title={element.title} description={element.description} tag={element.tag} createdAt={element.createdAt} openDeleteModal={openDeleteModal} setOpenDeleteModal={setOpenDeleteModal} openUpdateModal={openUpdateModal} setOpenUpdateModal={setOpenUpdateModal} />
             )
           })
           }
@@ -132,14 +136,31 @@ const Notes = () => {
           <div className="text-center text-2xl font-bold text-red-400 font-mono px-5">No Notes to display</div>
       }
       {
-        openModal && (
-          <Modal onClose={() => setOpenModal(false)}>
+        openDeleteModal && (
+          <Modal onClose={() => setOpenDeleteModal(false)} width={'w-full max-w-[700px]'}>
             <div className='w-[90%] mx-auto pt-5'>
               <h2 className='text-xl md:text-2xl font-serif font-bold text-center'>Are you sure you want to delete this note?</h2>
               <button className='flex items-center justify-center gap-2 mx-auto border border-red-600 px-5 py-2 rounded-full text-sm md:text-xl font-bold mt-10 hover:bg-red-500 hover:text-white transition-all ease-in-out duration-500' onClick={handleDeleteConfirmations}>
                 <MdDelete size={25} />
                 Delete
               </button>
+            </div>
+          </Modal>
+        )
+      }
+      {
+        openUpdateModal && (
+          <Modal onClose={() => setOpenUpdateModal(false)} height={'h-2/3'} width={'w-full md:w-3/4 lg:w-2/3'}>
+            <div className='w-full mx-auto pt-5'>
+              <h2 className='text-xl md:text-2xl font-serif font-bold text-center mb-5 md:mb-4'>Update Note Here</h2>
+              <form className="flex flex-col gap-7 w-full">
+                <div className="flex flex-col gap-7 text-xl">
+                  <input type="text" name="title" placeholder="Enter title" className="px-4 py-2 rounded-lg w-full" defaultValue={updatingNote.title} />
+                  <textarea name="description" id="" rows="4" placeholder="Enter Description" className="px-4 py-2 rounded-lg" defaultValue={updatingNote.description}></textarea>
+                  <input type="text" placeholder="Default:'General'" className="px-4 py-2 rounded-lg" defaultValue={updatingNote.tag} />
+                </div>
+                <button className="bg-green-300 py-3 rounded-full flex justify-center items-center gap-4 text-xl hover:bg-green-400"><GrUpdate size={23} /> Update</button>
+              </form>
             </div>
           </Modal>
         )
