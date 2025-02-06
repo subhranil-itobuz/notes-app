@@ -6,38 +6,44 @@ import { FaSearch } from "react-icons/fa";
 import { IoCaretBack } from "react-icons/io5";
 import { FaCaretRight } from "react-icons/fa";
 import { Link } from "react-router-dom";
+import { MdDelete } from "react-icons/md";
+
 
 import { NotesContext } from "../contexts/NotesContext";
 import NoteCard from '../components/NoteCard'
-import DeleteModal from "./DeleteModal";
+import Modal from './Modal'
+import { toast } from "react-toastify";
 
 
 const Notes = () => {
-  const [openModal, setOpenModal] = useState()
   const nevigationBtnRef = useRef(null)
+  const [openModal, setOpenModal] = useState()
   const [pageNotes, setPageNotes] = useState([])
-  const [totalResults, setTotalResults] = useState(0)
   const [keyword, setKeyword] = useState('')
   const [page, setPage] = useState(1)
   const [limit, setLimit] = useState(6)
 
-  const { getAllNotesFunction } = useContext(NotesContext)
+  const { getAllNotesFunction, totalResults, setTotalResults, deleteNoteFunction, allNotes } = useContext(NotesContext)
+
   useEffect(() => {
     const getAllNotes = async () => {
       const res = await getAllNotesFunction(keyword, page, limit)
       if (res?.data.success) {
         console.log(res)
         setPageNotes(res?.data.data)
-        setTotalResults(res?.data.totalResults)
+        setTotalResults(5)
+        console.log('this on', res.data.totalResults)
       }
       else {
+        console.log('useeffect else')
         setPageNotes([])
+        setTotalResults(0)
       }
     }
     getAllNotes()
 
     // eslint-disable-next-line  
-  }, [page, keyword, limit])
+  }, [page, keyword, limit, openModal])
 
   const increasePageNumber = () => {
     setPage(page + 1)
@@ -60,6 +66,22 @@ const Notes = () => {
     }
   }
 
+  const handleDeleteConfirmations = async () => {
+    console.log('deleteConfirmBtn clicked')
+    const res = await deleteNoteFunction()
+    if (res.data.success) {
+      toast.success(res.data.message)
+      console.log('open modal value=>', openModal)
+      setOpenModal(false)
+      console.log(allNotes.length)
+
+    }
+    else {
+      toast.error(res.data.message)
+    }
+
+  }
+
   return (
     <div className="border-t-4 border-opacity-65 border-green-700 py-7">
       <div className="flex justify-between flex-col gap-5 w-2/3 mx-auto">
@@ -79,7 +101,7 @@ const Notes = () => {
         </div>
         <div className="w-full border border-black rounded-lg flex items-center gap-1 py-3 px-2">
           <span className="w-6"><FaSearch size={25} /></span>
-          <input type="search" placeholder="search note" className="w-[95%] h-full focus:outline-none px-2 text-xl" disabled={totalResults === 0 ? true : false} onInput={handleSearch} />
+          <input type="search" placeholder="search note" className="w-[95%] h-full focus:outline-none px-2 text-xl disabled:opacity-50" disabled={totalResults === 0 ? true : false} onInput={handleSearch} />
         </div>
       </div>
       <div className="flex justify-between items-center px-2 2xl:px-16 mt-14 mb-8 sticky top-0 z-10 backdrop-blur-md text-xl md:text-2xl lg:w-[96%] lg:mx-auto border-b-2 border-b-slate-500">
@@ -96,20 +118,28 @@ const Notes = () => {
         </button>
       </div>
       {
-        pageNotes.length > 0 ?
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 justify-items-center gap-y-7 lg:gap-y-9 gap-x-2 sm:gap-x-7 px-6 sm:px-8 lg:px-10 mx-auto">
-            {pageNotes?.map((element) => {
-              return (
-                <NoteCard key={element._id} title={element.title} description={element.description} tag={element.tag} createdAt={element.createdAt} openModal={openModal} setOpenModal={setOpenModal} />
-              )
-            })
-            }:
-          </div>
-          :
+        pageNotes.length > 0 ? <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 justify-items-center gap-y-7 lg:gap-y-9 gap-x-2 sm:gap-x-7 px-6 sm:px-8 lg:px-10 mx-auto">
+          {pageNotes?.map((element) => {
+            return (
+              <NoteCard key={element._id} noteId={element._id} title={element.title} description={element.description} tag={element.tag} createdAt={element.createdAt} openModal={openModal} setOpenModal={setOpenModal} />
+            )
+          })
+          }
+        </div> :
           <div className="text-center text-2xl font-bold text-red-400 font-mono px-5">No Notes to display</div>
       }
       {
-        openModal && <DeleteModal openModal={openModal} setOpenModal={setOpenModal} />
+        openModal && (
+          <Modal onClose={() => setOpenModal(false)}>
+            <div className='w-[90%] mx-auto pt-5'>
+              <h2 className='text-xl md:text-2xl font-serif font-bold text-center'>Are you sure you want to delete this note?</h2>
+              <button className='flex items-center justify-center gap-2 mx-auto border border-red-600 px-5 py-2 rounded-full text-sm md:text-xl font-bold mt-10 hover:bg-red-500 hover:text-white' onClick={handleDeleteConfirmations}>
+                <MdDelete size={25} />
+                Delete
+              </button>
+            </div>
+          </Modal>
+        )
       }
     </div >
   )

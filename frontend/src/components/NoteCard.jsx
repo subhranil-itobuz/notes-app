@@ -1,6 +1,10 @@
+import { useContext } from "react";
 import { MdDelete, MdModeEdit, MdOutlineAttachFile } from "react-icons/md";
+import { NotesContext } from "../contexts/NotesContext";
 
-const NoteCard = ({ title, description, tag, createdAt, openModal, setOpenModal }) => {
+const NoteCard = ({ noteId, title, description, tag, createdAt, setOpenModal }) => {
+
+  const { setNoteId } = useContext(NotesContext)
 
   const daysAgoFunction = (mongoDbTime) => {
     const createdAt = new Date(mongoDbTime)
@@ -9,10 +13,10 @@ const NoteCard = ({ title, description, tag, createdAt, openModal, setOpenModal 
     return Math.floor(timeDifference / (1000 * 24 * 60 * 60))
   }
 
-  const handleDeletion = () => {
-    console.log('inside delete')
+  const handleDeletion = async () => {
+    console.log('deleteIcon clicked')
     setOpenModal(true)
-    console.log(openModal)
+    setNoteId(noteId)
   }
 
   return (

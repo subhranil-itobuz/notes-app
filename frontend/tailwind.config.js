@@ -1,3 +1,4 @@
+
 /** @type {import('tailwindcss').Config} */
 export default {
   content: [
@@ -17,5 +18,6 @@ export default {
       '4xl': '1920px',
     }
   },
-  plugins: [],
+  plugins: [
+  ],
 }
