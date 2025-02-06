@@ -47,6 +47,8 @@ const NotesProvider = (props) => {
       if (res?.data.success) {
         console.log(res)
         setAllNotes(res?.data.data)
+        setTotalResults(res?.data.totalResults)
+        console.log(totalResults)
         return res
       }
       else {
@@ -67,9 +69,11 @@ const NotesProvider = (props) => {
           Authorization: `Bearer ${refreshToken}`
         }
       })
-      if (res.data.success)
+
+      if (res.data.success) {
         console.log(res.data.message)
-      return res
+        return res
+      }
 
     } catch (error) {
       console.error(error)
@@ -78,7 +82,17 @@ const NotesProvider = (props) => {
   }
 
   return (
-    <NotesContext.Provider value={{ createNotes,totalResults, note, getAllNotesFunction, allNotes, deleteNoteFunction, noteId, setNoteId }}>
+    <NotesContext.Provider value={{
+      createNotes,
+      totalResults,
+      setTotalResults,
+      note,
+      getAllNotesFunction,
+      allNotes,
+      deleteNoteFunction,
+      noteId,
+      setNoteId
+    }}>
       {props.children}
     </NotesContext.Provider>
   )
