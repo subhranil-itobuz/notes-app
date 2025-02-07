@@ -1,7 +1,11 @@
 import nodemailer from 'nodemailer'
 import hbs from 'nodemailer-express-handlebars';
+import dotenv from 'dotenv'
+
+dotenv.config({})
 
 export const mailSender = async (token, email) => {
+    const FRONTEND_PORT = process.env.FRONTEND_PORT
     const transporter = nodemailer.createTransport({
         service: 'gmail',
         auth: {
@@ -27,7 +31,9 @@ export const mailSender = async (token, email) => {
         subject: 'Email Verification',
         template: 'email',
         context: {
-            token: `${token}`
+            token: `${token}`,
+            port:`${FRONTEND_PORT}`
+
         }
     }
 
@@ -37,6 +43,7 @@ export const mailSender = async (token, email) => {
         }
         else {
             console.log('Email sent successfully')
+            console.log(FRONTEND_PORT)
             console.log(res.response)
         }
     })

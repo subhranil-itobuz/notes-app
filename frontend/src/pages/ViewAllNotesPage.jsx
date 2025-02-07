@@ -70,7 +70,7 @@ const ViewAllNotesPage = () => {
 
                 <section className="w-full text-lg flex flex-wrap justify-center gap-y-4 gap-x-10 md:gap-x-5 md:px-10">
                     <div className="border border-blue-600 rounded-xl px-5 py-2">
-                        <select className="focus:outline-none w-full" onChange={handleSortingBy}>
+                        <select className="focus:outline-none w-full cursor-pointer" onChange={handleSortingBy}>
                             <option value="" title="default">Sort By</option>
                             <option value="title">Title</option>
                             <option value="tag">Tag</option>
@@ -78,7 +78,7 @@ const ViewAllNotesPage = () => {
                         </select>
                     </div>
                     <div className="border border-blue-600 rounded-xl px-5 py-2">
-                        <select className="focus:outline-none w-full" onChange={handleSortOrder}>
+                        <select className="focus:outline-none w-full cursor-pointer" onChange={handleSortOrder}>
                             <option value="" title="default">Order</option>
                             <option value="dsc">Asc to Dsc</option>
                             <option value="asc">Dsc to Asc</option>
