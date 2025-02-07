@@ -48,7 +48,7 @@ const UpdateModal = ({ setOpenUpdateModal }) => {
             </div>
           </div>
           <div className="w-full">
-            <button className="bg-green-300 py-3 rounded-full flex justify-center items-center gap-4 text-xl hover:bg-green-400 w-full"><GrUpdate size={23} /> Update</button>
+            <button className="bg-green-400 py-3 rounded-full flex justify-center items-center gap-4 text-xl hover:bg-green-500 hover:text-white transition-all ease-in-out duration-300 w-full"><GrUpdate size={23} /> Update</button>
             <div className="text-sm mt-1 text-center font-thin text-red-600">*Blank field indicates no updation</div>
           </div>
         </form>
