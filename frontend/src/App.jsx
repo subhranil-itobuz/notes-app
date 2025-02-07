@@ -10,7 +10,7 @@ import ReverifyPage from "./pages/ReverifyPage.jsx";
 import CreateNotePage from "./pages/CreateNotePage.jsx";
 import { NotesProvider } from "./contexts/NotesContext.jsx";
 import ViewAllNotesPage from "./pages/ViewAllNotesPage.jsx";
-
+import ProfilePage from './pages/ProfilePage.jsx'
 
 function App() {
   return (
@@ -26,6 +26,7 @@ function App() {
               <Route path='/reverify' element={<ReverifyPage />} />
               <Route path='/notes/create' element={<CreateNotePage />} />
               <Route path='/notes/view' element={<ViewAllNotesPage />} />
+              <Route path='/profile' element={<ProfilePage />} />
             </Routes>
           </NotesProvider>
         </UserProvider>

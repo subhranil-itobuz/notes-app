@@ -1,4 +1,4 @@
-import { useContext, useEffect, useRef, useState } from "react";
+import { useContext, useEffect, useRef } from "react";
 import { CgNotes } from "react-icons/cg";
 import { IoMdAddCircle } from "react-icons/io";
 import { FaEye } from "react-icons/fa";
@@ -19,10 +19,10 @@ const Notes = () => {
   const backBtnRef = useRef(null)
   const nextBtnRef = useRef(null)
 
-  const [openDeleteModal, setOpenDeleteModal] = useState()
-  const [openUpdateModal, setOpenUpdateModal] = useState()
+  // const [openDeleteModal, setOpenDeleteModal] = useState()
+  // const [openUpdateModal, setOpenUpdateModal] = useState()
 
-  const { getAllNotesFunction, totalResults, pageNotes, setPageNotes, keyword, setKeyword, page, setPage, limit, setLimit } = useContext(NotesContext)
+  const { getAllNotesFunction, totalResults, pageNotes, setPageNotes, keyword, setKeyword, page, setPage, limit, setLimit,openDeleteModal, setOpenDeleteModal,openUpdateModal, setOpenUpdateModal } = useContext(NotesContext)
 
   useEffect(() => {
     const getAllNotes = async () => {

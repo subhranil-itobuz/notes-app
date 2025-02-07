@@ -68,11 +68,11 @@ const CreateNotePage = () => {
           </div>
         </div>
         <div className="w-full flex flex-col md:flex-row-reverse md:justify-between gap-3 font-medium text-xl 2xl:text-2xl mt-5">
-          <button className="border border-green-500 hover:bg-green-400 rounded-xl w-full md:w-[46%] py-2 flex justify-center items-center gap-1">
+          <button className="border border-green-500 hover:bg-green-600 hover:text-white rounded-xl w-full md:w-[46%] py-2 flex justify-center items-center gap-1">
             <IoMdAddCircle size={30} />
             Add
           </button>
-          <button type="button" className="border border-red-500 hover:bg-red-400 rounded-xl w-full md:w-[46%] py-2 flex justify-center items-center gap-1" onClick={handleBack}>
+          <button type="button" className="border border-red-500 hover:bg-red-600 hover:text-white rounded-xl w-full md:w-[46%] py-2 flex justify-center items-center gap-1" onClick={handleBack}>
             <MdCancel size={30} />
             Cancel
           </button>

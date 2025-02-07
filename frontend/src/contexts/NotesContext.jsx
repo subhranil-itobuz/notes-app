@@ -19,6 +19,8 @@ const NotesProvider = (props) => {
   const [allUserNotes, setAllUserNotes] = useState([])
   const [sortBy, setSortBy] = useState('')
   const [order, sortOrder] = useState('asc')
+  const [openDeleteModal, setOpenDeleteModal] = useState()
+  const [openUpdateModal, setOpenUpdateModal] = useState()
 
   const { refreshToken } = useContext(AuthContext)
 
@@ -153,7 +155,11 @@ const NotesProvider = (props) => {
       setNoteId,
       updateNoteFunction,
       updatingNote,
-      setUpdatingNote
+      setUpdatingNote,
+      openDeleteModal,
+      setOpenDeleteModal,
+      openUpdateModal,
+      setOpenUpdateModal
     }}>
       {props.children}
     </NotesContext.Provider>

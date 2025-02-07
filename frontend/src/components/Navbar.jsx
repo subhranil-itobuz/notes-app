@@ -79,10 +79,10 @@ const Navbar = () => {
                       <Link to='/' className='hover:text-blue-400'>Home</Link>
                     </li>
                     <li>
-                      <Link to='/' className='hover:text-blue-400'>Profile</Link>
+                      <Link to='/profile' className='hover:text-blue-400'>Profile</Link>
                     </li>
                     <li>
-                      <Link to='/' className='hover:text-blue-400'>Notes</Link>
+                      <Link to='/notes/view' className='hover:text-blue-400'>Notes</Link>
                     </li>
                   </ul>
                   <div className='flex justify-center items-center gap-8'>
@@ -106,7 +106,7 @@ const Navbar = () => {
                 <Link to='/profile' className='hover:text-blue-400'>Profile</Link>
               </li>
               <li>
-                <Link to='/notes' className='hover:text-blue-400'>Notes</Link>
+                <Link to='/notes/view' className='hover:text-blue-400'>Notes</Link>
               </li>
             </ul>
             <div className='flex flex-wrap justify-center items-center gap-8'>
