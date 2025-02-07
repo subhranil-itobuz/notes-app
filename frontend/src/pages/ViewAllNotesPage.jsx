@@ -1,23 +1,23 @@
 import { FaSearch } from "react-icons/fa";
 import NoteCard from '../components/NoteCard'
 import BackToHome from '../components/BackToHome'
-import { useContext, useEffect,  } from "react";
+import { useContext, useEffect, } from "react";
 import { NotesContext } from "../contexts/NotesContext";
 import { CgNotes } from "react-icons/cg";
 
 
 const ViewAllNotesPage = () => {
-    const { getAllUserNotesFunction,allUserNotes, setAllUserNotes, keyword, setKeyword} = useContext(NotesContext)
+    const { getAllUserNotesFunction, allUserNotes, setAllUserNotes, keyword, setKeyword, sortBy, setSortBy,order, sortOrder } = useContext(NotesContext)
 
     useEffect(() => {
         const getAllUserNotes = async () => {
             const res = await getAllUserNotesFunction()
 
-            if(res?.data.success) {
+            if (res?.data.success) {
                 console.log(res)
                 setAllUserNotes(res.data.data)
             }
-            else{
+            else {
                 console.log('inside useeffect else')
                 setAllUserNotes([])
             }
@@ -26,16 +26,24 @@ const ViewAllNotesPage = () => {
         getAllUserNotes()
         console.log(allUserNotes)
         // eslint-disable-next-line  
-    }, [keyword])
+    }, [keyword, sortBy, order])
 
-    const handleSearch = (e) => { 
+    const handleSearch = (e) => {
         console.log(e.target.value)
         setKeyword(e.target.value)
+    }
 
-        if(e.target.value === '') {
-            setKeyword('')
-        }
-     }
+    const handleSortingBy = (e) => {
+        console.log('inside sorting type function')
+        console.log(e.target.value)
+        setSortBy(e.target.value)
+    }
+
+    const handleSortOrder = async (e) => {
+        console.log('inside sort order func')
+        console.log(e.target.value)
+        sortOrder(e.target.value)
+    }
 
     return (
         <div className="w-full px-5 py-10">
@@ -44,7 +52,7 @@ const ViewAllNotesPage = () => {
 
             <div className="flex items-center max-w-[900px] mx-auto gap-3 my-10 border border-blue-500 rounded-full px-5 py-3">
                 <span className="w-10"><FaSearch size={30} /></span>
-                <input type="search" placeholder="Search note" className="w-full h-full focus:outline-none text-2xl" onInput={handleSearch}/>
+                <input type="search" placeholder="Search note" className="w-full h-full focus:outline-none text-2xl" onInput={handleSearch} defaultValue={keyword} />
             </div>
 
             <section className="w-full text-lg flex flex-wrap justify-center gap-y-4 gap-x-10 md:gap-x-5 md:px-10">
@@ -57,18 +65,18 @@ const ViewAllNotesPage = () => {
                     </select>
                 </div>
                 <div className="border border-blue-600 rounded-full px-9 py-3">
-                    <select className="focus:outline-none w-full">
-                        <option value="">Sort By</option>
+                    <select className="focus:outline-none w-full" onChange={handleSortingBy}>
+                        <option value="" title="default">Sort By</option>
                         <option value="title">Title</option>
                         <option value="tag">Tag</option>
                         <option value="createdAt">Created time</option>
                     </select>
                 </div>
                 <div className="border border-blue-600 rounded-full px-10 py-3">
-                    <select className="focus:outline-none w-full">
-                        <option value="">Order</option>
-                        <option value="asc">New to Old</option>
-                        <option value="dsc">Old to New</option>
+                    <select className="focus:outline-none w-full" onChange={handleSortOrder}>
+                        <option value="" title="default">Order</option>
+                        <option value="asc">Asc to Dsc</option>
+                        <option value="dsc">Dsc to Asc</option>
                     </select>
                 </div>
             </section>

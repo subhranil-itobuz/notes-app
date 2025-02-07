@@ -17,6 +17,8 @@ const NotesProvider = (props) => {
   const [page, setPage] = useState(1)
   const [limit, setLimit] = useState(6)
   const [allUserNotes, setAllUserNotes] = useState([])
+  const [sortBy, setSortBy] = useState('')
+  const [order, sortOrder] = useState('asc')
 
   const { refreshToken } = useContext(AuthContext)
 
@@ -72,7 +74,7 @@ const NotesProvider = (props) => {
       console.log('inside all userNotes function in context')
       console.log(allUserNotes)
 
-      const res = await axios.get(`${NOTES_API_ENDPOINT}/getAllNotes?keyword=${keyword}&page=0&limit=0`, {
+      const res = await axios.get(`${NOTES_API_ENDPOINT}/getAllNotes?keyword=${keyword}&sortBy=${sortBy}&order=${order}&page=0&limit=0`, {
         headers: {
           Authorization: `Bearer ${refreshToken}`
         }
@@ -142,6 +144,10 @@ const NotesProvider = (props) => {
       setPage,
       limit,
       setLimit,
+      sortBy,
+      setSortBy,
+      order,
+      sortOrder,
       deleteNoteFunction,
       noteId,
       setNoteId,

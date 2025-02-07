@@ -85,7 +85,7 @@ const Notes = () => {
         </div>
         <div className="w-full h-14 border border-black rounded-lg flex items-center gap-1 px-2">
           <span className="w-6"><FaSearch size={25} /></span>
-          <input type="search" placeholder="search note" className="w-[95%] h-full focus:outline-none px-2 text-xl disabled:opacity-50" disabled={totalResults === 0 ? true : false} onInput={handleSearch} />
+          <input type="search" placeholder="search note" className="w-[95%] h-full focus:outline-none px-2 text-xl disabled:opacity-50" disabled={totalResults === 0 ? true : false} onInput={handleSearch} defaultValue={keyword} />
         </div>
       </div>
       <div className="flex justify-between items-center px-2 2xl:px-16 mt-14 mb-8 sticky top-0 z-10 backdrop-blur-md text-xl md:text-2xl lg:w-[96%] lg:mx-auto border-b-2 border-b-slate-500">
