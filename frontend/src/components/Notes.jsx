@@ -10,23 +10,19 @@ import { Link } from "react-router-dom";
 
 import { NotesContext } from "../contexts/NotesContext";
 import NoteCard from '../components/NoteCard'
-import Modal from './Modal'
-import { GrUpdate } from "react-icons/gr";
 import DeleteModal from "./DeleteModal";
+import UpdateModal from "./UpdateModal";
 
 
 
 const Notes = () => {
   const backBtnRef = useRef(null)
   const nextBtnRef = useRef(null)
+
   const [openDeleteModal, setOpenDeleteModal] = useState()
   const [openUpdateModal, setOpenUpdateModal] = useState()
-  // const [pageNotes, setPageNotes] = useState([])
-  // const [keyword, setKeyword] = useState('')
-  // const [page, setPage] = useState(1)
-  // const [limit, setLimit] = useState(6)
 
-  const { getAllNotesFunction, totalResults, pageNotes, setPageNotes, updatingNote, keyword, setKeyword, page, setPage, limit, setLimit } = useContext(NotesContext)
+  const { getAllNotesFunction, totalResults, pageNotes, setPageNotes, keyword, setKeyword, page, setPage, limit, setLimit } = useContext(NotesContext)
 
   useEffect(() => {
     const getAllNotes = async () => {
@@ -43,7 +39,7 @@ const Notes = () => {
     getAllNotes()
 
     // eslint-disable-next-line  
-  }, [page, keyword, limit, openDeleteModal])
+  }, [page, keyword, limit, openDeleteModal, openUpdateModal])
 
   const increasePageNumber = () => {
     setPage(page + 1)
@@ -67,26 +63,6 @@ const Notes = () => {
       nextBtnRef.current.style.visibility = 'visible'
     }
   }
-
-  // const handleDeleteConfirmation = async () => {
-  //   console.log('deleteConfirmBtn clicked')
-  //   const res = await deleteNoteFunction()
-
-  //   if (res.data.success) {
-  //     toast.success(res.data.message)
-  //     console.log('open modal value=>', openDeleteModal)
-  //     setOpenDeleteModal(false)
-  //     console.log(allNotes.length)
-
-  //     totalResults % 6 === 1 && page > 1 ? setPage(page - 1) : ''
-  //     totalResults === 1 ? setTotalResults(0) : ''
-  //     setNoteId('')
-  //   }
-  //   else {
-  //     toast.error(res.data.message)
-  //   }
-
-  // }
 
   return (
     <div className="border-t-4 border-opacity-65 border-green-700 py-7">
@@ -138,21 +114,7 @@ const Notes = () => {
         openDeleteModal && <DeleteModal openDeleteModal={openDeleteModal} setOpenDeleteModal={setOpenDeleteModal} />
       }
       {
-        openUpdateModal && (
-          <Modal onClose={() => setOpenUpdateModal(false)} height={'h-2/3'} width={'w-full md:w-3/4 lg:w-2/3'}>
-            <div className='w-full mx-auto pt-5'>
-              <h2 className='text-xl md:text-2xl font-serif font-bold text-center mb-5 md:mb-4'>Update Note Here</h2>
-              <form className="flex flex-col gap-7 w-full">
-                <div className="flex flex-col gap-7 text-xl">
-                  <input type="text" name="title" placeholder="Enter title" className="px-4 py-2 rounded-lg w-full" defaultValue={updatingNote.title} />
-                  <textarea name="description" id="" rows="4" placeholder="Enter Description" className="px-4 py-2 rounded-lg" defaultValue={updatingNote.description}></textarea>
-                  <input type="text" placeholder="Default:'General'" className="px-4 py-2 rounded-lg" defaultValue={updatingNote.tag} />
-                </div>
-                <button className="bg-green-300 py-3 rounded-full flex justify-center items-center gap-4 text-xl hover:bg-green-400"><GrUpdate size={23} /> Update</button>
-              </form>
-            </div>
-          </Modal>
-        )
+        openUpdateModal && <UpdateModal openUpdateModal={openUpdateModal} setOpenUpdateModal={setOpenUpdateModal} />
       }
     </div >
   )

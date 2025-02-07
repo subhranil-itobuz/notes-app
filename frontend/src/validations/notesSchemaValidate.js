@@ -15,3 +15,15 @@ export const createNoteSchema = yup.object({
   tag: yup.string()
   .max(8, 'Maximum 8 character allowed')
 })
+
+export const updateNoteSchema = yup.object({
+  title: yup
+  .string()
+  .max(15, 'Maximum 15 character allowed'),
+
+  description: yup
+  .string(),
+
+  tag: yup.string()
+  .max(8, 'Maximum 8 character allowed')
+})

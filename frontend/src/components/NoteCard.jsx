@@ -21,6 +21,7 @@ const NoteCard = ({ noteId, title, description, tag, createdAt, setOpenDeleteMod
 
   const handleUpdation = () => {
     console.log('edit icon clicked')
+    setNoteId(noteId)
     setOpenUpdateModal(true)
     setUpdatingNote({
       title: title,

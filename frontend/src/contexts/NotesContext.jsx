@@ -12,7 +12,6 @@ const NotesProvider = (props) => {
   const [noteId, setNoteId] = useState()
   const [totalResults, setTotalResults] = useState(0)
   const [updatingNote, setUpdatingNote] = useState({})
-  const [updatedData, setUpdatedData] = useState({})
   const [pageNotes, setPageNotes] = useState([])
   const [keyword, setKeyword] = useState('')
   const [page, setPage] = useState(1)
@@ -86,9 +85,10 @@ const NotesProvider = (props) => {
     }
   }
 
-  const updateNoteFunction = async () => {
+  const updateNoteFunction = async (updatedData) => {
     try {
       console.log('inside conteext update function')
+      console.log(noteId)
       const res = await axios.put(`${NOTES_API_ENDPOINT}/update/${noteId}`, updatedData, {
         headers: {
           Authorization: `Bearer ${refreshToken}`
@@ -96,8 +96,11 @@ const NotesProvider = (props) => {
       })
 
       console.log(res)
+      return res
+
     } catch (error) {
       console.error(error)
+      toast.error(error.response.data.message)
     }
   }
 
@@ -122,9 +125,7 @@ const NotesProvider = (props) => {
       setNoteId,
       updateNoteFunction,
       updatingNote,
-      setUpdatingNote,
-      updatedData,
-      setUpdatedData
+      setUpdatingNote
     }}>
       {props.children}
     </NotesContext.Provider>
