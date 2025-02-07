@@ -31,7 +31,7 @@ const ViewAllNotesPage = () => {
         getAllUserNotes()
 
         // eslint-disable-next-line  
-    }, [keyword, sortBy, order, openDeleteModal])
+    }, [keyword, sortBy, order, openDeleteModal, openUpdateModal])
 
     const handleSearch = (e) => {
         console.log(e.target.value)
