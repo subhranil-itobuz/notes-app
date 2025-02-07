@@ -38,7 +38,7 @@ const UpdateModal = ({ setOpenUpdateModal }) => {
             </div>
 
             <div className="w-full">
-              <textarea name="description" id="" rows="8" placeholder="Enter Description" className="px-4 py-2 rounded-lg w-full" {...register('description')} defaultValue={updatingNote.description}></textarea>
+              <textarea name="description" id="" rows="7" placeholder="Enter Description" className="px-4 py-2 rounded-lg w-full" {...register('description')} defaultValue={updatingNote.description}></textarea>
               <p className="text-sm text-red-600 px-2 h-8 -mt-2 font-semibold w-full">{errors.description?.message}</p>
             </div>
 

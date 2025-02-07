@@ -12,6 +12,7 @@ import { NotesContext } from "../contexts/NotesContext";
 import NoteCard from '../components/NoteCard'
 import DeleteModal from "./DeleteModal";
 import UpdateModal from "./UpdateModal";
+import FileViewModal from "./FileViewModal";
 
 
 
@@ -19,10 +20,7 @@ const Notes = () => {
   const backBtnRef = useRef(null)
   const nextBtnRef = useRef(null)
 
-  // const [openDeleteModal, setOpenDeleteModal] = useState()
-  // const [openUpdateModal, setOpenUpdateModal] = useState()
-
-  const { getAllNotesFunction, totalResults, pageNotes, setPageNotes, keyword, setKeyword, page, setPage, limit, setLimit,openDeleteModal, setOpenDeleteModal,openUpdateModal, setOpenUpdateModal } = useContext(NotesContext)
+  const { getAllNotesFunction, totalResults, pageNotes, setPageNotes, keyword, setKeyword, page, setPage, limit, setLimit, openDeleteModal, setOpenDeleteModal, openUpdateModal, setOpenUpdateModal, openFileViewModal, fileUrl } = useContext(NotesContext)
 
   useEffect(() => {
     const getAllNotes = async () => {
@@ -37,11 +35,11 @@ const Notes = () => {
         console.log('useeffect else')
         setPageNotes([])
       }
-    } 
+    }
     getAllNotes()
 
     // eslint-disable-next-line  
-  }, [page, keyword, limit, openDeleteModal, openUpdateModal])
+  }, [page, keyword, limit, openDeleteModal, openUpdateModal, fileUrl])
 
   const increasePageNumber = () => {
     setPage(page + 1)
@@ -111,6 +109,7 @@ const Notes = () => {
                 title={element.title}
                 description={element.description}
                 tag={element.tag}
+                fileUrl={element.fileUrl}
                 createdAt={element.createdAt}
                 openDeleteModal={openDeleteModal}
                 setOpenDeleteModal={setOpenDeleteModal}
@@ -127,6 +126,9 @@ const Notes = () => {
       }
       {
         openUpdateModal && <UpdateModal openUpdateModal={openUpdateModal} setOpenUpdateModal={setOpenUpdateModal} />
+      }
+      {
+        openFileViewModal && <FileViewModal />
       }
     </div >
   )

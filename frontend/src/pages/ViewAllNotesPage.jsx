@@ -12,7 +12,7 @@ import UpdateModal from "../components/UpdateModal";
 
 
 const ViewAllNotesPage = () => {
-    const { getAllUserNotesFunction, allUserNotes, setAllUserNotes, keyword, setKeyword, sortBy, setSortBy, order, sortOrder, openDeleteModal, setOpenDeleteModal, openUpdateModal, setOpenUpdateModal } = useContext(NotesContext)
+    const { getAllUserNotesFunction, allUserNotes, setAllUserNotes, keyword, setKeyword, sortBy, setSortBy, order, sortOrder, openDeleteModal, setOpenDeleteModal, openUpdateModal, setOpenUpdateModal, fileUrl } = useContext(NotesContext)
 
     useEffect(() => {
         const getAllUserNotes = async () => {
@@ -31,7 +31,7 @@ const ViewAllNotesPage = () => {
         getAllUserNotes()
 
         // eslint-disable-next-line  
-    }, [keyword, sortBy, order, openDeleteModal, openUpdateModal])
+    }, [keyword, sortBy, order, openDeleteModal, openUpdateModal, fileUrl])
 
     const handleSearch = (e) => {
         console.log(e.target.value)
@@ -53,7 +53,7 @@ const ViewAllNotesPage = () => {
     return (
         <div>
             <Navbar />
-            <div className="w-full relative pt-10 px-4">
+            <div className="w-full relative py-10 px-4">
                 <Link to='/notes/create' className="fixed bottom-5 right-5 z-20">
                     <div className="rounded-full p-4 bg-blue-300 hover:bg-blue-500 hover:text-white hover:scale-105 transition-all duration-300 ease-in-out">
                         <button className="flex items-center">
@@ -80,8 +80,8 @@ const ViewAllNotesPage = () => {
                     <div className="border border-blue-600 rounded-xl px-5 py-2">
                         <select className="focus:outline-none w-full cursor-pointer" onChange={handleSortOrder}>
                             <option value="" title="default">Order</option>
-                            <option value="dsc">Asc to Dsc</option>
-                            <option value="asc">Dsc to Asc</option>
+                            <option value="asc">Asc to Dsc</option>
+                            <option value="dsc">Dsc to Asc</option>
                         </select>
                     </div>
                 </section>
@@ -101,6 +101,7 @@ const ViewAllNotesPage = () => {
                                         title={element.title}
                                         description={element.description}
                                         tag={element.tag}
+                                        fileUrl={element.fileUrl}
                                         createdAt={element.createdAt}
                                         openDeleteModal={openDeleteModal}
                                         setOpenDeleteModal={setOpenDeleteModal}

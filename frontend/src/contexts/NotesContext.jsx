@@ -21,6 +21,11 @@ const NotesProvider = (props) => {
   const [order, sortOrder] = useState('asc')
   const [openDeleteModal, setOpenDeleteModal] = useState()
   const [openUpdateModal, setOpenUpdateModal] = useState()
+  const [openFileViewModal, setOpenFileViewModal] = useState()
+  const [file, setFile] = useState()
+  const [fileUrl, setFileUrl] = useState('')
+  const [currentFileUrl, setCurrentFileUrl] = useState('')
+
 
   const { refreshToken } = useContext(AuthContext)
 
@@ -127,6 +132,29 @@ const NotesProvider = (props) => {
     }
   }
 
+  const uploadFileFunction = async () => {
+    try {
+      console.log('inside file upload function')
+      const formData = new FormData();
+      formData.append('file', file)
+
+      console.log('formdatta = ', formData)
+      const res = await axios.post(`${NOTES_API_ENDPOINT}/file/upload/${noteId}`, formData, {
+        headers: {
+          'Authorization': `Bearer ${refreshToken}`,
+          'Content-Type': 'multipart/form-data'
+        },
+      })
+
+      console.log(res)
+      return res
+
+    } catch (error) {
+      console.log(error)
+      toast.error(error.response?.data.message)
+    }
+  }
+
   return (
     <NotesContext.Provider value={{
       createNotes,
@@ -159,7 +187,16 @@ const NotesProvider = (props) => {
       openDeleteModal,
       setOpenDeleteModal,
       openUpdateModal,
-      setOpenUpdateModal
+      setOpenUpdateModal,
+      openFileViewModal,
+      setOpenFileViewModal,
+      file,
+      setFile,
+      uploadFileFunction,
+      fileUrl,
+      setFileUrl,
+      currentFileUrl,
+      setCurrentFileUrl
     }}>
       {props.children}
     </NotesContext.Provider>

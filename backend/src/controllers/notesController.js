@@ -102,7 +102,8 @@ export const uploadFile = async (req, res) => {
 
         return res.status(201).json({
             success: true,
-            message: `${file.filename} uploaded successfully`
+            message: `File uploaded successfully`,
+            fileUrl: note.fileUrl
         })
 
     } catch (error) {

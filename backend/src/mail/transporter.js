@@ -32,8 +32,7 @@ export const mailSender = async (token, email) => {
         template: 'email',
         context: {
             token: `${token}`,
-            port:`${FRONTEND_PORT}`
-
+            port: `${FRONTEND_PORT}`
         }
     }
 
@@ -43,7 +42,6 @@ export const mailSender = async (token, email) => {
         }
         else {
             console.log('Email sent successfully')
-            console.log(FRONTEND_PORT)
             console.log(res.response)
         }
     })
