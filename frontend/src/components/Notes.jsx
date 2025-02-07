@@ -6,14 +6,13 @@ import { FaSearch } from "react-icons/fa";
 import { IoCaretBack } from "react-icons/io5";
 import { FaCaretRight } from "react-icons/fa";
 import { Link } from "react-router-dom";
-import { MdDelete } from "react-icons/md";
 
 
 import { NotesContext } from "../contexts/NotesContext";
 import NoteCard from '../components/NoteCard'
 import Modal from './Modal'
-import { toast } from "react-toastify";
 import { GrUpdate } from "react-icons/gr";
+import DeleteModal from "./DeleteModal";
 
 
 
@@ -22,12 +21,12 @@ const Notes = () => {
   const nextBtnRef = useRef(null)
   const [openDeleteModal, setOpenDeleteModal] = useState()
   const [openUpdateModal, setOpenUpdateModal] = useState()
-  const [pageNotes, setPageNotes] = useState([])
-  const [keyword, setKeyword] = useState('')
-  const [page, setPage] = useState(1)
-  const [limit, setLimit] = useState(6)
+  // const [pageNotes, setPageNotes] = useState([])
+  // const [keyword, setKeyword] = useState('')
+  // const [page, setPage] = useState(1)
+  // const [limit, setLimit] = useState(6)
 
-  const { getAllNotesFunction, totalResults, setTotalResults, deleteNoteFunction, allNotes, setNoteId, updatingNote } = useContext(NotesContext)
+  const { getAllNotesFunction, totalResults, pageNotes, setPageNotes, updatingNote, keyword, setKeyword, page, setPage, limit, setLimit } = useContext(NotesContext)
 
   useEffect(() => {
     const getAllNotes = async () => {
@@ -69,25 +68,25 @@ const Notes = () => {
     }
   }
 
-  const handleDeleteConfirmations = async () => {
-    console.log('deleteConfirmBtn clicked')
-    const res = await deleteNoteFunction()
+  // const handleDeleteConfirmation = async () => {
+  //   console.log('deleteConfirmBtn clicked')
+  //   const res = await deleteNoteFunction()
 
-    if (res.data.success) {
-      toast.success(res.data.message)
-      console.log('open modal value=>', openDeleteModal)
-      setOpenDeleteModal(false)
-      console.log(allNotes.length)
+  //   if (res.data.success) {
+  //     toast.success(res.data.message)
+  //     console.log('open modal value=>', openDeleteModal)
+  //     setOpenDeleteModal(false)
+  //     console.log(allNotes.length)
 
-      totalResults % 6 === 1 && page > 1 ? setPage(page - 1) : ''
-      totalResults === 1 ? setTotalResults(0) : ''
-      setNoteId('')
-    }
-    else {
-      toast.error(res.data.message)
-    }
+  //     totalResults % 6 === 1 && page > 1 ? setPage(page - 1) : ''
+  //     totalResults === 1 ? setTotalResults(0) : ''
+  //     setNoteId('')
+  //   }
+  //   else {
+  //     toast.error(res.data.message)
+  //   }
 
-  }
+  // }
 
   return (
     <div className="border-t-4 border-opacity-65 border-green-700 py-7">
@@ -136,17 +135,7 @@ const Notes = () => {
           <div className="text-center text-2xl font-bold text-red-400 font-mono px-5">No Notes to display</div>
       }
       {
-        openDeleteModal && (
-          <Modal onClose={() => setOpenDeleteModal(false)} width={'w-full max-w-[700px]'}>
-            <div className='w-[90%] mx-auto pt-5'>
-              <h2 className='text-xl md:text-2xl font-serif font-bold text-center'>Are you sure you want to delete this note?</h2>
-              <button className='flex items-center justify-center gap-2 mx-auto border border-red-600 px-5 py-2 rounded-full text-sm md:text-xl font-bold mt-10 hover:bg-red-500 hover:text-white transition-all ease-in-out duration-500' onClick={handleDeleteConfirmations}>
-                <MdDelete size={25} />
-                Delete
-              </button>
-            </div>
-          </Modal>
-        )
+        openDeleteModal && <DeleteModal openDeleteModal={openDeleteModal} setOpenDeleteModal={setOpenDeleteModal} />
       }
       {
         openUpdateModal && (

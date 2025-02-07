@@ -13,6 +13,10 @@ const NotesProvider = (props) => {
   const [totalResults, setTotalResults] = useState(0)
   const [updatingNote, setUpdatingNote] = useState({})
   const [updatedData, setUpdatedData] = useState({})
+  const [pageNotes, setPageNotes] = useState([])
+  const [keyword, setKeyword] = useState('')
+  const [page, setPage] = useState(1)
+  const [limit, setLimit] = useState(6)
 
   const { refreshToken } = useContext(AuthContext)
 
@@ -105,6 +109,14 @@ const NotesProvider = (props) => {
       note,
       getAllNotesFunction,
       allNotes,
+      pageNotes,
+      setPageNotes,
+      keyword,
+      setKeyword,
+      page,
+      setPage,
+      limit,
+      setLimit,
       deleteNoteFunction,
       noteId,
       setNoteId,
