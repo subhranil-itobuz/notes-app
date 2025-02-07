@@ -27,15 +27,17 @@ const Notes = () => {
   useEffect(() => {
     const getAllNotes = async () => {
       const res = await getAllNotesFunction(keyword, page, limit)
+
       if (res?.data.success) {
         console.log(res)
         setPageNotes(res?.data.data)
       }
+
       else {
         console.log('useeffect else')
         setPageNotes([])
       }
-    }
+    } 
     getAllNotes()
 
     // eslint-disable-next-line  
@@ -50,7 +52,7 @@ const Notes = () => {
   }
 
   const handleSearch = (e) => {
-    setKeyword(e.target.value)
+    setKeyword(e.target.value.trim())
     setPage(0)
     setLimit(0)
     backBtnRef.current.style.visibility = 'hidden'
@@ -87,7 +89,7 @@ const Notes = () => {
         </div>
       </div>
       <div className="flex justify-between items-center px-2 2xl:px-16 mt-14 mb-8 sticky top-0 z-10 backdrop-blur-md text-xl md:text-2xl lg:w-[96%] lg:mx-auto border-b-2 border-b-slate-500">
-        <button className="flex gap-1 items-center border border-slate-400 rounded-3xl pr-1 md:px-3 bg-green-200 hover:bg-green-300 disabled:opacity-25 disabled:cursor-not-allowed" disabled={page === 1 || pageNotes.length > 6 ? true : false} onClick={decreasePageNumber} ref={backBtnRef}>
+        <button className="flex gap-1 items-center border border-slate-400 rounded-3xl pr-1 md:px-3 bg-green-200 hover:bg-green-300 disabled:opacity-25 disabled:cursor-not-allowed" disabled={page <= 1 || pageNotes.length > 6 ? true : false} onClick={decreasePageNumber} ref={backBtnRef}>
           <IoCaretBack />
           Back
         </button>
@@ -103,7 +105,17 @@ const Notes = () => {
         pageNotes.length > 0 ? <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 justify-items-center gap-y-7 lg:gap-y-9 gap-x-2 sm:gap-x-7 px-6 sm:px-8 lg:px-10 mx-auto">
           {pageNotes?.map((element) => {
             return (
-              <NoteCard key={element._id} noteId={element._id} title={element.title} description={element.description} tag={element.tag} createdAt={element.createdAt} openDeleteModal={openDeleteModal} setOpenDeleteModal={setOpenDeleteModal} openUpdateModal={openUpdateModal} setOpenUpdateModal={setOpenUpdateModal} />
+              <NoteCard
+                key={element._id}
+                noteId={element._id}
+                title={element.title}
+                description={element.description}
+                tag={element.tag}
+                createdAt={element.createdAt}
+                openDeleteModal={openDeleteModal}
+                setOpenDeleteModal={setOpenDeleteModal}
+                openUpdateModal={openUpdateModal}
+                setOpenUpdateModal={setOpenUpdateModal} />
             )
           })
           }

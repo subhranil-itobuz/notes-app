@@ -1,22 +1,57 @@
 import { FaSearch } from "react-icons/fa";
 import NoteCard from '../components/NoteCard'
 import BackToHome from '../components/BackToHome'
+import { useContext, useEffect,  } from "react";
+import { NotesContext } from "../contexts/NotesContext";
+import { CgNotes } from "react-icons/cg";
 
 
 const ViewAllNotesPage = () => {
+    const { getAllUserNotesFunction,allUserNotes, setAllUserNotes, keyword, setKeyword} = useContext(NotesContext)
+
+    useEffect(() => {
+        const getAllUserNotes = async () => {
+            const res = await getAllUserNotesFunction()
+
+            if(res?.data.success) {
+                console.log(res)
+                setAllUserNotes(res.data.data)
+            }
+            else{
+                console.log('inside useeffect else')
+                setAllUserNotes([])
+            }
+        }
+
+        getAllUserNotes()
+        console.log(allUserNotes)
+        // eslint-disable-next-line  
+    }, [keyword])
+
+    const handleSearch = (e) => { 
+        console.log(e.target.value)
+        setKeyword(e.target.value)
+
+        if(e.target.value === '') {
+            setKeyword('')
+        }
+     }
+
     return (
         <div className="w-full px-5 py-10">
-            <BackToHome/>
+            <BackToHome />
             <h1 className="text-3xl text-center font-bold font-mono">View Your All Notes Here</h1>
+
             <div className="flex items-center max-w-[900px] mx-auto gap-3 my-10 border border-blue-500 rounded-full px-5 py-3">
-                <span className="w-10"><FaSearch size={30}/></span>
-                <input type="search" placeholder="Search note" className="w-full h-full focus:outline-none text-2xl" />
+                <span className="w-10"><FaSearch size={30} /></span>
+                <input type="search" placeholder="Search note" className="w-full h-full focus:outline-none text-2xl" onInput={handleSearch}/>
             </div>
+
             <section className="w-full text-lg flex flex-wrap justify-center gap-y-4 gap-x-10 md:gap-x-5 md:px-10">
                 <div className="border border-blue-600 rounded-full px-10 py-3">
                     <select className="focus:outline-none w-full">
                         <option value="">Select a tag</option>
-                        <option value="general">General</option> 
+                        <option value="general">General</option>
                         <option value="study">Study</option>
                         <option value="personal">Personal</option>
                     </select>
@@ -37,24 +72,29 @@ const ViewAllNotesPage = () => {
                     </select>
                 </div>
             </section>
-            <h3 className="text-2xl my-8 text-center font-mono font-semibold border-y-2 border-y-slate-700 py-5 text-sky-800">Notes (100)</h3>
-            <section className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 gap-8">
-                <NoteCard />
-                <NoteCard />
-                <NoteCard />
-                <NoteCard />
-                <NoteCard />
-                <NoteCard />
-                <NoteCard />
-                <NoteCard />
-                <NoteCard />
-                <NoteCard />
-                <NoteCard />
-                <NoteCard />
-                <NoteCard />
-                <NoteCard />
-                <NoteCard />
-            </section>
+
+            <h3 className="text-2xl 2xl:text-3xl my-8 text-center font-mono font-semibold border-y-2 border-y-slate-700 py-5 text-sky-800 flex justify-center items-center gap-1 sm:gap-3">
+                <CgNotes /><span>Notes ({allUserNotes.length})</span>
+            </h3>
+
+            {
+                allUserNotes?.length > 0 ? <section className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 gap-8">
+                    {
+                        allUserNotes?.map((element) => {
+                            return (
+                                <NoteCard
+                                    key={element._id}
+                                    noteId={element._id}
+                                    title={element.title}
+                                    description={element.description}
+                                    tag={element.tag}
+                                    createdAt={element.createdAt} />)
+                        })
+                    }
+                </section> :
+                    <div className="text-2xl px-2 my-16 text-orange-700 font-mono font-bold text-center">No notes to display</div>
+            }
+
         </div>
     )
 }
