@@ -10,11 +10,12 @@ import DeleteModal from "../components/DeleteModal";
 import UpdateModal from "../components/UpdateModal";
 import FileViewModal from "../components/FileViewModal";
 import FileUpdateModal from "../components/FileUpdateModal";
+import FileDeleteModal from "../components/FileDeleteModal";
 
 
 
 const ViewAllNotesPage = () => {
-    const { getAllUserNotesFunction, allUserNotes, setAllUserNotes, keyword, setKeyword, sortBy, setSortBy, order, sortOrder, openDeleteModal, setOpenDeleteModal, openUpdateModal, setOpenUpdateModal, fileUrl, openFileViewModal, openFileUpdateModal } = useContext(NotesContext)
+    const { getAllUserNotesFunction, allUserNotes, setAllUserNotes, keyword, setKeyword, sortBy, setSortBy, order, sortOrder, openDeleteModal, setOpenDeleteModal, openUpdateModal, setOpenUpdateModal, fileUrl, openFileViewModal, openFileUpdateModal, openFileDeleteModal, setOpenFileDeleteModal } = useContext(NotesContext)
 
     useEffect(() => {
         const getAllUserNotes = async () => {
@@ -33,7 +34,7 @@ const ViewAllNotesPage = () => {
         getAllUserNotes()
 
         // eslint-disable-next-line  
-    }, [keyword, sortBy, order, openDeleteModal, openUpdateModal, openFileUpdateModal, fileUrl])
+    }, [keyword, sortBy, order, openDeleteModal, openUpdateModal, openFileUpdateModal, openFileDeleteModal, fileUrl])
 
     const handleSearch = (e) => {
         console.log(e.target.value)
@@ -129,6 +130,9 @@ const ViewAllNotesPage = () => {
             }
             {
                 openFileUpdateModal && <FileUpdateModal />
+            }
+            {
+                openFileDeleteModal && <FileDeleteModal openFileDeleteModal={openFileDeleteModal} setOpenFileDeleteModal={setOpenFileDeleteModal} />
             }
         </div>
     )

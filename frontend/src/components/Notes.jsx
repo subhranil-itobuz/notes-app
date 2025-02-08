@@ -14,6 +14,7 @@ import DeleteModal from "./DeleteModal";
 import UpdateModal from "./UpdateModal";
 import FileViewModal from "./FileViewModal";
 import FileUpdateModal from "./FileUpdateModal";
+import FileDeleteModal from "./FileDeleteModal";
 
 
 
@@ -21,7 +22,7 @@ const Notes = () => {
   const backBtnRef = useRef(null)
   const nextBtnRef = useRef(null)
 
-  const { getAllNotesFunction, totalResults, pageNotes, setPageNotes, keyword, setKeyword, page, setPage, limit, setLimit, openDeleteModal, setOpenDeleteModal, openUpdateModal, setOpenUpdateModal, openFileViewModal, openFileUpdateModal, fileUrl } = useContext(NotesContext)
+  const { getAllNotesFunction, totalResults, pageNotes, setPageNotes, keyword, setKeyword, page, setPage, limit, setLimit, openDeleteModal, setOpenDeleteModal, openUpdateModal, setOpenUpdateModal, openFileViewModal, openFileUpdateModal, openFileDeleteModal, setOpenFileDeleteModal, fileUrl } = useContext(NotesContext)
 
   useEffect(() => {
     const getAllNotes = async () => {
@@ -40,7 +41,7 @@ const Notes = () => {
     getAllNotes()
 
     // eslint-disable-next-line  
-  }, [page, keyword, limit, openDeleteModal, openUpdateModal, openFileUpdateModal, fileUrl])
+  }, [page, keyword, limit, openDeleteModal, openUpdateModal, openFileUpdateModal, openFileDeleteModal, fileUrl])
 
   const increasePageNumber = () => {
     setPage(page + 1)
@@ -133,6 +134,9 @@ const Notes = () => {
       }
       {
         openFileUpdateModal && <FileUpdateModal />
+      }
+      {
+        openFileDeleteModal && <FileDeleteModal openFileDeleteModal={openFileDeleteModal} setOpenFileDeleteModal={setOpenFileDeleteModal} />
       }
     </div >
   )

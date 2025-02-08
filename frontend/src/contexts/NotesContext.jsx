@@ -23,6 +23,7 @@ const NotesProvider = (props) => {
   const [openUpdateModal, setOpenUpdateModal] = useState()
   const [openFileViewModal, setOpenFileViewModal] = useState()
   const [openFileUpdateModal, setOpenFileUpdateModal] = useState()
+  const [openFileDeleteModal, setOpenFileDeleteModal] = useState()
   const [fileUrl, setFileUrl] = useState('')
   const [currentFileUrl, setCurrentFileUrl] = useState('')
 
@@ -182,6 +183,26 @@ const NotesProvider = (props) => {
     }
   }
 
+  const deleteFileFunction = async () => {
+    try {
+      console.log('inside file delete function')
+      const res = await axios.delete(`${NOTES_API_ENDPOINT}/file/delete/${noteId}`, {
+        headers: {
+          Authorization: `Bearer ${refreshToken}`
+        }
+      })
+
+      if (res.data.success) {
+        console.log(res)
+        setNoteId()
+        return res
+      }
+    } catch (error) {
+      console.log(error)
+      toast.error(error.response?.data.message)
+    }
+  }
+
   return (
     <NotesContext.Provider value={{
       createNotes,
@@ -219,8 +240,11 @@ const NotesProvider = (props) => {
       setOpenFileViewModal,
       openFileUpdateModal,
       setOpenFileUpdateModal,
+      openFileDeleteModal,
+      setOpenFileDeleteModal,
       uploadFileFunction,
       upateFileFunction,
+      deleteFileFunction,
       fileUrl,
       setFileUrl,
       currentFileUrl,

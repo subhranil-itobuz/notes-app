@@ -1,3 +1,4 @@
+import fs from 'fs'
 import notesModel from "../models/notesModel.js";
 import { notesSchemaValidation } from "../validator/notesValidate.js";
 
@@ -160,14 +161,28 @@ export const deleteFile = async (req, res) => {
             })
         }
 
-        note.fileUrl = ''
+        const filePath = note.fileUrl.split('/').slice(-2).join('/')
 
-        await note.save()
+        fs.unlink(filePath, async (error) => {
+            if (error) {
+                return res.status(400).json({
+                    success: false,
+                    message: error.message
+                })
+            }
+            else {
+                note.fileUrl = ''
 
-        return res.status(200).json({
-            success: true,
-            message: 'File deleted successfully'
-        })
+                await note.save()
+
+                return res.status(200).json({
+                    success: true,
+                    message: 'File deleted successfully'
+                })
+            }
+        });
+
+
     } catch (error) {
         return res.status(500).json({
             success: false,

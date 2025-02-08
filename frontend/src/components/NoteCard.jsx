@@ -13,7 +13,7 @@ import { GrDocumentUpdate } from "react-icons/gr";
 
 const NoteCard = ({ id, title, description, tag, fileUrl, createdAt, setOpenDeleteModal, setOpenUpdateModal }) => {
 
-  const { setNoteId, setUpdatingNote, uploadFileFunction, setFileUrl, setOpenFileViewModal, setOpenFileUpdateModal, setCurrentFileUrl } = useContext(NotesContext)
+  const { setNoteId, setUpdatingNote, uploadFileFunction, setFileUrl, setOpenFileViewModal, setOpenFileUpdateModal, setOpenFileDeleteModal, setCurrentFileUrl } = useContext(NotesContext)
 
   const daysAgoFunction = (mongoDbTime) => {
     const createdAt = new Date(mongoDbTime)
@@ -80,6 +80,12 @@ const NoteCard = ({ id, title, description, tag, fileUrl, createdAt, setOpenDele
     setNoteId(id)
   }
 
+  const handleFileDelete = () => {
+    console.log('file delete icon clicked')
+    setNoteId(id)
+    setOpenFileDeleteModal(true)
+  }
+
   return (
     <div className="border border-black rounded-2xl w-full lg:w-full h-72 bg-[#f2e9e4] hover:scale-105 transition-all delay-150 duration-300 ease-in-out cursor-pointer hover:shadow-2xl shadow-black">
       <div className="text-2xl text-center h-[14%] font-bold font-serif flex justify-between items-center">
@@ -107,6 +113,7 @@ const NoteCard = ({ id, title, description, tag, fileUrl, createdAt, setOpenDele
               <span title="Update file">
                 <GrDocumentUpdate size={25} onClick={handleFileUploadModal} />
               </span>
+              <span><MdDelete size={25} onClick={handleFileDelete} /></span>
             </div>
             :
             <input className="cursor-pointer w-full mx-auto px-6 text-sm pt-1 transition-colors file:border-0 file:bg-transparent file:text-foreground file:text-sm file:font-medium " name="file" type="file" accept=".png, .jpg, .jpeg, .pdf" onClick={settingId} onChange={handleFileUpload} />
