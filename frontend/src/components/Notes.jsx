@@ -19,6 +19,7 @@ import FileDeleteModal from "./FileDeleteModal";
 
 
 const Notes = () => {
+  const paginationRef = useRef(null)
   const backBtnRef = useRef(null)
   const nextBtnRef = useRef(null)
 
@@ -55,19 +56,21 @@ const Notes = () => {
     setKeyword(e.target.value.trim())
     setPage(0)
     setLimit(0)
+    paginationRef.current.style.visibility = 'hidden'
     backBtnRef.current.style.visibility = 'hidden'
     nextBtnRef.current.style.visibility = 'hidden'
 
     if (e.target.value === '') {
       setLimit(6)
       setPage(1)
+      paginationRef.current.style.visibility = 'visible'
       backBtnRef.current.style.visibility = 'visible'
       nextBtnRef.current.style.visibility = 'visible'
     }
   }
 
   return (
-    <div className="border-t-4 border-opacity-65 border-green-700 py-7">
+    <div className="py-10">
       <div className="flex justify-between flex-col gap-5 w-2/3 mx-auto">
         <div className="flex flex-wrap gap-y-2 justify-between w-full">
           <Link to='/notes/create' className="border border-green-500 rounded-md w-full md:w-[47%] h-12 text-xl hover:bg-green-200">
@@ -88,13 +91,19 @@ const Notes = () => {
           <input type="search" placeholder="search note" className="w-[95%] h-full focus:outline-none px-2 text-xl disabled:opacity-50" disabled={totalResults === 0 ? true : false} onInput={handleSearch} defaultValue={keyword} />
         </div>
       </div>
-      <div className="flex justify-between items-center px-2 2xl:px-16 mt-14 mb-8 sticky top-0 z-10 backdrop-blur-md text-xl md:text-2xl lg:w-[96%] lg:mx-auto border-b-2 border-b-slate-500">
+
+      <div className="flex justify-between items-center px-2 2xl:px-16 my-4 sticky top-0 z-10 backdrop-blur-md text-xl md:text-2xl lg:w-[96%] lg:mx-auto border-b-2 border-b-slate-500">
         <button className="flex gap-1 items-center border border-slate-400 rounded-3xl pr-1 md:px-3 bg-green-200 hover:bg-green-300 disabled:opacity-25 disabled:cursor-not-allowed" disabled={page <= 1 || pageNotes.length > 6 ? true : false} onClick={decreasePageNumber} ref={backBtnRef}>
           <IoCaretBack />
           Back
         </button>
 
-        <h1 className="text-2xl sm:text-3xl 2xl:text-4xl font-serif font-semibold py-4 flex justify-center items-center gap-1 sm:gap-3"><CgNotes /><span>Notes ({pageNotes.length})</span></h1>
+        <div className="flex flex-col items-center gap-3 py-2">
+          <h1 className="text-2xl sm:text-3xl 2xl:text-4xl font-serif font-semibold flex justify-center items-center gap-1 sm:gap-3"><CgNotes /><span>Notes ({pageNotes.length})</span></h1>
+          <span className="text-slate-400 border-y border-y-red-200 px-4 text-base font-mono font-thin bg-white rounded-full" ref={paginationRef}>
+            Page {page} of {totalResults === 0 ? 1 : Math.ceil(totalResults / 6)}
+          </span>
+        </div>
 
         <button className="flex gap-1 items-center border border-slate-400 rounded-3xl pl-1 md:px-3 bg-sky-200 hover:bg-sky-300 disabled:opacity-25 disabled:cursor-not-allowed" disabled={page === Math.ceil(totalResults / 6) || pageNotes.length === totalResults || pageNotes.length < 6 || totalResults === 6 ? true : false} onClick={increasePageNumber} ref={nextBtnRef}>
           Next

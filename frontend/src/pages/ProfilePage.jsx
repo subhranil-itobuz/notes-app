@@ -1,12 +1,11 @@
 import Navbar from "../components/Navbar"
+import Profile from "../components/Profile"
 
 const ProfilePage = () => {
   return (
     <div>
-      <Navbar/>
-      <section>
-        Profile view section
-      </section>
+      <Navbar />
+      <Profile />
     </div>
   )
 }

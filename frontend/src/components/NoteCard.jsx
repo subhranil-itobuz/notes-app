@@ -95,7 +95,7 @@ const NoteCard = ({ id, title, description, tag, fileUrl, createdAt, setOpenDele
 
         <button className="hover:scale-105 pe-2" title="Delete Note" onClick={handleDeletion}><MdDelete size={25} /></button>
       </div>
-      <p className="text-justify text-xl px-5 h-[63%] border-y-2 border-y-red-400 py-2 overflow-y-auto no-scrollbar  font-serif break-words">{description} {id}</p>
+      <p className="text-justify text-xl px-5 h-[63%] border-y-2 border-y-red-400 py-2 overflow-y-auto no-scrollbar  font-serif break-words">{description}</p>
       <div className="h-[13%] w-full flex justify-center border-b border-b-gray-600">
         {
           fileUrl ?
