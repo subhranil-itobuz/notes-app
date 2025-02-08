@@ -13,6 +13,7 @@ import NoteCard from '../components/NoteCard'
 import DeleteModal from "./DeleteModal";
 import UpdateModal from "./UpdateModal";
 import FileViewModal from "./FileViewModal";
+import FileUpdateModal from "./FileUpdateModal";
 
 
 
@@ -20,7 +21,7 @@ const Notes = () => {
   const backBtnRef = useRef(null)
   const nextBtnRef = useRef(null)
 
-  const { getAllNotesFunction, totalResults, pageNotes, setPageNotes, keyword, setKeyword, page, setPage, limit, setLimit, openDeleteModal, setOpenDeleteModal, openUpdateModal, setOpenUpdateModal, openFileViewModal, fileUrl } = useContext(NotesContext)
+  const { getAllNotesFunction, totalResults, pageNotes, setPageNotes, keyword, setKeyword, page, setPage, limit, setLimit, openDeleteModal, setOpenDeleteModal, openUpdateModal, setOpenUpdateModal, openFileViewModal, openFileUpdateModal, fileUrl } = useContext(NotesContext)
 
   useEffect(() => {
     const getAllNotes = async () => {
@@ -39,7 +40,7 @@ const Notes = () => {
     getAllNotes()
 
     // eslint-disable-next-line  
-  }, [page, keyword, limit, openDeleteModal, openUpdateModal, fileUrl])
+  }, [page, keyword, limit, openDeleteModal, openUpdateModal, openFileUpdateModal, fileUrl])
 
   const increasePageNumber = () => {
     setPage(page + 1)
@@ -105,7 +106,7 @@ const Notes = () => {
             return (
               <NoteCard
                 key={element._id}
-                noteId={element._id}
+                id={element._id}
                 title={element.title}
                 description={element.description}
                 tag={element.tag}
@@ -129,6 +130,9 @@ const Notes = () => {
       }
       {
         openFileViewModal && <FileViewModal />
+      }
+      {
+        openFileUpdateModal && <FileUpdateModal />
       }
     </div >
   )

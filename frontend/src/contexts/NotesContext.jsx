@@ -22,7 +22,7 @@ const NotesProvider = (props) => {
   const [openDeleteModal, setOpenDeleteModal] = useState()
   const [openUpdateModal, setOpenUpdateModal] = useState()
   const [openFileViewModal, setOpenFileViewModal] = useState()
-  const [file, setFile] = useState()
+  const [openFileUpdateModal, setOpenFileUpdateModal] = useState()
   const [fileUrl, setFileUrl] = useState('')
   const [currentFileUrl, setCurrentFileUrl] = useState('')
 
@@ -104,6 +104,7 @@ const NotesProvider = (props) => {
 
       if (res.data.success) {
         console.log(res.data.message)
+        setNoteId()
         return res
       }
 
@@ -123,8 +124,11 @@ const NotesProvider = (props) => {
         }
       })
 
-      console.log(res)
-      return res
+      if (res.data.success) {
+        console.log(res)
+        setNoteId()
+        return res
+      }
 
     } catch (error) {
       console.error(error)
@@ -132,22 +136,45 @@ const NotesProvider = (props) => {
     }
   }
 
-  const uploadFileFunction = async () => {
+  const uploadFileFunction = async (data) => {
     try {
       console.log('inside file upload function')
-      const formData = new FormData();
-      formData.append('file', file)
-
-      console.log('formdatta = ', formData)
-      const res = await axios.post(`${NOTES_API_ENDPOINT}/file/upload/${noteId}`, formData, {
+      console.log(noteId)
+      const res = await axios.post(`${NOTES_API_ENDPOINT}/file/upload/${noteId}`, data, {
         headers: {
           'Authorization': `Bearer ${refreshToken}`,
           'Content-Type': 'multipart/form-data'
         },
       })
 
-      console.log(res)
-      return res
+      if (res.data.success) {
+        console.log(res)
+        setNoteId()
+        return res
+      }
+
+    } catch (error) {
+      console.log(error)
+      toast.error(error.response?.data.message)
+    }
+  }
+
+  const upateFileFunction = async (data) => {
+    try {
+      console.log('inside file update function')
+
+      const res = await axios.put(`${NOTES_API_ENDPOINT}/file/update/${noteId}`, data, {
+        headers: {
+          'Authorization': `Bearer ${refreshToken}`,
+          'Content-Type': 'multipart/form-data'
+        }
+      })
+
+      if (res.data.success) {
+        console.log(res)
+        setNoteId()
+        return res
+      }
 
     } catch (error) {
       console.log(error)
@@ -190,9 +217,10 @@ const NotesProvider = (props) => {
       setOpenUpdateModal,
       openFileViewModal,
       setOpenFileViewModal,
-      file,
-      setFile,
+      openFileUpdateModal,
+      setOpenFileUpdateModal,
       uploadFileFunction,
+      upateFileFunction,
       fileUrl,
       setFileUrl,
       currentFileUrl,

@@ -8,11 +8,13 @@ import { Link } from "react-router-dom";
 import Navbar from "../components/Navbar";
 import DeleteModal from "../components/DeleteModal";
 import UpdateModal from "../components/UpdateModal";
+import FileViewModal from "../components/FileViewModal";
+import FileUpdateModal from "../components/FileUpdateModal";
 
 
 
 const ViewAllNotesPage = () => {
-    const { getAllUserNotesFunction, allUserNotes, setAllUserNotes, keyword, setKeyword, sortBy, setSortBy, order, sortOrder, openDeleteModal, setOpenDeleteModal, openUpdateModal, setOpenUpdateModal, fileUrl } = useContext(NotesContext)
+    const { getAllUserNotesFunction, allUserNotes, setAllUserNotes, keyword, setKeyword, sortBy, setSortBy, order, sortOrder, openDeleteModal, setOpenDeleteModal, openUpdateModal, setOpenUpdateModal, fileUrl, openFileViewModal, openFileUpdateModal } = useContext(NotesContext)
 
     useEffect(() => {
         const getAllUserNotes = async () => {
@@ -31,7 +33,7 @@ const ViewAllNotesPage = () => {
         getAllUserNotes()
 
         // eslint-disable-next-line  
-    }, [keyword, sortBy, order, openDeleteModal, openUpdateModal, fileUrl])
+    }, [keyword, sortBy, order, openDeleteModal, openUpdateModal, openFileUpdateModal, fileUrl])
 
     const handleSearch = (e) => {
         console.log(e.target.value)
@@ -97,7 +99,7 @@ const ViewAllNotesPage = () => {
                                 return (
                                     <NoteCard
                                         key={element._id}
-                                        noteId={element._id}
+                                        id={element._id}
                                         title={element.title}
                                         description={element.description}
                                         tag={element.tag}
@@ -121,6 +123,12 @@ const ViewAllNotesPage = () => {
             }
             {
                 openUpdateModal && <UpdateModal openUpdateModal={openUpdateModal} setOpenUpdateModal={setOpenUpdateModal} />
+            }
+            {
+                openFileViewModal && <FileViewModal />
+            }
+            {
+                openFileUpdateModal && <FileUpdateModal />
             }
         </div>
     )
