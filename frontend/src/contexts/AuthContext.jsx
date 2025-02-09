@@ -3,7 +3,7 @@ import React, { useState } from 'react'
 const AuthContext = React.createContext()
 
 const AuthProvider = (props) => {
-  const [isLoggedIn, setIsLoggedIn] = useState(localStorage.getItem('isLoggedIn'))
+  const [isLoggedIn, setIsLoggedIn] = useState(false)
   const [accessToken, setAccessToken] = useState(localStorage.getItem('accessToken'))
   const [refreshToken, setRefreshToken] = useState(localStorage.getItem('refreshToken'))
 
@@ -32,7 +32,15 @@ const AuthProvider = (props) => {
   }
 
   return (
-    <AuthContext.Provider value={{ isLoggedIn, loginFunction, logoutFunction, tokenSetFunction, accessToken, tokenRemoveFunction, refreshToken }}>
+    <AuthContext.Provider value={{
+      isLoggedIn,
+      loginFunction,
+      logoutFunction,
+      tokenSetFunction,
+      accessToken,
+      tokenRemoveFunction,
+      refreshToken
+    }}>
       {props.children}
     </AuthContext.Provider>
   )

@@ -73,13 +73,13 @@ const Notes = () => {
     <div className="py-5 2xl:py-10 bg-[#16425b]">
       <div className="flex justify-between flex-col gap-5 w-2/3 mx-auto">
         <div className="flex flex-wrap gap-y-2 justify-between w-full">
-          <Link to='/notes/create' className="bg-green-500 rounded-md w-full md:w-[47%] h-12 text-xl font-semibold hover:bg-green-400 hover:text-white">
+          <Link to='/notes/create' className="bg-green-500 rounded-md w-full md:w-[47%] h-12 text-xl font-semibold hover:bg-green-400 hover:text-white transition-all ease-in-out duration-300">
             <button className="flex justify-center items-center gap-2 mx-auto w-full h-full">
               <IoMdAddCircle size={25} />
               Add Note
             </button>
           </Link>
-          <Link to='/notes/view' className="bg-blue-500 rounded-md w-full md:w-[47%] h-12 flex justify-center items-center gap-2 text-xl font-semibold hover:bg-blue-400 hover:text-white">
+          <Link to='/notes/view' className="bg-blue-500 rounded-md w-full md:w-[47%] h-12 flex justify-center items-center gap-2 text-xl font-semibold hover:bg-blue-400 hover:text-white transition-all ease-in-out duration-300">
             <button className="w-full h-full flex justify-center items-center gap-2 mx-auto disabled:opacity-25 disabled:cursor-not-allowed" disabled={totalResults === 0 ? true : false}>
               <FaEye size={25} />
               View all ({totalResults})
@@ -93,7 +93,7 @@ const Notes = () => {
       </div>
 
       <div className="flex justify-between items-center px-2 2xl:px-16 my-4 sticky top-0 z-10 backdrop-blur-md text-xl md:text-2xl lg:w-[96%] lg:mx-auto border-b-2 border-b-slate-500">
-        <button className="flex gap-1 items-center border border-slate-400 rounded-3xl pr-1 md:px-3 bg-green-200 hover:bg-green-300 disabled:opacity-25 disabled:cursor-not-allowed" disabled={page <= 1 || pageNotes.length > 6 ? true : false} onClick={decreasePageNumber} ref={backBtnRef}>
+        <button className="flex gap-1 items-center border border-slate-400 rounded-3xl pr-1 md:px-3 bg-green-200 hover:bg-green-300 disabled:opacity-25 disabled:cursor-not-allowed transition-all ease-in-out duration-300" disabled={page <= 1 || pageNotes.length > 6 ? true : false} onClick={decreasePageNumber} ref={backBtnRef}>
           <IoCaretBack />
           Back
         </button>
@@ -105,7 +105,7 @@ const Notes = () => {
           </span>
         </div>
 
-        <button className="flex gap-1 items-center border border-slate-400 rounded-3xl pl-1 md:px-3 bg-sky-200 hover:bg-sky-300 disabled:opacity-25 disabled:cursor-not-allowed" disabled={page === Math.ceil(totalResults / 6) || pageNotes.length === totalResults || pageNotes.length < 6 || totalResults === 6 ? true : false} onClick={increasePageNumber} ref={nextBtnRef}>
+        <button className="flex gap-1 items-center border border-slate-400 rounded-3xl pl-1 md:px-3 bg-sky-200 hover:bg-sky-300 disabled:opacity-25 disabled:cursor-not-allowed transition-all ease-in-out duration-300 " disabled={page === Math.ceil(totalResults / 6) || pageNotes.length === totalResults || pageNotes.length < 6 || totalResults === 6 ? true : false} onClick={increasePageNumber} ref={nextBtnRef}>
           Next
           <FaCaretRight />
         </button>
