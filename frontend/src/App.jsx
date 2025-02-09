@@ -14,7 +14,7 @@ import ProfilePage from './pages/ProfilePage.jsx'
 
 function App() {
   return (
-    <div className="max-w-[1440px] mx-auto">
+    <div className="max-w-[1440px] h-[100vh] mx-auto bg-[#16425b]">
       <AuthProvider>
         <UserProvider>
           <NotesProvider>

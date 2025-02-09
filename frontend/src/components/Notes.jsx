@@ -70,25 +70,25 @@ const Notes = () => {
   }
 
   return (
-    <div className="py-10">
+    <div className="py-5 2xl:py-10 bg-[#16425b]">
       <div className="flex justify-between flex-col gap-5 w-2/3 mx-auto">
         <div className="flex flex-wrap gap-y-2 justify-between w-full">
-          <Link to='/notes/create' className="border border-green-500 rounded-md w-full md:w-[47%] h-12 text-xl hover:bg-green-200">
+          <Link to='/notes/create' className="bg-green-500 rounded-md w-full md:w-[47%] h-12 text-xl font-semibold hover:bg-green-400 hover:text-white">
             <button className="flex justify-center items-center gap-2 mx-auto w-full h-full">
               <IoMdAddCircle size={25} />
               Add Note
             </button>
           </Link>
-          <Link to='/notes/view' className="border border-blue-500 rounded-md w-full md:w-[47%] h-12 flex justify-center items-center gap-2 text-xl hover:bg-blue-200">
+          <Link to='/notes/view' className="bg-blue-500 rounded-md w-full md:w-[47%] h-12 flex justify-center items-center gap-2 text-xl font-semibold hover:bg-blue-400 hover:text-white">
             <button className="w-full h-full flex justify-center items-center gap-2 mx-auto disabled:opacity-25 disabled:cursor-not-allowed" disabled={totalResults === 0 ? true : false}>
               <FaEye size={25} />
               View all ({totalResults})
             </button>
           </Link>
         </div>
-        <div className="w-full h-14 border border-black rounded-lg flex items-center gap-1 px-2">
-          <span className="w-6"><FaSearch size={25} /></span>
-          <input type="search" placeholder="search note" className="w-[95%] h-full focus:outline-none px-2 text-xl disabled:opacity-50" disabled={totalResults === 0 ? true : false} onInput={handleSearch} defaultValue={keyword} />
+        <div className="w-full h-14 border border-gray-200 rounded-lg flex items-center gap-1 px-2">
+          <span className="w-6 text-white"><FaSearch size={25} /></span>
+          <input type="search" placeholder="search note" className="w-[95%] h-full focus:outline-none px-2 text-xl bg-transparent text-white placeholder:text-white disabled:opacity-50" disabled={totalResults === 0 ? true : false} onInput={handleSearch} defaultValue={keyword} />
         </div>
       </div>
 
@@ -99,7 +99,7 @@ const Notes = () => {
         </button>
 
         <div className="flex flex-col items-center gap-3 py-2">
-          <h1 className="text-2xl sm:text-3xl 2xl:text-4xl font-serif font-semibold flex justify-center items-center gap-1 sm:gap-3"><CgNotes /><span>Notes ({pageNotes.length})</span></h1>
+          <h1 className="text-2xl sm:text-3xl 2xl:text-4xl font-serif font-semibold flex justify-center items-center gap-1 sm:gap-3 text-white"><CgNotes /><span>Notes ({pageNotes.length})</span></h1>
           <span className="text-slate-400 border-y border-y-red-200 px-4 text-base font-mono font-thin bg-white rounded-full" ref={paginationRef}>
             Page {page} of {totalResults === 0 ? 1 : Math.ceil(totalResults / 6)}
           </span>
@@ -132,21 +132,16 @@ const Notes = () => {
         </div> :
           <div className="text-center text-2xl font-bold text-red-400 font-mono px-5">No Notes to display</div>
       }
-      {
-        openDeleteModal && <DeleteModal openDeleteModal={openDeleteModal} setOpenDeleteModal={setOpenDeleteModal} />
-      }
-      {
-        openUpdateModal && <UpdateModal openUpdateModal={openUpdateModal} setOpenUpdateModal={setOpenUpdateModal} />
-      }
-      {
-        openFileViewModal && <FileViewModal />
-      }
-      {
-        openFileUpdateModal && <FileUpdateModal />
-      }
-      {
-        openFileDeleteModal && <FileDeleteModal openFileDeleteModal={openFileDeleteModal} setOpenFileDeleteModal={setOpenFileDeleteModal} />
-      }
+
+      {openDeleteModal && <DeleteModal openDeleteModal={openDeleteModal} setOpenDeleteModal={setOpenDeleteModal} />}
+
+      {openUpdateModal && <UpdateModal openUpdateModal={openUpdateModal} setOpenUpdateModal={setOpenUpdateModal} />}
+
+      {openFileViewModal && <FileViewModal />}
+
+      {openFileUpdateModal && <FileUpdateModal />}
+
+      {openFileDeleteModal && <FileDeleteModal openFileDeleteModal={openFileDeleteModal} setOpenFileDeleteModal={setOpenFileDeleteModal} />}
     </div >
   )
 }

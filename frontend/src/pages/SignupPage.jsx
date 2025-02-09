@@ -57,11 +57,11 @@ const SignupPage = () => {
 
   return (
     <>
-      <h1 className='text-3xl text-center mt-5 2xl:mt-14 font-mono font-bold'>Create Your NotesApp Account</h1>
-      <form className='relative flex flex-col gap-2 md:gap-4 mt-6 border border-slate-900 md:w-[70%] 2xl:max-w-[50%] rounded-xl mx-2 md:mx-auto px-4 py-2 sm:py-4' onSubmit={handleSubmit(handleRegistration)}>
+      <h1 className='text-3xl text-center text-[#eae2b7] pt-5 2xl:pt-10 font-mono font-bold'>Create Your NotesApp Account</h1>
+      <form className='relative flex flex-col gap-2 md:gap-4 mt-6 border border-white shadow-md shadow-white md:w-[70%] 2xl:max-w-[50%] rounded-xl mx-2 md:mx-auto px-4 py-2 sm:py-4' onSubmit={handleSubmit(handleRegistration)}>
         <BackToHome />
         <div>
-          <label htmlFor="username" className='w-full text-xl'>
+          <label htmlFor="username" className='w-full text-xl text-white'>
             <span className='text-red-500'>*</span>
             Enter User name:
           </label>
@@ -69,7 +69,7 @@ const SignupPage = () => {
           <p className='text-red-600 font-semibold h-4'>{errors.userName?.message}</p>
         </div>
         <div>
-          <label htmlFor="email" className='w-full text-xl'>
+          <label htmlFor="email" className='w-full text-xl text-white'>
             <span className='text-red-500'>*</span>
             Enter your email:
           </label>
@@ -78,7 +78,7 @@ const SignupPage = () => {
           <p className='text-red-600 font-semibold h-4'>{errors.email?.message}</p>
         </div>
         <div>
-          <label htmlFor="password" className='w-1/4 text-xl'>
+          <label htmlFor="password" className='w-1/4 text-xl  text-white'>
             <span className='text-red-500'>*</span>
             Enter password:
           </label>
@@ -89,7 +89,7 @@ const SignupPage = () => {
           <p className='text-red-600 font-semibold h-10 sm:h-4'>{errors.password?.message}</p>
         </div>
         <div>
-          <label htmlFor="confirmassword" className='w-full text-xl'>
+          <label htmlFor="confirmassword" className='w-full text-xl text-white'>
             <span className='text-red-500'>*</span>
             Confirm password:
           </label>
@@ -98,10 +98,10 @@ const SignupPage = () => {
           </div>
           <p className='text-red-600 font-semibold h-4'>{errors.confirmPassword?.message}</p>
         </div>
-        <button className='bg-slate-900 hover:bg-slate-700 w-[80%] 2xl:w-[60%] py-2 mt-2 mb-1 text-gray-200 outline-0 rounded-lg mx-auto text-xl' >Submit</button>
-        <div>
+        <button className='bg-orange-400 hover:bg-orange-700 font-semibold w-[80%] 2xl:w-[60%] py-2 mt-2 mb-1 text-white outline-0 rounded-lg mx-auto text-xl transition-all duration-500 ease-in-out' >Submit</button>
+        <div className='text-white'>
           Already have an account? &nbsp;
-          <Link to='/login' className='text-blue-600 hover:text-blue-400'>Login</Link>
+          <Link to='/login' className='text-blue-300 hover:text-blue-400'>Login</Link>
         </div>
       </form>
     </>)

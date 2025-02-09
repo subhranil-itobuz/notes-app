@@ -44,18 +44,18 @@ const Navbar = () => {
 
   return (
     <>
-      <nav className={`bg-slate-600 text-white flex justify-between items-center py-4 px-4 h-16 md:px-8 2xl:px-20 w-full`}>
-        <Link to='/'><h1 className='text-xl font-bold italic'>NotesApp</h1></Link>
+      <nav className={`bg-[#16425b] text-white flex justify-between items-center py-4 px-4 h-16 md:px-8 2xl:px-20 md:py-2 w-full`}>
+        <Link to='/'><h1 className='text-xl md:text-2xl font-bold italic hover:scale-105'>&lt;NotesApp/&gt;</h1></Link>
         {
           !isUser ?
             <div className='flex items-center gap-4'>
               <Link to='/login'>
-                <button className='border border-gray-400 rounded-xl px-2 md:px-4 py-2 hover:bg-green-800 transition-colors ease-in-out'>
+                <button className='rounded-md px-2 md:px-4 py-1 md:py-2 font-semibold hover:bg-[#fbf8cc] hover:text-black transition-all duration-500 ease-in-out'>
                   Login
                 </button>
               </Link>
               <Link to='/signup'>
-                <button className='border border-gray-400 rounded-xl px-2 md:px-4 py-2 hover:bg-slate-400 transition-colors ease-in-ou'>
+                <button className='rounded-md px-2 md:px-4 py-1 md:py-2 font-semibold hover:bg-[#98f5e1] hover:text-black transition-all duration-500 ease-in-out'>
                   Sign up
                 </button>
               </Link>
@@ -86,8 +86,8 @@ const Navbar = () => {
                     </li>
                   </ul>
                   <div className='flex justify-center items-center gap-8'>
-                    <p>Hello, <span className='text-green-300 cursor-pointer'>{userName}</span></p>
-                    <button className='border border-gray-400 rounded-xl px-2 py-2 hover:bg-red-500 transition-colors ease-in-out' onClick={logoutHandler}>Logout</button>
+                    <p>Hello, <Link to='/profile'><span className='text-yellow-300 cursor-pointer'>{userName}</span></Link> </p>
+                    <button className='border border-white rounded-md font-medium px-2 py-2 hover:bg-red-500 transition-colors ease-in-out' onClick={logoutHandler}>Logout</button>
                   </div>
                 </div>
               </div>
@@ -96,7 +96,7 @@ const Navbar = () => {
       </nav >
       {
         expandNav &&
-        <div className={`bg-slate-600 backdrop-blur-3xl backdrop-opacity-10 w-52 h-auto text-white absolute right-0 z-10 pt-5 pb-10 text-xl shadow-lg shadow-slate-500 rounded-bl-lg md:hidden ${!isUser && 'hidden'}`}>
+        <div className={`bg-slate-600 backdrop-blur-3xl backdrop-opacity-10 w-52 h-auto text-white absolute right-0 z-30 pt-5 pb-10 text-xl shadow-lg shadow-slate-500 rounded-l-xl md:hidden ${!isUser && 'hidden'}`}>
           <div className='flex flex-col items-center justify-between gap-12'>
             <ul className='flex flex-col justify-center items-center gap-10'>
               <li>
@@ -110,8 +110,8 @@ const Navbar = () => {
               </li>
             </ul>
             <div className='flex flex-wrap justify-center items-center gap-8'>
-              <p>Hello, <span className='text-green-300 cursor-pointer'>{userName}</span></p>
-              <button className='border border-gray-400 rounded-xl px-2 py-2 hover:bg-red-500 transition-colors ease-in-out' onClick={logoutHandler}>Logout</button>
+              <p>Hello, <span className='text-green-300 cursor-pointer font-medium'>{userName}</span></p>
+              <button className='border border-white rounded-md px-2 py-2 hover:bg-red-500 transition-colors ease-in-out' onClick={logoutHandler}>Logout</button>
             </div>
           </div>
         </div>

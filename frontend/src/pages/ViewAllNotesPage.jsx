@@ -54,7 +54,7 @@ const ViewAllNotesPage = () => {
     }
 
     return (
-        <div>
+        <div className="bg-[#16425b]">
             <Navbar />
             <div className="w-full relative py-10 px-4">
                 <Link to='/notes/create' className="fixed bottom-5 right-5 z-20">
@@ -64,16 +64,16 @@ const ViewAllNotesPage = () => {
                         </button>
                     </div>
                 </Link>
-                <h1 className="text-3xl text-center font-bold font-mono">View Your All Notes Here</h1>
+                <h1 className="text-3xl text-center font-bold font-mono text-[#eae2b7] ">View Your All Notes Here</h1>
 
                 <div className="flex items-center max-w-[900px] mx-auto gap-3 my-10 border border-blue-500 rounded-full px-5 py-3">
-                    <span className="w-10"><FaSearch size={30} /></span>
-                    <input type="search" placeholder="Search note" className="w-full h-full focus:outline-none text-2xl" onInput={handleSearch} defaultValue={keyword} />
+                    <span className="w-10 text-white"><FaSearch size={30} /></span>
+                    <input type="search" placeholder="Search note" className="bg-transparent text-white w-full h-full focus:outline-none text-2xl" onInput={handleSearch} defaultValue={keyword} />
                 </div>
 
                 <section className="w-full text-lg flex flex-wrap justify-center gap-y-4 gap-x-10 md:gap-x-5 md:px-10">
                     <div className="border border-blue-600 rounded-xl px-5 py-2">
-                        <select className="focus:outline-none w-full cursor-pointer" onChange={handleSortingBy}>
+                        <select className="focus:outline-none w-full cursor-pointer bg-transparent text-orange-500" onChange={handleSortingBy}>
                             <option value="" title="default">Sort By</option>
                             <option value="title">Title</option>
                             <option value="tag">Tag</option>
@@ -81,7 +81,7 @@ const ViewAllNotesPage = () => {
                         </select>
                     </div>
                     <div className="border border-blue-600 rounded-xl px-5 py-2">
-                        <select className="focus:outline-none w-full cursor-pointer" onChange={handleSortOrder}>
+                        <select className="focus:outline-none w-full cursor-pointer bg-transparent text-orange-500" onChange={handleSortOrder}>
                             <option value="" title="default">Order</option>
                             <option value="asc">Asc to Dsc</option>
                             <option value="dsc">Dsc to Asc</option>
@@ -89,7 +89,7 @@ const ViewAllNotesPage = () => {
                     </div>
                 </section>
 
-                <h3 className="text-2xl 2xl:text-3xl my-8 text-center font-mono font-semibold border-y-2 border-y-slate-700 py-5 text-sky-800 flex justify-center items-center gap-1 sm:gap-3 sticky top-0 backdrop-blur-lg z-20">
+                <h3 className="text-2xl 2xl:text-3xl my-8 text-center font-mono font-semibold border-y-2 border-y-orange-400 py-5 text-white flex justify-center items-center gap-1 sm:gap-3 sticky top-0 backdrop-blur-lg z-20">
                     <CgNotes /><span>Notes ({allUserNotes.length})</span>
                 </h3>
 
