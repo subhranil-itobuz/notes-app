@@ -5,7 +5,18 @@ import { UserContext } from '../contexts/UserContext'
 
 const Profile = () => {
 
+  const { setOpenUserNameUpdateModal } = useContext(UserContext)
+
   const { user } = useContext(UserContext)
+
+  const handleUserNameChange = () => {
+    console.log('username change button clicked')
+    setOpenUserNameUpdateModal(true)
+  }
+
+  const handlePasswordChange = () => {
+    console.log('password change button clicked')
+  }
 
   return (
     <div className="border border-slate-600 flex flex-col justify-center items-center gap-6 mx-10 md:mx-auto md:max-w-[40%] my-5 py-5 rounded-2xl shadow-sm shadow-fuchsia-300">
@@ -19,8 +30,8 @@ const Profile = () => {
 
         </div>
         <div className='flex flex-col items-start text-sm text-start text-orange-400 gap-3'>
-          <button className='hover:text-orange-600'>Change Username</button>
-          <button className='hover:text-orange-600'>Change Password</button>
+          <button className='hover:text-orange-600' onClick={handleUserNameChange}>Change Username</button>
+          <button className='hover:text-orange-600' onClick={handlePasswordChange}>Change Password</button>
         </div>
         <button className='bg-red-500 text-sm lg:text-xl text-white px-10 py-2 rounded-lg mb-5 hover:bg-red-600'>
           Delete All Notes

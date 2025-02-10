@@ -9,6 +9,7 @@ const UserContext = React.createContext()
 const UserProvider = (props) => {
     const { refreshToken } = useContext(AuthContext)
     const [user, setUser] = useState()
+    const [openUserNameUpdateModal, setOpenUserNameUpdateModal] = useState(false)
 
     const getUser = async () => {
         try {
@@ -32,8 +33,25 @@ const UserProvider = (props) => {
         }
     }
 
+    const userNameUpdateFunction = async (data) => {
+        try {
+            console.log('inside username update function context')
+            const res = await axios.put(`${USER_API_ENDPOINT}/update/userName`, data, {
+                headers: {
+                    Authorization: `Bearer ${refreshToken}`
+                }
+            })
+            console.log(res)
+
+            return res
+        } catch (error) {
+            console.log(error)
+            toast.error(error.response.data.message)
+        }
+    }
+
     return (
-        <UserContext.Provider value={{ getUser, user }}>
+        <UserContext.Provider value={{ getUser, user, openUserNameUpdateModal, setOpenUserNameUpdateModal, userNameUpdateFunction }}>
             {props.children}
         </UserContext.Provider>
     )

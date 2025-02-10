@@ -192,14 +192,14 @@ export const login = async (req, res) => {
       email: email.toLowerCase()
     })
 
-    
+
     if (!user) {
       return res.status(404).json({
         success: false,
         message: "User not found"
       })
     }
-    
+
     const userId = user._id
 
     const comparePassword = await bcrypt.compare(password.replace(/\s/g, '').trim(), user.password);
@@ -477,7 +477,7 @@ export const updateUserName = async (req, res) => {
       })
     }
 
-    userNameRegexValidation(newUserName.replace(/\s/g, '').trim())
+    userNameRegexValidation(newUserName?.replace(/\s/g, '').trim())
 
     user.userName = newUserName.replace(/\s/g, '').trim()
     await user.save()
