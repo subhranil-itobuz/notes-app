@@ -5,6 +5,7 @@ import { passwordRegexValidation, userNameRegexValidation } from "../utils/regex
 import { loginCredValidation, userSchemaValidation } from "../validator/userValidate.js"
 import bcrypt from 'bcryptjs'
 import jwt from 'jsonwebtoken'
+import fs from 'fs'
 
 //signup function
 export const signUp = async (req, res) => {
@@ -516,6 +517,19 @@ export const updateProfilePicture = async (req, res) => {
       })
     }
 
+    const existingProfilePicture = user.profilePicture.split('/').slice(-3).join('/')
+
+    if (existingProfilePicture !== '') {
+      fs.unlink(existingProfilePicture, async (error) => {
+        if (error) {
+          throw new Error(error.message);
+        }
+        else {
+          return
+        }
+      })
+    }
+
     user.profilePicture = `http://localhost:3000/uploads/profilePicture/${file.filename}`
 
     await user.save()
@@ -525,6 +539,7 @@ export const updateProfilePicture = async (req, res) => {
       message: `File uploaded successfully`,
       profilePicture: user.profilePicture
     })
+
   } catch (error) {
     return res.status(500).json({
       success: false,

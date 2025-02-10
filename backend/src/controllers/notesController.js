@@ -130,15 +130,27 @@ export const updateFile = async (req, res) => {
             })
         }
 
-        const url = newFile ? newFile.filename : note.fileUrl
+        const existingFile = note.fileUrl.split('/').slice(-3).join('/')
 
-        note.fileUrl = `http://localhost:3000/uploads/notesFile/${url}`
+        fs.unlink(existingFile, async (error) => {
+            if (error) {
+                return res.status(400).json({
+                    success: false,
+                    message: error.message
+                })
+            }
+            else {
+                const url = newFile ? newFile.filename : note.fileUrl
 
-        await note.save()
+                note.fileUrl = `http://localhost:3000/uploads/notesFile/${url}`
 
-        return res.status(200).json({
-            success: true,
-            message: 'File updated successfully'
+                await note.save()
+
+                return res.status(200).json({
+                    success: true,
+                    message: 'File updated successfully'
+                })
+            }
         })
 
     } catch (error) {
@@ -161,7 +173,7 @@ export const deleteFile = async (req, res) => {
             })
         }
 
-        const filePath = note.fileUrl.split('/').slice(-2).join('/')
+        const filePath = note.fileUrl.split('/').slice(-3).join('/')
 
         fs.unlink(filePath, async (error) => {
             if (error) {
@@ -181,7 +193,6 @@ export const deleteFile = async (req, res) => {
                 })
             }
         });
-
 
     } catch (error) {
         return res.status(500).json({
