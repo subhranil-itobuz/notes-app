@@ -5,7 +5,7 @@ import { UserContext } from '../contexts/UserContext'
 
 const Profile = () => {
 
-  const { setOpenUserNameUpdateModal } = useContext(UserContext)
+  const { setOpenUserNameUpdateModal, setOpenPasswordUpdateModal } = useContext(UserContext)
 
   const { user } = useContext(UserContext)
 
@@ -16,6 +16,7 @@ const Profile = () => {
 
   const handlePasswordChange = () => {
     console.log('password change button clicked')
+    setOpenPasswordUpdateModal(true)
   }
 
   return (

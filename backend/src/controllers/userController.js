@@ -399,19 +399,19 @@ export const updatePassword = async (req, res) => {
 
     const user = await userModel.findById(userId)
 
-    const comparePassword = await bcrypt.compare(oldPassword.replace(/\s/g, '').trim(), user.password);
+    const comparePassword = await bcrypt.compare(oldPassword?.replace(/\s/g, '').trim(), user.password);
 
     if (!comparePassword) {
       return res.status(400).json({
         success: false,
-        message: "Password is not matching"
+        message: "Old Password is not matching"
       })
     }
 
     const userDetails = {
       userName: user.userName,
       email: user.email,
-      password: newPassword.replace(/\s/g, '').trim()
+      password: newPassword?.replace(/\s/g, '').trim()
     }
 
     const validUser = userSchemaValidation.safeParse(userDetails)
@@ -423,9 +423,9 @@ export const updatePassword = async (req, res) => {
       })
     }
 
-    passwordRegexValidation(newPassword.replace(/\s/g, '').trim())
+    passwordRegexValidation(newPassword?.replace(/\s/g, '').trim())
 
-    if (newPassword.replace(/\s/g, '').trim() !== confirmNewPassword.replace(/\s/g, '').trim()) {
+    if (newPassword?.replace(/\s/g, '').trim() !== confirmNewPassword?.replace(/\s/g, '').trim()) {
       return res.status(400).json({
         success: false,
         message: "New password is not matching with confirm passowrd"
@@ -433,7 +433,7 @@ export const updatePassword = async (req, res) => {
     }
 
     const salt = await bcrypt.genSalt(10);
-    const newHashedPassword = await bcrypt.hash(newPassword.replace(/\s/g, '').trim(), salt);
+    const newHashedPassword = await bcrypt.hash(newPassword?.replace(/\s/g, '').trim(), salt);
 
     user.password = newHashedPassword
     await user.save()

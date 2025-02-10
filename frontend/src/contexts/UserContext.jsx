@@ -10,6 +10,7 @@ const UserProvider = (props) => {
     const { refreshToken } = useContext(AuthContext)
     const [user, setUser] = useState()
     const [openUserNameUpdateModal, setOpenUserNameUpdateModal] = useState(false)
+    const [openPasswordUpdateModal, setOpenPasswordUpdateModal] = useState(false)
 
     const getUser = async () => {
         try {
@@ -50,8 +51,34 @@ const UserProvider = (props) => {
         }
     }
 
+    const passwordUpdateFunction = async (data) => {
+        try {
+            console.log('inside pasword change function context')
+            const res = await axios.put(`${USER_API_ENDPOINT}/update/password`, data, {
+                headers: {
+                    Authorization: `Bearer ${refreshToken}`
+                }
+            })
+
+            return res
+
+        } catch (error) {
+            console.log(error)
+            toast.error(error.response.data.message)
+        }
+    }
+
     return (
-        <UserContext.Provider value={{ getUser, user, openUserNameUpdateModal, setOpenUserNameUpdateModal, userNameUpdateFunction }}>
+        <UserContext.Provider value={{
+            getUser,
+            user,
+            openUserNameUpdateModal,
+            setOpenUserNameUpdateModal,
+            userNameUpdateFunction,
+            openPasswordUpdateModal,
+            setOpenPasswordUpdateModal,
+            passwordUpdateFunction
+        }}>
             {props.children}
         </UserContext.Provider>
     )

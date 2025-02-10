@@ -41,7 +41,13 @@ export const updateUserNameSchema = yup.object({
 }).required()
 
 export const updatePasswordSchema = yup.object({
-  password: yup.string()
-    .required('password is required')
-    .min(5)
+  oldPassword: yup.string()
+    .required('old password is required')
+    .min(5),
+  newPassword: yup.string()
+    .required('New Password is required')
+    .min(5),
+  confirmNewPassword: yup.string()
+    .required('Confirm password is required')
+    .min(5),
 }).required()
