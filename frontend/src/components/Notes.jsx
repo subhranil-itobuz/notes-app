@@ -23,11 +23,22 @@ const Notes = () => {
   const backBtnRef = useRef(null)
   const nextBtnRef = useRef(null)
 
-  const { getAllNotesFunction, totalResults, pageNotes, setPageNotes, keyword, setKeyword, page, setPage, limit, setLimit, openDeleteModal, setOpenDeleteModal, openUpdateModal, setOpenUpdateModal, openFileViewModal, openFileUpdateModal, openFileDeleteModal, setOpenFileDeleteModal, fileUrl } = useContext(NotesContext)
+  const { getAllNotesFunction, totalResults, pageNotes, setPageNotes, keyword, setKeyword, debouncedQuary, setDebouncedQuary, page, setPage, limit, setLimit, openDeleteModal, setOpenDeleteModal, openUpdateModal, setOpenUpdateModal, openFileViewModal, openFileUpdateModal, openFileDeleteModal, setOpenFileDeleteModal, fileUrl } = useContext(NotesContext)
+
+  useEffect(() => {
+    const handleDebouncedQuary = setTimeout(() => {
+      console.log('setting debounced quary after 500ms')
+      setDebouncedQuary(keyword)
+    }, 700);
+
+    return () => clearTimeout(handleDebouncedQuary)
+
+    // eslint-disable-next-line  
+  }, [keyword])
 
   useEffect(() => {
     const getAllNotes = async () => {
-      const res = await getAllNotesFunction(keyword, page, limit)
+      const res = await getAllNotesFunction(debouncedQuary, page, limit)
 
       if (res?.data.success) {
         console.log(res)
@@ -39,10 +50,11 @@ const Notes = () => {
         setPageNotes([])
       }
     }
+
     getAllNotes()
 
     // eslint-disable-next-line  
-  }, [page, keyword, limit, openDeleteModal, openUpdateModal, openFileUpdateModal, openFileDeleteModal, fileUrl])
+  }, [page, debouncedQuary, limit, openDeleteModal, openUpdateModal, openFileUpdateModal, openFileDeleteModal, fileUrl])
 
   const increasePageNumber = () => {
     setPage(page + 1)
@@ -93,19 +105,19 @@ const Notes = () => {
       </div>
 
       <div className="flex justify-between items-center px-2 2xl:px-16 my-4 sticky top-0 z-10 backdrop-blur-md text-xl md:text-2xl lg:w-[96%] lg:mx-auto border-b-2 border-b-slate-500">
-        <button className="flex gap-1 items-center border border-slate-400 rounded-3xl pr-1 md:px-3 bg-green-200 hover:bg-green-300 disabled:opacity-25 disabled:cursor-not-allowed transition-all ease-in-out duration-300" disabled={page <= 1 || pageNotes.length > 6 ? true : false} onClick={decreasePageNumber} ref={backBtnRef}>
+        <button className="flex gap-1 items-center border border-slate-400 rounded-3xl pr-1 md:px-3 bg-green-200 hover:bg-green-300 disabled:opacity-25 disabled:cursor-not-allowed transition-all ease-in-out duration-700" disabled={page <= 1 || pageNotes.length > 6 ? true : false} onClick={decreasePageNumber} ref={backBtnRef}>
           <IoCaretBack />
           Back
         </button>
 
         <div className="flex flex-col items-center gap-3 py-2">
           <h1 className="text-2xl sm:text-3xl 2xl:text-4xl font-serif font-semibold flex justify-center items-center gap-1 sm:gap-3 text-white"><CgNotes /><span>Notes ({pageNotes.length})</span></h1>
-          <span className="text-slate-400 border-y border-y-red-200 px-4 text-base font-mono font-thin bg-white rounded-full" ref={paginationRef}>
-            Page {page} of {totalResults === 0 ? 1 : Math.ceil(totalResults / 6)}
+          <span className="text-slate-400 border-y border-y-red-200 px-4 text-base font-mono font-thin bg-white rounded-full transition-all ease-in-out duration-700" ref={paginationRef}>
+            Page {page === 0 ? 1 : page} of {totalResults === 0 ? 1 : Math.ceil(totalResults / 6)}
           </span>
         </div>
 
-        <button className="flex gap-1 items-center border border-slate-400 rounded-3xl pl-1 md:px-3 bg-sky-200 hover:bg-sky-300 disabled:opacity-25 disabled:cursor-not-allowed transition-all ease-in-out duration-300 " disabled={page === Math.ceil(totalResults / 6) || pageNotes.length === totalResults || pageNotes.length < 6 || totalResults === 6 ? true : false} onClick={increasePageNumber} ref={nextBtnRef}>
+        <button className="flex gap-1 items-center border border-slate-400 rounded-3xl pl-1 md:px-3 bg-sky-200 hover:bg-sky-300 disabled:opacity-25 disabled:cursor-not-allowed transition-all ease-in-out duration-700 " disabled={page === Math.ceil(totalResults / 6) || pageNotes.length === totalResults || pageNotes.length < 6 || totalResults === 6 ? true : false} onClick={increasePageNumber} ref={nextBtnRef}>
           Next
           <FaCaretRight />
         </button>

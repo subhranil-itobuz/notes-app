@@ -15,7 +15,18 @@ import FileDeleteModal from "../components/FileDeleteModal";
 
 
 const ViewAllNotesPage = () => {
-    const { getAllUserNotesFunction, allUserNotes, setAllUserNotes, keyword, setKeyword, sortBy, setSortBy, order, sortOrder, openDeleteModal, setOpenDeleteModal, openUpdateModal, setOpenUpdateModal, fileUrl, openFileViewModal, openFileUpdateModal, openFileDeleteModal, setOpenFileDeleteModal } = useContext(NotesContext)
+    const { getAllUserNotesFunction, allUserNotes, setAllUserNotes, keyword, setKeyword, debouncedQuary, setDebouncedQuary, sortBy, setSortBy, order, sortOrder, openDeleteModal, setOpenDeleteModal, openUpdateModal, setOpenUpdateModal, fileUrl, openFileViewModal, openFileUpdateModal, openFileDeleteModal, setOpenFileDeleteModal } = useContext(NotesContext)
+
+    useEffect(() => {
+        const handleDebouncedQuary = setTimeout(() => {
+            console.log('setting debounced quary after 500ms')
+            setDebouncedQuary(keyword)
+        }, 700);
+
+        return () => clearTimeout(handleDebouncedQuary)
+
+        // eslint-disable-next-line  
+    }, [keyword])
 
     useEffect(() => {
         const getAllUserNotes = async () => {
@@ -34,7 +45,7 @@ const ViewAllNotesPage = () => {
         getAllUserNotes()
 
         // eslint-disable-next-line  
-    }, [keyword, sortBy, order, openDeleteModal, openUpdateModal, openFileUpdateModal, openFileDeleteModal, fileUrl])
+    }, [debouncedQuary, sortBy, order, openDeleteModal, openUpdateModal, openFileUpdateModal, openFileDeleteModal, fileUrl])
 
     const handleSearch = (e) => {
         console.log(e.target.value)

@@ -14,6 +14,7 @@ const NotesProvider = (props) => {
   const [updatingNote, setUpdatingNote] = useState({})
   const [pageNotes, setPageNotes] = useState([])
   const [keyword, setKeyword] = useState('')
+  const [debouncedQuary, setDebouncedQuary] = useState('')
   const [page, setPage] = useState(1)
   const [limit, setLimit] = useState(6)
   const [allUserNotes, setAllUserNotes] = useState([])
@@ -56,7 +57,7 @@ const NotesProvider = (props) => {
     try {
       console.log('inside get all notes')
       console.log(page, limit)
-      const res = await axios.get(`${NOTES_API_ENDPOINT}/getAllNotes?keyword=${keyword}&page=${page}&limit=${limit}`, {
+      const res = await axios.get(`${NOTES_API_ENDPOINT}/getAllNotes?keyword=${debouncedQuary}&page=${page}&limit=${limit}`, {
         headers: {
           Authorization: `Bearer ${refreshToken}`
         }
@@ -83,7 +84,7 @@ const NotesProvider = (props) => {
       console.log('inside all userNotes function in context')
       console.log(allUserNotes)
 
-      const res = await axios.get(`${NOTES_API_ENDPOINT}/getAllNotes?keyword=${keyword}&sortBy=${sortBy}&order=${order}&page=0&limit=0`, {
+      const res = await axios.get(`${NOTES_API_ENDPOINT}/getAllNotes?keyword=${debouncedQuary}&sortBy=${sortBy}&order=${order}&page=0&limit=0`, {
         headers: {
           Authorization: `Bearer ${refreshToken}`
         }
@@ -237,6 +238,8 @@ const NotesProvider = (props) => {
       setAllUserNotes,
       keyword,
       setKeyword,
+      debouncedQuary,
+      setDebouncedQuary,
       page,
       setPage,
       limit,
