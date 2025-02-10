@@ -13,13 +13,13 @@ const Navbar = () => {
   const navigate = useNavigate()
   const [expandNav, setExpandNav] = useState(false)
 
-  const { isLoggedIn, logoutFunction, refreshToken, tokenRemoveFunction } = useContext(AuthContext)
+  const { isLoggedIn, logoutFunction, accessToken, tokenRemoveFunction } = useContext(AuthContext)
   const isUser = isLoggedIn || localStorage.getItem('isLoggedIn')
 
   const { user } = useContext(UserContext)
   const userName = user?.userName || 'Username'
 
-  const token = refreshToken || localStorage.getItem('refreshToken')
+  const token = accessToken || localStorage.getItem('accessToken')
 
   const logoutHandler = async () => {
     try {

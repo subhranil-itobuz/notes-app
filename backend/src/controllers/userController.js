@@ -219,7 +219,7 @@ export const login = async (req, res) => {
       })
     }
 
-    const accessToken = jwt.sign({ userId }, process.env.SECRET_KEY, { expiresIn: '15m' })
+    const accessToken = jwt.sign({ userId }, process.env.SECRET_KEY, { expiresIn: '1m' })
     const refreshToken = jwt.sign({ userId }, process.env.SECRET_KEY, { expiresIn: '7d' })
 
     await sessionsModel.create({ userId })
@@ -302,16 +302,16 @@ export const logout = async (req, res) => {
       })
     }
 
-    const refreshToken = authHeader.split(' ')[1]
+    const accessToken = authHeader.split(' ')[1]
 
-    if (!refreshToken) {
+    if (!accessToken) {
       return res.status(404).json({
         success: false,
         message: "Token not found"
       })
     }
 
-    jwt.verify(refreshToken, process.env.SECRET_KEY, async (error, decoded) => {
+    jwt.verify(accessToken, process.env.SECRET_KEY, async (error, decoded) => {
       if (error) {
         return res.status(400).json({
           success: false,
@@ -349,16 +349,16 @@ export const getUserDetails = async (req, res) => {
       })
     }
 
-    const refreshToken = authHeader.split(' ')[1]
+    const accessToken = authHeader.split(' ')[1]
 
-    if (!refreshToken) {
+    if (!accessToken) {
       return res.status(404).json({
         success: false,
         message: "Token not found"
       })
     }
 
-    jwt.verify(refreshToken, process.env.SECRET_KEY, async (error, decoded) => {
+    jwt.verify(accessToken, process.env.SECRET_KEY, async (error, decoded) => {
       if (error) {
         throw new Error(error.message);
       }

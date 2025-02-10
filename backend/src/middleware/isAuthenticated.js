@@ -13,18 +13,21 @@ const isAuthenticated = async (req, res, next) => {
             })
         }
 
-        const refreshToken = authHeader.split(' ')[1]
+        const accessToken = authHeader.split(' ')[1]
 
-        if (!refreshToken) {
+        if (!accessToken) {
             return res.status(404).json({
                 success: false,
                 message: "Refresh token not found"
             })
         }
 
-        jwt.verify(refreshToken, process.env.SECRET_KEY, async (error, decoded) => {
+        jwt.verify(accessToken, process.env.SECRET_KEY, async (error, decoded) => {
             if (error) {
-                throw new Error(error.message)
+                return res.status(401).json({
+                    success: false,
+                    message: error.message
+                })
             }
             else {
                 const userId = decoded.userId

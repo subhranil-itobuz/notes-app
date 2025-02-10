@@ -15,6 +15,7 @@ import ProtectedRoutes from "./middleware/ProtectedRoutes.jsx";
 
 function App() {
 
+
   return (
     <div className="max-w-[1440px] h-[100vh] mx-auto bg-[#16425b]">
       <AuthProvider>

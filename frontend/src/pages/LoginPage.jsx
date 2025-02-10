@@ -36,7 +36,7 @@ const LoginPage = () => {
       else toast.info(res.data.message)
     }
     catch (error) {
-      console.error(error.response.data.message)
+      console.error(error)
       toast.error(error.response.data.message)
     }
   }

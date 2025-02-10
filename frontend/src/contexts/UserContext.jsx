@@ -7,7 +7,7 @@ import { toast } from 'react-toastify'
 const UserContext = React.createContext()
 
 const UserProvider = (props) => {
-    const { refreshToken } = useContext(AuthContext)
+    const { accessToken } = useContext(AuthContext)
     const [user, setUser] = useState()
     const [openUserNameUpdateModal, setOpenUserNameUpdateModal] = useState(false)
     const [openPasswordUpdateModal, setOpenPasswordUpdateModal] = useState(false)
@@ -18,7 +18,7 @@ const UserProvider = (props) => {
         try {
             const res = await axios.get(`${USER_API_ENDPOINT}/getUser`, {
                 headers: {
-                    Authorization: `Bearer ${refreshToken}`
+                    Authorization: `Bearer ${accessToken}`
                 }
             })
 
@@ -41,7 +41,7 @@ const UserProvider = (props) => {
             console.log('inside username update function context')
             const res = await axios.put(`${USER_API_ENDPOINT}/update/userName`, data, {
                 headers: {
-                    Authorization: `Bearer ${refreshToken}`
+                    Authorization: `Bearer ${accessToken}`
                 }
             })
             console.log(res)
@@ -58,7 +58,7 @@ const UserProvider = (props) => {
             console.log('inside pasword change function context')
             const res = await axios.put(`${USER_API_ENDPOINT}/update/password`, data, {
                 headers: {
-                    Authorization: `Bearer ${refreshToken}`
+                    Authorization: `Bearer ${accessToken}`
                 }
             })
 
@@ -75,7 +75,7 @@ const UserProvider = (props) => {
             console.log('inside profile picture update function in context')
             const res = await axios.post(`${USER_API_ENDPOINT}/update/profilePicture`, data, {
                 headers: {
-                    'Authorization': `Bearer ${refreshToken}`,
+                    'Authorization': `Bearer ${accessToken}`,
                     'Content-Type': 'multipart/form-data'
                 },
             })
