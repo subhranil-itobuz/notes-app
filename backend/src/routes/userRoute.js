@@ -1,6 +1,7 @@
 import express from 'express'
-import { getUserDetails, login, logout, regenerateAccessToken, resendVerificationLink, signUp, updatePassword, updateUserName, verifyUser } from '../controllers/userController.js'
+import { getUserDetails, login, logout, regenerateAccessToken, resendVerificationLink, signUp, updatePassword, updateProfilePicture, updateUserName, verifyUser } from '../controllers/userController.js'
 import isAuthenticated from '../middleware/isAuthenticated.js'
+import { uploadProfilePicture } from '../middleware/multer.js'
 
 const userRoute = express.Router()
 
@@ -13,6 +14,7 @@ userRoute.get('/logout', logout)
 userRoute.get('/getUser', getUserDetails)
 userRoute.put('/update/password', isAuthenticated, updatePassword)
 userRoute.put('/update/userName', isAuthenticated, updateUserName)
+userRoute.post('/update/profilePicture', isAuthenticated, uploadProfilePicture.single('profilePicture'), updateProfilePicture)
 
 
 export default userRoute

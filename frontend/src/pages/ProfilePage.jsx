@@ -4,9 +4,13 @@ import Profile from "../components/Profile"
 import { UserContext } from "../contexts/UserContext"
 import UserNameChangeModal from "../components/UserNameChangeModal"
 import PasswordUpdateModal from "../components/PasswordUpdateModal"
+import DeleteAllNotesModal from "../components/DeleteAllNotesModal"
+import { NotesContext } from "../contexts/NotesContext"
+import ProfilePictureUpdateModal from "../components/ProfilePictureUpdateModal"
 
 const ProfilePage = () => {
-  const { openUserNameUpdateModal, getUser, openPasswordUpdateModal } = useContext(UserContext)
+  const { openUserNameUpdateModal, getUser, openPasswordUpdateModal, openProfilePhotoUpdateModal } = useContext(UserContext)
+  const { openDeleteAllNotesModal } = useContext(NotesContext)
 
   useEffect(() => {
     const getUserDetails = async () => {
@@ -17,7 +21,7 @@ const ProfilePage = () => {
     getUserDetails()
 
     // eslint-disable-next-line  
-  }, [openUserNameUpdateModal])
+  }, [openUserNameUpdateModal, openProfilePhotoUpdateModal])
 
   return (
     <div>
@@ -26,7 +30,8 @@ const ProfilePage = () => {
 
       {openUserNameUpdateModal && <UserNameChangeModal />}
       {openPasswordUpdateModal && <PasswordUpdateModal />}
-
+      {openDeleteAllNotesModal && <DeleteAllNotesModal />}
+      {openProfilePhotoUpdateModal && <ProfilePictureUpdateModal />}
     </div>
   )
 }

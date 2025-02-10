@@ -11,6 +11,8 @@ const UserProvider = (props) => {
     const [user, setUser] = useState()
     const [openUserNameUpdateModal, setOpenUserNameUpdateModal] = useState(false)
     const [openPasswordUpdateModal, setOpenPasswordUpdateModal] = useState(false)
+    const [openProfilePhotoUpdateModal, setOpenProfilePhotoUpdateModal] = useState(false)
+
 
     const getUser = async () => {
         try {
@@ -68,6 +70,26 @@ const UserProvider = (props) => {
         }
     }
 
+    const profilePictureUpdateFunction = async (data) => {
+        try {
+            console.log('inside profile picture update function in context')
+            const res = await axios.post(`${USER_API_ENDPOINT}/update/profilePicture`, data, {
+                headers: {
+                    'Authorization': `Bearer ${refreshToken}`,
+                    'Content-Type': 'multipart/form-data'
+                },
+            })
+
+            if (res.data.success) {
+                console.log(res)
+                return res
+            }
+        } catch (error) {
+            console.log(error)
+            toast.error(error.response.data.message)
+        }
+    }
+
     return (
         <UserContext.Provider value={{
             getUser,
@@ -77,7 +99,10 @@ const UserProvider = (props) => {
             userNameUpdateFunction,
             openPasswordUpdateModal,
             setOpenPasswordUpdateModal,
-            passwordUpdateFunction
+            passwordUpdateFunction,
+            openProfilePhotoUpdateModal,
+            setOpenProfilePhotoUpdateModal,
+            profilePictureUpdateFunction
         }}>
             {props.children}
         </UserContext.Provider>

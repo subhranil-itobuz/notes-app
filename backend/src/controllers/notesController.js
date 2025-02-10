@@ -97,7 +97,7 @@ export const uploadFile = async (req, res) => {
             })
         }
 
-        note.fileUrl = `http://localhost:3000/uploads/${file.filename}`
+        note.fileUrl = `http://localhost:3000/uploads/notesFile/${file.filename}`
 
         await note.save()
 
@@ -132,7 +132,7 @@ export const updateFile = async (req, res) => {
 
         const url = newFile ? newFile.filename : note.fileUrl
 
-        note.fileUrl = `http://localhost:3000/uploads/${url}`
+        note.fileUrl = `http://localhost:3000/uploads/notesFile/${url}`
 
         await note.save()
 

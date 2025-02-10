@@ -110,7 +110,7 @@ const Navbar = () => {
               </li>
             </ul>
             <div className='flex flex-wrap justify-center items-center gap-8'>
-              <p>Hello, <span className='text-green-300 cursor-pointer font-medium'>{userName}</span></p>
+              <p>Hello, <Link to='/profile'> <span className='text-green-300 cursor-pointer font-medium'>{userName}</span></Link></p>
               <button className='border border-white rounded-md px-2 py-2 hover:bg-red-500 transition-colors ease-in-out' onClick={logoutHandler}>Logout</button>
             </div>
           </div>

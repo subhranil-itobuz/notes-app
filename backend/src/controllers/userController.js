@@ -493,3 +493,42 @@ export const updateUserName = async (req, res) => {
     })
   }
 }
+
+//update profilePicture function
+export const updateProfilePicture = async (req, res) => {
+  try {
+    const file = req.file
+    const userId = req.id
+
+    if (!file) {
+      return res.status(400).json({
+        success: false,
+        message: "No file uploaded"
+      })
+    }
+
+    const user = await userModel.findById(userId)
+
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: "User not found"
+      })
+    }
+
+    user.profilePicture = `http://localhost:3000/uploads/profilePicture/${file.filename}`
+
+    await user.save()
+
+    return res.status(201).json({
+      success: true,
+      message: `File uploaded successfully`,
+      profilePicture: user.profilePicture
+    })
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      message: error.message
+    })
+  }
+}
