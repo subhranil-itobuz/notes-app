@@ -5,8 +5,7 @@ import { NotesContext } from '../contexts/NotesContext'
 import { toast } from 'react-toastify'
 
 const DeleteAllNotesModal = () => {
-  const { setOpenDeleteAllNotesModal, deleteAllNotesFunction } = useContext(NotesContext)
-
+  const { setOpenDeleteAllNotesModal, deleteAllNotesFunction, setTotalResults } = useContext(NotesContext)
   const handleDeleteAllConfirmation = async () => {
     console.log('inside delete confirm func in modal')
     const res = await deleteAllNotesFunction()
@@ -14,6 +13,7 @@ const DeleteAllNotesModal = () => {
     if (res?.data.success) {
       console.log(res)
       setOpenDeleteAllNotesModal(false)
+      setTotalResults(0)
       toast.success(res.data.message)
     }
     else {

@@ -1,4 +1,4 @@
-import { useContext } from 'react'
+import { useContext, useEffect } from 'react'
 import { UserContext } from '../contexts/UserContext'
 import { NotesContext } from '../contexts/NotesContext'
 
@@ -7,9 +7,11 @@ import { NotesContext } from '../contexts/NotesContext'
 const Profile = () => {
 
   const { setOpenUserNameUpdateModal, setOpenPasswordUpdateModal, setOpenProfilePhotoUpdateModal } = useContext(UserContext)
-  const { setOpenDeleteAllNotesModal } = useContext(NotesContext)
+  const { setOpenDeleteAllNotesModal, totalResults } = useContext(NotesContext)
 
   const { user } = useContext(UserContext)
+
+  useEffect(() => { console.log('use effect called') }, [])
 
   const handleUserNameChange = () => {
     console.log('username change button clicked')
@@ -32,7 +34,7 @@ const Profile = () => {
   }
 
   return (
-    <div className="border border-slate-600 flex flex-col justify-center items-center gap-6 mx-10 md:mx-auto md:max-w-[40%] my-5 py-5 rounded-2xl shadow-sm shadow-fuchsia-300">
+    <div className="border border-slate-600 flex flex-col justify-center items-center gap-6 mx-5 md:mx-auto md:max-w-[40%] my-10 pt-10 pb-8 rounded-2xl shadow-sm shadow-fuchsia-300">
       <div className='rounded-full w-40 h-40 bg-white'>
         <img src={user?.profilePicture} alt="profile picture" className='bg-white overflow-hidden mx-auto rounded-full w-full h-full' />
       </div>
@@ -47,8 +49,8 @@ const Profile = () => {
           <button className='hover:text-orange-600' onClick={handlePasswordChange}>Change Password</button>
           <button className='hover:text-orange-600' onClick={handleProfilePictureChange}>Change Profile picture</button>
         </div>
-        <button className='bg-red-500 text-sm lg:text-xl text-white px-6 md:px-10 py-2 rounded-lg mb-5 hover:bg-red-600 disabled:bg-opacity-70 disabled:cursor-not-allowed' onClick={handleDeleteAllNotes} disabled={true}>
-          Delete All Notes
+        <button className='bg-red-500 text-sm lg:text-xl text-white px-6 md:px-10 py-2 rounded-lg mb-5 hover:bg-red-600 disabled:bg-opacity-70 disabled:cursor-not-allowed' onClick={handleDeleteAllNotes} disabled={totalResults === 0 ? true : false}>
+          Delete All Notes ({totalResults})
         </button>
       </div>
     </div>

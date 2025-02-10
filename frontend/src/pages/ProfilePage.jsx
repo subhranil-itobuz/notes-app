@@ -10,7 +10,7 @@ import ProfilePictureUpdateModal from "../components/ProfilePictureUpdateModal"
 
 const ProfilePage = () => {
   const { openUserNameUpdateModal, getUser, openPasswordUpdateModal, openProfilePhotoUpdateModal } = useContext(UserContext)
-  const { openDeleteAllNotesModal } = useContext(NotesContext)
+  const { openDeleteAllNotesModal, totalResults } = useContext(NotesContext)
 
   useEffect(() => {
     const getUserDetails = async () => {
@@ -21,7 +21,7 @@ const ProfilePage = () => {
     getUserDetails()
 
     // eslint-disable-next-line  
-  }, [openUserNameUpdateModal, openProfilePhotoUpdateModal])
+  }, [openUserNameUpdateModal, openProfilePhotoUpdateModal, totalResults])
 
   return (
     <div>
