@@ -11,6 +11,7 @@ import CreateNotePage from "./pages/CreateNotePage.jsx";
 import { NotesProvider } from "./contexts/NotesContext.jsx";
 import ViewAllNotesPage from "./pages/ViewAllNotesPage.jsx";
 import ProfilePage from './pages/ProfilePage.jsx'
+import ProtectedRoutes from "./middleware/ProtectedRoutes.jsx";
 
 function App() {
 
@@ -27,9 +28,21 @@ function App() {
               <Route path='/reverify' element={<ReverifyPage />} />
 
               {/* Protected Routes */}
-              <Route path='/notes/create' element={<CreateNotePage />} />
-              <Route path='/notes/view' element={<ViewAllNotesPage />} />
-              <Route path='/profile' element={<ProfilePage />} />
+              <Route path='/notes/create' element={
+                <ProtectedRoutes>
+                  <CreateNotePage />
+                </ProtectedRoutes>
+              } />
+              <Route path='/notes/view' element={
+                <ProtectedRoutes>
+                  <ViewAllNotesPage />
+                </ProtectedRoutes>
+              } />
+              <Route path='/profile' element={
+                <ProtectedRoutes>
+                  <ProfilePage />
+                </ProtectedRoutes>
+              } />
             </Routes>
           </NotesProvider>
         </UserProvider>
