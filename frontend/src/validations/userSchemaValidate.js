@@ -4,8 +4,8 @@ export const signupUserSchema = yup.object({
   userName: yup
     .string()
     .required('Username is required')
-    .min(4, 'minimum 4 character required in username')
-    .max(15, 'maximum 15 character in username'),
+    .min(4)
+    .max(15),
 
   email: yup.string()
     .required('email is required')
@@ -13,7 +13,10 @@ export const signupUserSchema = yup.object({
 
   password: yup.string()
     .required('password is required')
-    .min(5)
+    .min(5),
+  role: yup.string()
+    .required('Role is required')
+
 }).required()
 
 export const loginUserSchema = yup.object({
@@ -23,7 +26,9 @@ export const loginUserSchema = yup.object({
 
   password: yup.string()
     .required('password is required')
-    .min(5)
+    .min(5),
+  role: yup.string()
+    .required('Role is required')
 }).required()
 
 export const reVerifySchema = yup.object({
@@ -36,8 +41,8 @@ export const updateUserNameSchema = yup.object({
   newUserName: yup
     .string()
     .required('Username is required')
-    .min(4, 'minimum 4 character required in username')
-    .max(15, 'maximum 15 character in username'),
+    .min(4)
+    .max(15),
 }).required()
 
 export const updatePasswordSchema = yup.object({
