@@ -481,7 +481,8 @@ export const updateUserName = async (req, res) => {
     const userDetails = {
       userName: newUserName.replace(/\s/g, '').trim(),
       email: user.email,
-      password: user.password
+      password: user.password,
+      role: user.role
     }
 
     const validUser = userSchemaValidation.safeParse(userDetails)

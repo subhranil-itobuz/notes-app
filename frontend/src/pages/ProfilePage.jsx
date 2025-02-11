@@ -9,7 +9,7 @@ import { NotesContext } from "../contexts/NotesContext"
 import ProfilePictureUpdateModal from "../components/ProfilePictureUpdateModal"
 
 const ProfilePage = () => {
-  const { openUserNameUpdateModal, getUser, openPasswordUpdateModal, openProfilePhotoUpdateModal } = useContext(UserContext)
+  const { openUserNameUpdateModal, getUser, openPasswordUpdateModal, openProfilePhotoUpdateModal, user } = useContext(UserContext)
   const { openDeleteAllNotesModal, totalResults } = useContext(NotesContext)
 
   useEffect(() => {
@@ -28,7 +28,7 @@ const ProfilePage = () => {
       <Navbar />
       <Profile />
 
-      {openUserNameUpdateModal && <UserNameChangeModal />}
+      {openUserNameUpdateModal && <UserNameChangeModal userName={user.userName} />}
       {openPasswordUpdateModal && <PasswordUpdateModal />}
       {openDeleteAllNotesModal && <DeleteAllNotesModal />}
       {openProfilePhotoUpdateModal && <ProfilePictureUpdateModal />}
