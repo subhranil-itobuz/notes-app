@@ -221,12 +221,11 @@ export const login = async (req, res) => {
       })
     }
 
-    const accessToken = jwt.sign({ userId }, process.env.SECRET_KEY, { expiresIn: '1m' })
-    const refreshToken = jwt.sign({ userId }, process.env.SECRET_KEY, { expiresIn: '7d' })
+    const accessToken = jwt.sign({ userId }, process.env.SECRET_KEY, { expiresIn: '7d' })
+    const refreshToken = jwt.sign({ userId }, process.env.SECRET_KEY, { expiresIn: '30d' })
 
     await sessionsModel.create({ userId })
 
-    user.status = 'online'
     await user.save()
 
     return res.status(200).json({
@@ -275,7 +274,7 @@ export const regenerateAccessToken = async (req, res) => {
           })
         }
 
-        const accessToken = jwt.sign({ userId }, process.env.SECRET_KEY, { expiresIn: '15m' })
+        const accessToken = jwt.sign({ userId }, process.env.SECRET_KEY, { expiresIn: '7d' })
 
         return res.status(201).json({
           success: true,
