@@ -17,8 +17,8 @@ export const userSchemaValidation = z.object({
   }).min(5),
 
   role: z.string({
-    required_error: "Email is requreired",
-    invalid_type_error: "Email must be a string with valid mail format"
+    required_error: "Role is requreired",
+    invalid_type_error: "Role must be a string"
   })
 })
 

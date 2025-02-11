@@ -414,10 +414,20 @@ export const updatePassword = async (req, res) => {
       })
     }
 
+    const compareNewPassword = await bcrypt.compare(newPassword?.replace(/\s/g, '').trim(), user.password);
+
+    if (compareNewPassword) {
+      return res.status(400).json({
+        success: false,
+        message: "New password must be different from Old password"
+      })
+    }
+
     const userDetails = {
       userName: user.userName,
       email: user.email,
-      password: newPassword?.replace(/\s/g, '').trim()
+      password: newPassword?.replace(/\s/g, '').trim(),
+      role: user.role
     }
 
     const validUser = userSchemaValidation.safeParse(userDetails)
