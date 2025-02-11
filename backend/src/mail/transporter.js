@@ -38,7 +38,10 @@ export const mailSender = async (token, email) => {
 
     transporter.sendMail(mailConfiguration, (error, res) => {
         if (error) {
-            throw new Error(error.message);
+            return res.status(400).json({
+                success: false,
+                message: error.message
+            })
         }
         else {
             console.log('Email sent successfully')
