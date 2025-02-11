@@ -23,12 +23,14 @@ const Notes = () => {
   const backBtnRef = useRef(null)
   const nextBtnRef = useRef(null)
 
-  const { getAllNotesFunction, totalResults, pageNotes, setPageNotes, keyword, setKeyword, debouncedQuary, setDebouncedQuary, page, setPage, limit, setLimit, openDeleteModal, setOpenDeleteModal, openUpdateModal, setOpenUpdateModal, openFileViewModal, openFileUpdateModal, openFileDeleteModal, setOpenFileDeleteModal, fileUrl } = useContext(NotesContext)
+  const { getAllNotesFunction, totalResults, pageNotes, setPageNotes, keyword, setKeyword, debouncedQuary, setDebouncedQuary, page, setPage, limit, openDeleteModal, setOpenDeleteModal, openUpdateModal, setOpenUpdateModal, openFileViewModal, openFileUpdateModal, openFileDeleteModal, setOpenFileDeleteModal, fileUrl } = useContext(NotesContext)
 
   useEffect(() => {
     const handleDebouncedQuary = setTimeout(() => {
       console.log('setting debounced quary after 500ms')
       setDebouncedQuary(keyword)
+      // setPage(0)
+      // setLimit(0)
     }, 700);
 
     return () => clearTimeout(handleDebouncedQuary)
@@ -56,30 +58,12 @@ const Notes = () => {
     // eslint-disable-next-line  
   }, [page, debouncedQuary, limit, openDeleteModal, openUpdateModal, openFileUpdateModal, openFileDeleteModal, fileUrl])
 
-  const increasePageNumber = () => {
-    setPage(page + 1)
-  }
+  const increasePageNumber = () => setPage(page + 1)
 
-  const decreasePageNumber = () => {
-    setPage(page - 1)
-  }
+  const decreasePageNumber = () => setPage(page - 1)
 
-  const handleSearch = (e) => {
-    setKeyword(e.target.value.trim())
-    setPage(0)
-    setLimit(0)
-    paginationRef.current.style.visibility = 'hidden'
-    backBtnRef.current.style.visibility = 'hidden'
-    nextBtnRef.current.style.visibility = 'hidden'
+  const handleSearch = (e) => setKeyword(e.target.value.trim())
 
-    if (e.target.value === '') {
-      setLimit(6)
-      setPage(1)
-      paginationRef.current.style.visibility = 'visible'
-      backBtnRef.current.style.visibility = 'visible'
-      nextBtnRef.current.style.visibility = 'visible'
-    }
-  }
 
   return (
     <div className="py-5 2xl:py-10 bg-[#16425b]">

@@ -10,15 +10,16 @@ import fs from 'fs'
 //signup function
 export const signUp = async (req, res) => {
   try {
-    const { userName, email, password, confirmPassword } = req.body
+    const { userName, email, password, confirmPassword, role } = req.body
 
-    if (Object.keys(req.body).length > 4)
+    if (Object.keys(req.body).length > 5)
       throw new Error("Extra fields");
 
     const userDetails = {
       userName: userName.replace(/\s/g, '').trim(),
       email,
-      password: password.replace(/\s/g, '').trim()
+      password: password.replace(/\s/g, '').trim(),
+      role
     }
 
     const validUser = userSchemaValidation.safeParse(userDetails)
@@ -62,6 +63,7 @@ export const signUp = async (req, res) => {
       userName: userName.replace(/\s/g, '').trim(),
       email: email.toLowerCase(),
       password: hashedPassword,
+      role: role,
       verified: false,
       token: token
     })

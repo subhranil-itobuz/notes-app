@@ -15,6 +15,11 @@ export const userSchemaValidation = z.object({
     required_error: "Password required",
     invalid_type_error: "Password must be more than 5 characters"
   }).min(5),
+
+  role: z.string({
+    required_error: "Email is requreired",
+    invalid_type_error: "Email must be a string with valid mail format"
+  })
 })
 
 export const loginCredValidation = z.object({

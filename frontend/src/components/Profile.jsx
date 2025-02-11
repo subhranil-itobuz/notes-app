@@ -35,8 +35,13 @@ const Profile = () => {
 
   return (
     <div className="border border-slate-600 flex flex-col justify-center items-center gap-6 mx-5 md:mx-auto md:max-w-[40%] my-10 pt-10 pb-8 rounded-2xl shadow-sm shadow-fuchsia-300">
-      <div className='rounded-full w-40 h-40 bg-white'>
-        <img src={user?.profilePicture} alt="profile picture" className='bg-white overflow-hidden mx-auto rounded-full w-full h-full' />
+      <div className='rounded-full w-40 h-40 bg-gray-200 flex justify-center items-center cursor-pointer' onClick={handleProfilePictureChange}>
+        {
+          user?.profilePicture ?
+            <img src={user?.profilePicture} alt="profile picture" className='bg-white overflow-hidden mx-auto rounded-full w-full h-full' />
+            :
+            <button className='text-blue-600 hover:font-semibold' onClick={handleProfilePictureChange}>Add Profile photo</button>
+        }
       </div>
       <div className='flex justify-center items-center flex-col gap-5 md:gap-10 px-6 text-white'>
         <div className='flex flex-col text-center'>
