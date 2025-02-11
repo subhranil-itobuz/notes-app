@@ -1,7 +1,5 @@
-import axios from 'axios'
-import React, { useContext, useState } from 'react'
+import React, { useState } from 'react'
 import { NOTES_API_ENDPOINT } from '../utils/endPoints'
-import { AuthContext } from './AuthContext'
 import { toast } from 'react-toastify'
 import { notesInstance } from '../utils/axiosSetup'
 
@@ -31,8 +29,6 @@ const NotesProvider = (props) => {
   const [currentFileUrl, setCurrentFileUrl] = useState('')
 
 
-  const { accessToken } = useContext(AuthContext)
-
   const createNotes = async (data) => {
     try {
       console.log('inside create note func')
@@ -46,7 +42,7 @@ const NotesProvider = (props) => {
         return res
       }
     } catch (error) {
-      console.error(error)
+      console.log(error)
       toast.error(error.response.data.message)
     }
   }
@@ -55,11 +51,7 @@ const NotesProvider = (props) => {
     try {
       console.log('inside get all notes')
       console.log(page, limit)
-      const res = await axios.get(`${NOTES_API_ENDPOINT}/getAllNotes?keyword=${debouncedQuary}&page=${page}&limit=${limit}`, {
-        headers: {
-          Authorization: `Bearer ${accessToken}`
-        }
-      })
+      const res = await notesInstance.get(`${NOTES_API_ENDPOINT}/getAllNotes?keyword=${debouncedQuary}&page=${page}&limit=${limit}`)
 
       if (res?.data.success) {
         console.log(res)
@@ -82,11 +74,7 @@ const NotesProvider = (props) => {
       console.log('inside all userNotes function in context')
       console.log(allUserNotes)
 
-      const res = await axios.get(`${NOTES_API_ENDPOINT}/getAllNotes?keyword=${debouncedQuary}&sortBy=${sortBy}&order=${order}&page=0&limit=0`, {
-        headers: {
-          Authorization: `Bearer ${accessToken}`
-        }
-      })
+      const res = await notesInstance.get(`${NOTES_API_ENDPOINT}/getAllNotes?keyword=${debouncedQuary}&sortBy=${sortBy}&order=${order}&page=0&limit=0`)
 
       return res
     } catch (error) {
@@ -97,11 +85,7 @@ const NotesProvider = (props) => {
   const deleteNoteFunction = async () => {
     try {
       console.log('inside context delete function')
-      const res = await axios.delete(`${NOTES_API_ENDPOINT}/delete/${noteId}`, {
-        headers: {
-          Authorization: `Bearer ${accessToken}`
-        }
-      })
+      const res = await notesInstance.delete(`${NOTES_API_ENDPOINT}/delete/${noteId}`)
 
       if (res.data.success) {
         console.log(res.data.message)
@@ -119,11 +103,7 @@ const NotesProvider = (props) => {
     try {
       console.log('inside conteext update function')
       console.log(noteId)
-      const res = await axios.put(`${NOTES_API_ENDPOINT}/update/${noteId}`, updatedData, {
-        headers: {
-          Authorization: `Bearer ${accessToken}`
-        }
-      })
+      const res = await notesInstance.put(`${NOTES_API_ENDPOINT}/update/${noteId}`, updatedData)
 
       if (res.data.success) {
         console.log(res)
@@ -141,9 +121,9 @@ const NotesProvider = (props) => {
     try {
       console.log('inside file upload function')
       console.log(noteId)
-      const res = await axios.post(`${NOTES_API_ENDPOINT}/file/upload/${noteId}`, data, {
+      const res = await notesInstance.post(`${NOTES_API_ENDPOINT}/file/upload/${noteId}`, data, {
         headers: {
-          'Authorization': `Bearer ${accessToken}`,
+          // 'Authorization': `Bearer ${accessToken}`,
           'Content-Type': 'multipart/form-data'
         },
       })
@@ -164,9 +144,9 @@ const NotesProvider = (props) => {
     try {
       console.log('inside file update function')
 
-      const res = await axios.put(`${NOTES_API_ENDPOINT}/file/update/${noteId}`, data, {
+      const res = await notesInstance.put(`${NOTES_API_ENDPOINT}/file/update/${noteId}`, data, {
         headers: {
-          'Authorization': `Bearer ${accessToken}`,
+          // 'Authorization': `Bearer ${accessToken}`,
           'Content-Type': 'multipart/form-data'
         }
       })
@@ -186,11 +166,7 @@ const NotesProvider = (props) => {
   const deleteFileFunction = async () => {
     try {
       console.log('inside file delete function')
-      const res = await axios.delete(`${NOTES_API_ENDPOINT}/file/delete/${noteId}`, {
-        headers: {
-          Authorization: `Bearer ${accessToken}`
-        }
-      })
+      const res = await notesInstance.delete(`${NOTES_API_ENDPOINT}/file/delete/${noteId}`)
 
       if (res.data.success) {
         console.log(res)
@@ -206,11 +182,7 @@ const NotesProvider = (props) => {
   const deleteAllNotesFunction = async () => {
     try {
       console.log('inside context delete all notes func')
-      const res = await axios.delete(`${NOTES_API_ENDPOINT}/deleteAll`, {
-        headers: {
-          Authorization: `Bearer ${accessToken}`
-        }
-      })
+      const res = await notesInstance.delete(`${NOTES_API_ENDPOINT}/deleteAll`)
 
       return res
 

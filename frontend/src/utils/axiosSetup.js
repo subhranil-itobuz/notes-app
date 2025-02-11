@@ -18,70 +18,68 @@ notesInstance.interceptors.request.use((req) => {
 
 }, (error) => error)
 
-notesInstance.interceptors.response.use((res) => res,
-    async (error) => {
-        if (error.res?.status === 401) {
-            const originalRequest = error.config;
-            if (!originalRequest._retry) {
-                originalRequest._retry = true;
-                try {
-                    const refreshToken = localStorage.getItem("refreshToken");
-                    if (!refreshToken) {
-                        throw new Error("No refresh token available");
-                    }
+userInstance.interceptors.request.use(req => {
+    const accessToken = localStorage.getItem('accessToken')
 
-                    const res = await axios.get(`${USER_API_ENDPOINT}/regenerateAccessToken`, {
-                        headers: {
-                            Authorization: `Bearer ${refreshToken}`
-                        },
-                    });
+    if (accessToken) req.headers['Authorization'] = `Bearer ${accessToken}`
 
-                    if (res.data.success) {
-                        localStorage.setItem("accessToken", res.data.accessToken);
-                        notesInstance.defaults.headers.common["Authorization"] = `Bearer ${res.data.accessToken}`;
-                        originalRequest.headers["Authorization"] = `Bearer ${res.data.accessToken}`;
-                        return notesInstance(originalRequest);
-                    }
-                } catch (refreshError) {
-                    console.error("Token refresh failed", refreshError);
+    return req
+
+}, error => error)
+
+notesInstance.interceptors.response.use(res => res, async (error) => {
+    const originalReq = error.config
+    if (error.status === 401 && !originalReq._retry) {
+        originalReq._retry = true
+
+        try {
+            const refreshToken = localStorage.getItem('refreshToken')
+            const res = await axios.get(`${USER_API_ENDPOINT}/regenerateAccessToken`, {
+                headers: {
+                    Authorization: `Bearer ${refreshToken}`
                 }
-            }
-            localStorage.removeItem("accessToken");
-            localStorage.removeItem("refreshToken");
-            localStorage.removeItem("isLoggedIn");
-            window.location.href = "/login";
+            })
+
+            const accessToken = res.data.accessToken
+            localStorage.setItem('accessToken', accessToken)
+
+            originalReq.headers.Authorization = `Bearer ${accessToken}`
+            return axios(originalReq)
+
+        } catch (error) {
+            console.log(error)
         }
-        return Promise.reject(error);
-    })
+    }
 
-// notesInstance.interceptors.response.use(async (res) => {
-//     console.log(res)
-//     if (res.data.status === 401) {
-//         console.log('inside instance interceptor if part')
-//         const refreshToken = localStorage.getItem('refreshToken')
-//         try {
-//             const res = await axios.get(`${USER_API_ENDPOINT}/regenerateAccessToken`, {
-//                 headers: `Bearer ${refreshToken}`
-//             })
+    return Promise.reject(error)
+})
 
-//             if (res.data.success) {
-//                 console.log(res)
-//                 const { accessToken } = res.data.accessToken
-//                 localStorage.setItem('accessToken', accessToken)
-//                 notesInstance.defaults.headers.common['Authorization'] = `Bearer ${accessToken}`
-//                 return notesInstance(res.config)
-//             }
-//             else {
-//                 localStorage.removeItem('accessToken')
-//                 localStorage.removeItem('refreshToken')
-//                 localStorage.removeItem('isLoggedIn')
-//             }
-//         } catch (error) {
-//             console.log(error)
-//         }
-//     }
-//     else return res
+userInstance.interceptors.response.use(res => res, async (error) => {
+    const originalReq = error.config
+    if (error.status === 401 && !originalReq._retry) {
+        originalReq._retry = true
 
-// })
+        try {
+            const refreshToken = localStorage.getItem('refreshToken')
+            const res = await axios.get(`${USER_API_ENDPOINT}/regenerateAccessToken`, {
+                headers: {
+                    Authorization: `Bearer ${refreshToken}`
+                }
+            })
+
+            const accessToken = res.data.accessToken
+            localStorage.setItem('accessToken', accessToken)
+
+            originalReq.headers.Authorization = `Bearer ${accessToken}`
+
+            return axios(originalReq)
+
+        } catch (error) {
+            console.log(error)
+        }
+    }
+
+    return Promise.reject(error)
+})
 
 export { userInstance, notesInstance }

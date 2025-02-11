@@ -313,7 +313,7 @@ export const logout = async (req, res) => {
 
     jwt.verify(accessToken, process.env.SECRET_KEY, async (error, decoded) => {
       if (error) {
-        return res.status(400).json({
+        return res.status(401).json({
           success: false,
           message: error.message
         })
@@ -360,7 +360,10 @@ export const getUserDetails = async (req, res) => {
 
     jwt.verify(accessToken, process.env.SECRET_KEY, async (error, decoded) => {
       if (error) {
-        throw new Error(error.message);
+        return res.status(401).json({
+          success: false,
+          message: error.message
+        })
       }
       else {
         const userId = decoded.userId
@@ -522,10 +525,10 @@ export const updateProfilePicture = async (req, res) => {
     if (existingProfilePicture !== '') {
       fs.unlink(existingProfilePicture, async (error) => {
         if (error) {
-          throw new Error(error.message);
-        }
-        else {
-          return
+          return res.status(404).json({
+            success: false,
+            message: error.message
+          })
         }
       })
     }

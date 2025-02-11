@@ -1,13 +1,11 @@
-import React, { useContext, useState } from 'react'
-import { AuthContext } from './AuthContext'
-import { USER_API_ENDPOINT } from '../utils/endPoints'
-import axios from 'axios'
+import React, { useState } from 'react'
 import { toast } from 'react-toastify'
+import { USER_API_ENDPOINT } from '../utils/endPoints'
+import { userInstance } from '../utils/axiosSetup'
 
 const UserContext = React.createContext()
 
 const UserProvider = (props) => {
-    const { accessToken } = useContext(AuthContext)
     const [user, setUser] = useState()
     const [openUserNameUpdateModal, setOpenUserNameUpdateModal] = useState(false)
     const [openPasswordUpdateModal, setOpenPasswordUpdateModal] = useState(false)
@@ -16,11 +14,7 @@ const UserProvider = (props) => {
 
     const getUser = async () => {
         try {
-            const res = await axios.get(`${USER_API_ENDPOINT}/getUser`, {
-                headers: {
-                    Authorization: `Bearer ${accessToken}`
-                }
-            })
+            const res = await userInstance.get(`${USER_API_ENDPOINT}/getUser`)
 
             if (res.data.success) {
                 console.log(res)
@@ -39,11 +33,7 @@ const UserProvider = (props) => {
     const userNameUpdateFunction = async (data) => {
         try {
             console.log('inside username update function context')
-            const res = await axios.put(`${USER_API_ENDPOINT}/update/userName`, data, {
-                headers: {
-                    Authorization: `Bearer ${accessToken}`
-                }
-            })
+            const res = await userInstance.put(`${USER_API_ENDPOINT}/update/userName`, data)
             console.log(res)
 
             return res
@@ -56,11 +46,7 @@ const UserProvider = (props) => {
     const passwordUpdateFunction = async (data) => {
         try {
             console.log('inside pasword change function context')
-            const res = await axios.put(`${USER_API_ENDPOINT}/update/password`, data, {
-                headers: {
-                    Authorization: `Bearer ${accessToken}`
-                }
-            })
+            const res = await userInstance.put(`${USER_API_ENDPOINT}/update/password`, data)
 
             return res
 
@@ -73,9 +59,9 @@ const UserProvider = (props) => {
     const profilePictureUpdateFunction = async (data) => {
         try {
             console.log('inside profile picture update function in context')
-            const res = await axios.post(`${USER_API_ENDPOINT}/update/profilePicture`, data, {
+            const res = await userInstance.post(`${USER_API_ENDPOINT}/update/profilePicture`, data, {
                 headers: {
-                    'Authorization': `Bearer ${accessToken}`,
+                    // 'Authorization': `Bearer ${accessToken}`,
                     'Content-Type': 'multipart/form-data'
                 },
             })

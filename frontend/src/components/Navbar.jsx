@@ -1,33 +1,28 @@
 import { useContext, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
-import axios from 'axios';
 
 import { USER_API_ENDPOINT } from '../utils/endPoints';
 import { AuthContext } from '../contexts/AuthContext';
 import hamburger from '../assets/hamburger.svg'
 import cross from '../assets/cross.svg'
 import { UserContext } from '../contexts/UserContext';
+import { userInstance } from '../utils/axiosSetup';
 
 const Navbar = () => {
   const navigate = useNavigate()
   const [expandNav, setExpandNav] = useState(false)
 
-  const { isLoggedIn, logoutFunction, accessToken, tokenRemoveFunction } = useContext(AuthContext)
+  const { isLoggedIn, logoutFunction, tokenRemoveFunction } = useContext(AuthContext)
   const isUser = isLoggedIn || localStorage.getItem('isLoggedIn')
 
   const { user } = useContext(UserContext)
   const userName = user?.userName || 'Username'
 
-  const token = accessToken || localStorage.getItem('accessToken')
-
   const logoutHandler = async () => {
     try {
-      const res = await axios.get(`${USER_API_ENDPOINT}/logout`, {
-        headers: {
-          Authorization: `Bearer ${token}`
-        }
-      })
+      const res = await userInstance.get(`${USER_API_ENDPOINT}/logout`)
+
       if (res.data.success) {
         console.log(res.data.message)
         logoutFunction()
@@ -38,7 +33,7 @@ const Navbar = () => {
       else toast.info(res.data.message)
     } catch (error) {
       console.error(error)
-      toast.error(error.message)
+      toast.error(error.response.data.message)
     }
   }
 
