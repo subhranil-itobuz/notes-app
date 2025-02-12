@@ -22,7 +22,7 @@ export const createAccount = async (req, res) => {
   }
 }
 
-//update account details of user by admin
+//update userName of user by admin
 export const updateUserNameOfUser = async (req, res) => {
   try {
     const userId = req.params.userId
@@ -55,6 +55,34 @@ export const updateUserNameOfUser = async (req, res) => {
   }
 }
 
+//update password of user by admin
+export const updatePasswordOfUser = async (req, res) => {
+  try {
+    const userId = req.params.userId
+
+    if (!userId) {
+      return res.status(404).json({
+        success: false,
+        message: "User id not found"
+      })
+    }
+
+    const user = await userModel.findById(userId)
+
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: "User not found"
+      })
+    }
+
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      message: error.message
+    })
+  }
+}
 //verify mail send to a particular user
 export const verifyMailSend = async (req, res) => {
   try {
