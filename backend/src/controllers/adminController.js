@@ -276,3 +276,31 @@ export const deleteAllNotesOfUser = async (req, res) => {
     })
   }
 }
+
+//delete the user and all notes of the user
+export const deleteUser = async (req, res) => {
+  try {
+    const userId = req.params.userId
+    if (!userId) {
+      return res.status(404).json({
+        success: false,
+        message: 'User id not found'
+      })
+    }
+
+    const user = await userModel.findById(userId)
+
+    await notesModel.deleteMany({ user: userId })
+    await user.deleteOne()
+
+    return res.status(200).json({
+      success: true,
+      message: "User deleted successfully"
+    })
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      message: error.message
+    })
+  }
+}
