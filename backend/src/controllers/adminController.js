@@ -4,51 +4,48 @@ import { mailSender } from "../mail/transporter.js"
 import notesModel from "../models/notesModel.js"
 import userModel from "../models/userModel.js"
 import { createNote } from './notesController.js'
+import { signUp, updateUserName } from './userController.js'
 
-//get all users, all verified user and non-verified user function
-export const getAllUser = async (req, res) => {
+//create a new user by admin
+export const createAccount = async (req, res) => {
   try {
-    const allUser = await userModel.find({ role: 'user' })
+    const userData = { ...req.body }
+    console.log(userData)
 
-    if (!allUser) {
+    await signUp(req, res, userData)
+
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      message: error.message
+    })
+  }
+}
+
+//update account details of user by admin
+export const updateUserNameOfUser = async (req, res) => {
+  try {
+    const userId = req.params.userId
+
+    const { newUserName } = req.body
+
+    if (!userId) {
       return res.status(404).json({
         success: false,
-        message: 'No User Found'
+        message: "User id not found"
       })
     }
 
-    const verifiedUser = allUser.filter(item => item.verified === true)
+    const user = await userModel.findById(userId)
 
-    if (!verifiedUser) {
+    if (!user) {
       return res.status(404).json({
-        succes: false,
-        message: "No user is verified"
+        success: false,
+        message: "User not found"
       })
     }
 
-    const nonVerifiedUser = allUser.filter(item => item.verified === false)
-
-    if (!nonVerifiedUser) {
-      return res.status(404).json({
-        succes: false,
-        message: "All user is verified"
-      })
-    }
-
-    const data = {
-      totalUser: allUser.length,
-      totalVerifiedUser: verifiedUser.length,
-      totalNonVerifiedUser: nonVerifiedUser.length,
-      allUser: allUser,
-      verifiedUser: verifiedUser,
-      nonVerifiedUser: nonVerifiedUser,
-    }
-
-    return res.status(200).json({
-      success: true,
-      message: 'All users fetched successfully',
-      data: data
-    })
+    await updateUserName(req, res, userId, newUserName)
 
   } catch (error) {
     return res.status(500).json({
@@ -153,6 +150,113 @@ export const verifyParticularUser = async (req, res) => {
   }
 }
 
+//get all users, all verified user and non-verified user function
+export const getAllUser = async (req, res) => {
+  try {
+    const allUser = await userModel.find({ role: 'user' })
+
+    if (!allUser) {
+      return res.status(404).json({
+        success: false,
+        message: 'No User Found'
+      })
+    }
+
+    const verifiedUser = allUser.filter(item => item.verified === true)
+
+    if (!verifiedUser) {
+      return res.status(404).json({
+        succes: false,
+        message: "No user is verified"
+      })
+    }
+
+    const nonVerifiedUser = allUser.filter(item => item.verified === false)
+
+    if (!nonVerifiedUser) {
+      return res.status(404).json({
+        succes: false,
+        message: "All user is verified"
+      })
+    }
+
+    const data = {
+      totalUser: allUser.length,
+      totalVerifiedUser: verifiedUser.length,
+      totalNonVerifiedUser: nonVerifiedUser.length,
+      allUser: allUser,
+      verifiedUser: verifiedUser,
+      nonVerifiedUser: nonVerifiedUser,
+    }
+
+    return res.status(200).json({
+      success: true,
+      message: 'All users fetched successfully',
+      data: data
+    })
+
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      message: error.message
+    })
+  }
+}
+
+//delete the user and all notes of the user
+export const deleteUser = async (req, res) => {
+  try {
+    const userId = req.params.userId
+    if (!userId) {
+      return res.status(404).json({
+        success: false,
+        message: 'User id not found'
+      })
+    }
+
+    const user = await userModel.findById(userId)
+
+    await notesModel.deleteMany({ user: userId })
+    await user.deleteOne()
+
+    return res.status(200).json({
+      success: true,
+      message: "User deleted successfully"
+    })
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      message: error.message
+    })
+  }
+}
+
+//add note for a particular user
+export const createNoteForUser = async (req, res) => {
+  try {
+    const userId = req.params.userId
+
+    if (!userId) {
+      return res.status(404).json({
+        success: false,
+        message: 'User id not found'
+      })
+    }
+
+    const { title, description, tag } = req.body
+
+    const noteData = { title, description, tag }
+
+    await createNote(req, res, userId, noteData)
+
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      message: error.message
+    })
+  }
+}
+
 //get all notes of a particular user
 export const getAllNotesOfUser = async (req, res) => {
   try {
@@ -165,7 +269,7 @@ export const getAllNotesOfUser = async (req, res) => {
       })
     }
 
-    const notes = await notesModel.find({ user: userId })
+    const notes = await notesModel.find({ user: userId }).populate('user')
 
     if (!notes) {
       return res.status(404).json({
@@ -269,60 +373,6 @@ export const deleteAllNotesOfUser = async (req, res) => {
       success: false,
       message: "All notes deleted successfully for this user"
     })
-
-  } catch (error) {
-    return res.status(500).json({
-      success: false,
-      message: error.message
-    })
-  }
-}
-
-//delete the user and all notes of the user
-export const deleteUser = async (req, res) => {
-  try {
-    const userId = req.params.userId
-    if (!userId) {
-      return res.status(404).json({
-        success: false,
-        message: 'User id not found'
-      })
-    }
-
-    const user = await userModel.findById(userId)
-
-    await notesModel.deleteMany({ user: userId })
-    await user.deleteOne()
-
-    return res.status(200).json({
-      success: true,
-      message: "User deleted successfully"
-    })
-  } catch (error) {
-    return res.status(500).json({
-      success: false,
-      message: error.message
-    })
-  }
-}
-
-//add note for a particular user
-export const createNoteForUser = async (req, res) => {
-  try {
-    const userId = req.params.userId
-
-    if (!userId) {
-      return res.status(404).json({
-        success: false,
-        message: 'User id not found'
-      })
-    }
-
-    const { title, description, tag } = req.body
-
-    const noteData = { title, description, tag }
-
-    await createNote(req, res, userId, noteData)
 
   } catch (error) {
     return res.status(500).json({

@@ -8,10 +8,9 @@ import jwt from 'jsonwebtoken'
 import fs from 'fs'
 
 //signup function
-export const signUp = async (req, res) => {
+export const signUp = async (req, res, obj) => {
   try {
-    const { userName, email, password, confirmPassword, role } = req.body
-
+    const { userName, email, password, confirmPassword, role } = req.body || obj
     if (Object.keys(req.body).length > 5)
       throw new Error("Extra fields");
 
@@ -467,10 +466,10 @@ export const updatePassword = async (req, res) => {
 }
 
 //update userName function
-export const updateUserName = async (req, res) => {
+export const updateUserName = async (req, res, newId, name) => {
   try {
-    const userId = req.id
-    const { newUserName } = req.body
+    const userId = newId ? newId : req.id
+    const newUserName = name ? name : req.body.newUserName
 
     if (Object.keys(req.body).length > 1)
       throw new Error("Extra fields");
