@@ -3,6 +3,7 @@ import jwt from 'jsonwebtoken'
 import { mailSender } from "../mail/transporter.js"
 import notesModel from "../models/notesModel.js"
 import userModel from "../models/userModel.js"
+import { createNote } from './notesController.js'
 
 //get all users, all verified user and non-verified user function
 export const getAllUser = async (req, res) => {
@@ -297,6 +298,32 @@ export const deleteUser = async (req, res) => {
       success: true,
       message: "User deleted successfully"
     })
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      message: error.message
+    })
+  }
+}
+
+//add note for a particular user
+export const createNoteForUser = async (req, res) => {
+  try {
+    const userId = req.params.userId
+
+    if (!userId) {
+      return res.status(404).json({
+        success: false,
+        message: 'User id not found'
+      })
+    }
+
+    const { title, description, tag } = req.body
+
+    const noteData = { title, description, tag }
+
+    await createNote(req, res, userId, noteData)
+
   } catch (error) {
     return res.status(500).json({
       success: false,

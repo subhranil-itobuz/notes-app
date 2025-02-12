@@ -3,12 +3,13 @@ import notesModel from "../models/notesModel.js";
 import { notesSchemaValidation } from "../validator/notesValidate.js";
 
 //create note function
-export const createNote = async (req, res) => {
+export const createNote = async (req, res, newId, obj) => {
     try {
-        const { title, description, tag } = req.body
-        const userId = req.id
+        const { title, description, tag } = req.body || obj
 
-        if (Object.keys(req.body).length > 3)
+        let userId = newId ? newId : req.id
+
+        if (Object.keys(req?.body).length > 3)
             throw new Error("Extra fields");
 
         //eslint-disable-next-line
