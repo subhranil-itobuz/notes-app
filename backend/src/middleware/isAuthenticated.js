@@ -18,7 +18,7 @@ const isAuthenticated = async (req, res, next) => {
         if (!accessToken) {
             return res.status(404).json({
                 success: false,
-                message: "Refresh token not found"
+                message: "Access token not found"
             })
         }
 

@@ -1,4 +1,5 @@
 import express from 'express'
+
 import { getUserDetails, login, logout, regenerateAccessToken, resendVerificationLink, signUp, updatePassword, updateProfilePicture, updateUserName, verifyUser } from '../controllers/userController.js'
 import isAuthenticated from '../middleware/isAuthenticated.js'
 import { uploadProfilePicture } from '../middleware/multer.js'
