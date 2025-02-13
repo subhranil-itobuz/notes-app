@@ -14,8 +14,10 @@ export const signupUserSchema = yup.object({
   password: yup.string()
     .required('password is required')
     .min(5),
-  role: yup.string()
-    .required('Role is required')
+
+  confirmPassword: yup.string()
+    .required('confirm password is required')
+    .min(5),
 
 }).required()
 
@@ -26,9 +28,7 @@ export const loginUserSchema = yup.object({
 
   password: yup.string()
     .required('password is required')
-    .min(5),
-  role: yup.string()
-    .required('Role is required')
+    .min(5)
 }).required()
 
 export const reVerifySchema = yup.object({

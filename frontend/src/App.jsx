@@ -12,6 +12,7 @@ import { NotesProvider } from "./contexts/NotesContext.jsx";
 import ViewAllNotesPage from "./pages/ViewAllNotesPage.jsx";
 import ProfilePage from './pages/ProfilePage.jsx'
 import ProtectedRoutes from "./middleware/ProtectedRoutes.jsx";
+import ErrorPage from "./pages/ErrorPage.jsx";
 
 function App() {
 
@@ -22,6 +23,7 @@ function App() {
         <UserProvider>
           <NotesProvider>
             <Routes>
+              <Route path='*' element={<ErrorPage />} />
               <Route path='/' element={<Home />} />
               <Route path='/signup' element={<SignupPage />} />
               <Route path='/verify/:token' element={<VerifyEmail />} />

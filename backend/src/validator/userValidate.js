@@ -20,7 +20,7 @@ export const userSchemaValidation = z.object({
     required_error: "Password required",
     invalid_type_error: "Password must be more than 5 characters"
   }).min(5)
-}).strict()
+})
 
 export const loginCredValidation = z.object({
   email: z.string({

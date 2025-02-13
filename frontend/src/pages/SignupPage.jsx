@@ -10,11 +10,17 @@ import BackToHome from '../components/BackToHome'
 import eye from '../assets/eye.svg'
 import { useState } from 'react'
 import eyeSlash from '../assets/eyeSlash.svg'
+import { FiInfo } from "react-icons/fi";
+import { Popover } from 'react-tiny-popover'
+
+
 
 
 const SignupPage = () => {
   const [type, setType] = useState('password');
   const [icon, setIcon] = useState(eye);
+  const [isUserNamePopoverOpen, setIsUserNamePopoverOpen] = useState(false)
+  const [isPasswordPopoverOpen, setIsPasswordPopoverOpen] = useState(false)
   const navigate = useNavigate()
 
   const { register, handleSubmit, formState: { errors }, } = useForm({
@@ -62,7 +68,26 @@ const SignupPage = () => {
         <BackToHome />
 
         <div>
-          <input type="text" name='userName' placeholder='Enter Username' className='border border-[#eae2b7] rounded-md w-full p-2 text-xl focus:outline-none bg-transparent focus:bg-white text-white focus:text-black placeholder:text-base transition-all ease-in-out duration-300' {...register('userName', { required: true, minLength: 4, maxLength: 15 })} />
+          <div className='w-full flex items-center gap-2'>
+            <input type="text" name='userName' placeholder='Enter Username' className=' border border-[#eae2b7] rounded-md w-[95%]  p-2 text-xl focus:outline-none bg-transparent focus:bg-white text-white focus:text-black placeholder:text-base transition-all ease-in-out duration-300' {...register('userName', { required: true, minLength: 4, maxLength: 15 })} />
+            <Popover
+              isOpen={isUserNamePopoverOpen}
+              positions={['top']}
+              content={
+                <div className='bg-gray-300 text-sm p-3 rounded-md me-5 opacity-95'>
+                  <ol className='flex flex-col gap-1'>
+                    <li>Symbols are not allowed</li>
+                    <li>One digit is required</li>
+                    <li>UPPERCASE character is not allowed</li>
+                    <li>lowercase character is required</li>
+                    <li>Must be within 4-15 characters</li>
+                  </ol>
+                </div>
+              }
+            >
+              <button onMouseEnter={() => setIsUserNamePopoverOpen(true)} onMouseLeave={() => setIsUserNamePopoverOpen(false)} ><FiInfo color='cyan' size={30} /></button>
+            </Popover>
+          </div>
           <p className='text-red-600 text-sm font-semibold h-6 pt-1'>{errors.userName?.message}</p>
         </div>
 
@@ -73,10 +98,30 @@ const SignupPage = () => {
         </div>
 
         <div>
-          <div className='relative'>
-            <input type={type} name='password' placeholder='Enter password' className='border border-[#eae2b7] rounded-md w-full p-2 text-xl focus:outline-none bg-transparent focus:bg-white text-white focus:text-black placeholder:text-base transition-all ease-in-out duration-300' {...register('password', { required: true, minLength: 5 })} />
-            <span className='absolute w-6 top-[10px] right-3 cursor-pointer' onClick={handleTogglePassword}><img src={icon} alt="eye icon" className='filter fill-white' /></span>
+          <div className='w-full flex items-center gap-2'>
+            <div className='relative w-[95%]'>
+              <input type={type} name='password' placeholder='Enter password' className='border border-[#eae2b7] rounded-md w-full p-2 text-xl focus:outline-none bg-transparent focus:bg-white text-white focus:text-black placeholder:text-base transition-all ease-in-out duration-300' {...register('password', { required: true, minLength: 5 })} />
+              <span className='absolute w-6 top-[10px] right-3 cursor-pointer' onClick={handleTogglePassword}><img src={icon} alt="eye icon" className='filter fill-white' /></span>
+            </div>
+            <Popover
+              isOpen={isPasswordPopoverOpen}
+              positions={['top']}
+              content={
+                <div className='bg-gray-300 text-sm p-3 rounded-md me-5 opacity-95'>
+                  <ol className='flex flex-col gap-1'>
+                    <li>Atleast one UPPERCASE character is required</li>
+                    <li>Atleast one lowercase character is required</li>
+                    <li>Atleast one digit (0-9) is required</li>
+                    <li>Atleast one special character is required</li>
+                    <li>Atleast 5 characters long</li>
+                  </ol>
+                </div>
+              }
+            >
+              <button onMouseEnter={() => setIsPasswordPopoverOpen(true)} onMouseLeave={() => setIsPasswordPopoverOpen(false)} ><FiInfo color='cyan' size={30} /></button>
+            </Popover>
           </div>
+
           <p className='text-red-600 text-sm font-semibold h-6 pt-1'>{errors.password?.message}</p>
         </div>
 
@@ -86,27 +131,8 @@ const SignupPage = () => {
           </div>
           <p className='text-red-600 text-sm font-semibold h-6 pt-1'>{errors.confirmPassword?.message}</p>
         </div>
-        <div>
-          <div className='flex items-center gap-3'>
-            <label className='text-white font-medium 2xl:text-base'>
-              <span className='text-red-500'>*</span>
-              Enter Your Role:
-            </label>
-            <div className='flex items-center justify-start gap-3 font-semibold'>
-              <div>
-                <input type="radio" name="role" id="user" value='user' className='accent-pink-600 cursor-pointer' {...register('role', { required: true })} />
-                <label htmlFor="user" className='ms-1 text-[#eae2b7] cursor-pointer'>User</label>
-              </div>
-              <div>
-                <input type="radio" name="role" id="admin" value='admin' className='accent-pink-600 cursor-pointer' {...register('role', { required: true })} />
-                <label htmlFor="admin" className='ms-1 text-[#eae2b7] cursor-pointer'>Admin</label>
-              </div>
-            </div>
-          </div>
-          <p className='text-red-600 ps-2 text-sm font-semibold h-6 pt-1'>{errors.role?.message}</p>
-        </div>
 
-        <button className='bg-orange-400 hover:bg-orange-700 font-semibold w-[80%] 2xl:w-[60%] py-2 mt-2 mb-1 text-white outline-0 rounded-lg mx-auto text-xl transition-all duration-500 ease-in-out' >Submit</button>
+        <button className='bg-orange-400 hover:bg-orange-700 font-semibold w-[80%] 2xl:w-[60%] py-2 mt-5 mb-1 text-white outline-0 rounded-lg mx-auto text-xl transition-all duration-500 ease-in-out' >Submit</button>
         <div className='text-white'>
           Already have an account? &nbsp;
           <Link to='/login' className='text-blue-300 hover:text-blue-400'>Login</Link>

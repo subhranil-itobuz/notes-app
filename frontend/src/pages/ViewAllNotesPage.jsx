@@ -94,8 +94,8 @@ const ViewAllNotesPage = () => {
                     <div className="border border-blue-600 rounded-xl px-5 py-2">
                         <select className="focus:outline-none w-full cursor-pointer bg-transparent text-orange-500" onChange={handleSortOrder}>
                             <option value="" title="default">Order</option>
-                            <option value="asc">Asc to Dsc</option>
-                            <option value="dsc">Dsc to Asc</option>
+                            <option value={sortBy === 'createdAt' ? 'asc' : 'dsc'}>Asc to Dsc</option>
+                            <option value={sortBy === 'createdAt' ? 'dsc' : 'asc'}>Dsc to Asc</option>
                         </select>
                     </div>
                 </section>

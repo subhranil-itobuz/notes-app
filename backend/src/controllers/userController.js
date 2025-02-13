@@ -24,13 +24,12 @@ export const signUp = async (req, res) => {
       confirmPassword: confirmPassword.replace(/\s/g, '').trim(),
     }
 
-    const validUser = userSchemaValidation.parse(userDetails)
+    const validUser = userSchemaValidation.safeParse(userDetails)
 
     if (!validUser.success) {
       return res.status(BAD_REQUEST_CODE).json({
         success: false,
-        data: validUser.error
-        // message: `${validUser.error.issues[0].message} --> ${validUser.error.issues[0].path}`
+        message: `${validUser.error.issues[0].message} --> ${validUser.error.issues[0].path}`
       })
     }
 
