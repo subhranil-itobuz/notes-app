@@ -211,7 +211,8 @@ export const login = async (req, res) => {
     }, {
       password: 1,
       verified: 1,
-      userName: 1
+      userName: 1,
+      role: 1
     }).exec()
 
     if (!user) {
@@ -222,10 +223,10 @@ export const login = async (req, res) => {
     }
 
     const userId = user._id
+    const role = user.role
 
     const comparePassword = await bcrypt.compare(password, user.password);
 
-    console.log('after compare')
     if (!comparePassword) {
       return res.status(BAD_REQUEST_CODE).json({
         success: false,
@@ -240,8 +241,8 @@ export const login = async (req, res) => {
       })
     }
 
-    const accessToken = jwt.sign({ userId }, process.env.SECRET_KEY, { expiresIn: '7d' })
-    const refreshToken = jwt.sign({ userId }, process.env.SECRET_KEY, { expiresIn: '30d' })
+    const accessToken = jwt.sign({ userId, role }, process.env.SECRET_KEY, { expiresIn: '7d' })
+    const refreshToken = jwt.sign({ userId, role }, process.env.SECRET_KEY, { expiresIn: '30d' })
 
     await sessionsModel.create({ userId })
 
@@ -389,7 +390,7 @@ export const getUserDetails = async (req, res) => {
         const userId = decoded.userId
 
         const user = await userModel.findById(userId)
-        console.log(user)
+
         if (!user) {
           return res.status(NOT_FOUND_CODE).json({
             success: false,

@@ -31,6 +31,7 @@ const isAuthenticated = async (req, res, next) => {
             }
             else {
                 const userId = decoded.userId
+                const role = decoded.role
 
                 if (!userId) {
                     return res.status(404).json({
@@ -58,6 +59,7 @@ const isAuthenticated = async (req, res, next) => {
                 }
 
                 req.id = userId
+                req.role = role
                 next()
             }
         })

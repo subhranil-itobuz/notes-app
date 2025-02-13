@@ -81,10 +81,14 @@ export const createNote = async (req, res) => {
 export const getAllNotes = async (req, res) => {
     try {
         const userId = req.id
+        const role = req.role
         const keyword = req.query.keyword || ''
         const sortBy = req.query.sortBy || 'createdAt'
         const order = req.query.order || 'asc'
-        const { limit = 6, page = 1 } = req.query
+        const {
+            limit = role === 'user' ? 6 : 0,
+            page = role === 'user' ? 1 : 0
+        } = req.query
 
         const offset = (page - 1) * limit
 
@@ -100,30 +104,55 @@ export const getAllNotes = async (req, res) => {
             .skip(offset)
             .limit(limit * 1)
 
-        const totalNotes = await notesModel.find({ user: userId }).populate('user')
+        const totalNotes = await notesModel.find({ user: userId })
 
-        if (!userId) {
-            return res.status(NOT_FOUND_CODE).json({
-                success: false,
-                message: "User not found"
+        const allNotes = role === 'user' ? null : await notesModel.find({
+            $or: [
+                { title: { $regex: keyword, $options: 'i' } },
+                { description: { $regex: keyword, $options: 'i' } },
+                { tag: { $regex: keyword, $options: "i" } }
+            ]
+        }).populate('user').sort({ [sortBy]: order === 'asc' ? -1 : 1 })
+
+        if (role === 'user') {
+            if (!userId) {
+                return res.status(NOT_FOUND_CODE).json({
+                    success: false,
+                    message: "User not found"
+                })
+            }
+
+            if (pageNotes.length === 0 || totalNotes.length === 0) {
+                return res.status(NOT_FOUND_CODE).json({
+                    success: false,
+                    message: "No notes to display. Please create a note"
+                })
+            }
+
+            return res.status(SUCCESS_CODE).json({
+                success: true,
+                message: "All notes fetched successfully",
+                pageNo: page,
+                currentResults: pageNotes.length,
+                totalResults: totalNotes.length,
+                data: pageNotes
             })
         }
+        else {
+            if (allNotes.length === 0) {
+                return res.status(404).json({
+                    success: false,
+                    message: "No notes to display"
+                })
+            }
 
-        if (pageNotes.length === 0 || totalNotes.length === 0) {
-            return res.status(NOT_FOUND_CODE).json({
-                success: false,
-                message: "No notes to display. Please create a note"
+            return res.status(200).json({
+                success: true,
+                message: "All notes fetched successfully",
+                totalNotes: allNotes.length,
+                data: allNotes
             })
         }
-
-        return res.status(SUCCESS_CODE).json({
-            success: true,
-            message: "All notes fetched successfully",
-            pageNo: page,
-            currentResults: pageNotes.length,
-            totalResults: totalNotes.length,
-            data: pageNotes
-        })
 
     } catch (error) {
         return res.status(INTERNAL_SERVER_ERROR_CODE).json({
