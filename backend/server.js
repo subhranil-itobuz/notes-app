@@ -4,6 +4,7 @@ import cors from 'cors'
 import { dbConnect } from './src/utils/dbConnect.js'
 import userRoute from './src/routes/userRoute.js'
 import notesRoute from './src/routes/notesRoute.js'
+import adminRoute from './src/routes/adminRoute.js'
 
 env.config({})
 
@@ -23,6 +24,7 @@ const port = process.env.PORT || 5000
 dbConnect()
 
 //all api
+app.use('/api/admin', adminRoute)
 app.use('/api/user', userRoute)
 app.use('/api/notes', notesRoute)
 
