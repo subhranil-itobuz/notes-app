@@ -1,13 +1,14 @@
 import fs from 'fs'
 import notesModel from "../models/notesModel.js";
 import { notesSchemaValidation } from "../validator/notesValidate.js";
+import { BAD_REQUEST_CODE, CREATED_CODE, INTERNAL_SERVER_ERROR_CODE, NOT_FOUND_CODE, SUCCESS_CODE } from '../utils/constant.js';
 
 //create note function
-export const createNote = async (req, res, newId, obj) => {
+export const createNote = async (req, res) => {
     try {
-        const { title, description, tag } = req.body || obj
+        const { title, description, tag } = req.body
 
-        let userId = newId ? newId : req.id
+        let userId = req.id
 
         if (Object.keys(req?.body).length > 3)
             throw new Error("Extra fields");
@@ -16,13 +17,13 @@ export const createNote = async (req, res, newId, obj) => {
         const noteRegex = /[-!$%^&*()_+|~=`{}\[\]:\/;<>?,.@#]/;
 
         if (noteRegex.test(title)) {
-            return res.status(400).json({
+            return res.status(BAD_REQUEST_CODE).json({
                 success: false,
                 message: 'Special character is not allowed in title'
             })
         }
         if (noteRegex.test(tag)) {
-            return res.status(400).json({
+            return res.status(BAD_REQUEST_CODE).json({
                 success: false,
                 message: 'Special character is not allowed in tag'
             })
@@ -37,7 +38,7 @@ export const createNote = async (req, res, newId, obj) => {
         const validNotes = notesSchemaValidation.safeParse(noteDetails)
 
         if (!validNotes.success) {
-            return res.status(400).json({
+            return res.status(BAD_REQUEST_CODE).json({
                 success: false,
                 message: `${validNotes.error.issues[0].message} --> ${validNotes.error.issues[0].path}`
             })
@@ -49,7 +50,7 @@ export const createNote = async (req, res, newId, obj) => {
         })
 
         if (oldNote) {
-            return res.status(400).json({
+            return res.status(BAD_REQUEST_CODE).json({
                 success: false,
                 message: "Same title already exists, please try another title"
             })
@@ -62,141 +63,14 @@ export const createNote = async (req, res, newId, obj) => {
             tag: tag?.toLowerCase().replace(/\s+/g, ' ').trim() || 'general'
         })
 
-        return res.status(201).json({
+        return res.status(CREATED_CODE).json({
             success: true,
             message: "Note created successfully",
             data: note
         })
 
     } catch (error) {
-        return res.status(500).json({
-            success: false,
-            message: error.message
-        })
-    }
-}
-
-//upload note files function
-export const uploadFile = async (req, res) => {
-    try {
-        const file = req.file
-        const noteId = req.params.id
-
-        if (!file) {
-            return res.status(400).json({
-                success: false,
-                message: "No file uploaded"
-            })
-        }
-
-        const note = await notesModel.findById(noteId)
-
-        if (!note) {
-            return res.status(404).json({
-                success: false,
-                message: "Note not found"
-            })
-        }
-
-        note.fileUrl = `http://localhost:3000/uploads/notesFile/${file.filename}`
-
-        await note.save()
-
-        return res.status(201).json({
-            success: true,
-            message: `File uploaded successfully`,
-            fileUrl: note.fileUrl
-        })
-
-    } catch (error) {
-        return res.status(500).json({
-            success: false,
-            message: error.message
-        })
-    }
-}
-
-//update the existing file function
-export const updateFile = async (req, res) => {
-    try {
-        const newFile = req.file
-        const noteId = req.params.id
-
-        const note = await notesModel.findById(noteId)
-
-        if (!note) {
-            return res.status(404).json({
-                success: false,
-                message: "Note not found"
-            })
-        }
-
-        const existingFile = note.fileUrl.split('/').slice(-3).join('/')
-
-        fs.unlink(existingFile, async (error) => {
-            if (error) {
-                return res.status(400).json({
-                    success: false,
-                    message: error.message
-                })
-            }
-            else {
-                const url = newFile ? newFile.filename : note.fileUrl
-
-                note.fileUrl = `http://localhost:3000/uploads/notesFile/${url}`
-
-                await note.save()
-
-                return res.status(200).json({
-                    success: true,
-                    message: 'File updated successfully'
-                })
-            }
-        })
-
-    } catch (error) {
-        return res.status(500).json({
-            success: false,
-            message: error.message
-        })
-    }
-}
-
-//delete the file function
-export const deleteFile = async (req, res) => {
-    try {
-        const note = await notesModel.findById(req.params.id)
-
-        if (!note) {
-            return res.status(404).json({
-                success: false,
-                message: 'Note not found'
-            })
-        }
-
-        const filePath = note.fileUrl.split('/').slice(-3).join('/')
-
-        fs.unlink(filePath, async (error) => {
-            if (error) {
-                return res.status(400).json({
-                    success: false,
-                    message: error.message
-                })
-            }
-            else {
-                note.fileUrl = ''
-
-                await note.save()
-
-                return res.status(200).json({
-                    success: true,
-                    message: 'File deleted successfully'
-                })
-            }
-        });
-
-    } catch (error) {
-        return res.status(500).json({
+        return res.status(INTERNAL_SERVER_ERROR_CODE).json({
             success: false,
             message: error.message
         })
@@ -226,23 +100,23 @@ export const getAllNotes = async (req, res) => {
             .skip(offset)
             .limit(limit * 1)
 
-        const totalNotes = await notesModel.find({ user: userId })
+        const totalNotes = await notesModel.find({ user: userId }).populate('user')
 
         if (!userId) {
-            return res.status(404).json({
+            return res.status(NOT_FOUND_CODE).json({
                 success: false,
                 message: "User not found"
             })
         }
 
         if (pageNotes.length === 0 || totalNotes.length === 0) {
-            return res.status(404).json({
+            return res.status(NOT_FOUND_CODE).json({
                 success: false,
                 message: "No notes to display. Please create a note"
             })
         }
 
-        return res.status(200).json({
+        return res.status(SUCCESS_CODE).json({
             success: true,
             message: "All notes fetched successfully",
             pageNo: page,
@@ -252,7 +126,7 @@ export const getAllNotes = async (req, res) => {
         })
 
     } catch (error) {
-        return res.status(500).json({
+        return res.status(INTERNAL_SERVER_ERROR_CODE).json({
             success: false,
             message: error.message
         })
@@ -267,19 +141,19 @@ export const getNoteById = async (req, res) => {
         const note = await notesModel.findById(id)
 
         if (!note) {
-            return res.status(404).json({
+            return res.status(NOT_FOUND_CODE).json({
                 success: false,
                 message: "Note not found"
             })
         }
 
-        return res.status(200).json({
+        return res.status(SUCCESS_CODE).json({
             success: true,
             message: "Note fetched successfully",
             data: note
         })
     } catch (error) {
-        return res.status(500).json({
+        return res.status(INTERNAL_SERVER_ERROR_CODE).json({
             success: false,
             message: error.message
         })
@@ -300,7 +174,7 @@ export const updateNote = async (req, res) => {
         const regex_symbols = /[-!$%^&*()_+|~=`{}\[\]:\/;<>?,.@#]/;
 
         if (regex_symbols.test(title) || regex_symbols.test(tag)) {
-            return res.status(400).json({
+            return res.status(BAD_REQUEST_CODE).json({
                 success: false,
                 message: 'Special character is not allowed'
             })
@@ -310,7 +184,7 @@ export const updateNote = async (req, res) => {
         const note = await notesModel.findById(id)
 
         if (!note) {
-            return res.status(404).json({
+            return res.status(NOT_FOUND_CODE).json({
                 success: false,
                 message: "Note not found"
             })
@@ -334,7 +208,7 @@ export const updateNote = async (req, res) => {
         const validNotes = notesSchemaValidation.safeParse(newNote)
 
         if (!validNotes.success) {
-            return res.status(400).json({
+            return res.status(BAD_REQUEST_CODE).json({
                 success: false,
                 message: `${validNotes.error.issues[0].message} --> ${validNotes.error.issues[0].path}`
             })
@@ -347,7 +221,7 @@ export const updateNote = async (req, res) => {
         })
 
         if (sameTitle) {
-            return res.status(400).json({
+            return res.status(BAD_REQUEST_CODE).json({
                 success: false,
                 message: "Same title already exists, please try another title"
             })
@@ -355,14 +229,14 @@ export const updateNote = async (req, res) => {
 
         await note.updateOne(newNote)
 
-        return res.status(201).json({
+        return res.status(CREATED_CODE).json({
             success: true,
             message: "Note updated successfully",
             data: await notesModel.findById(id)
         })
 
     } catch (error) {
-        return res.status(500).json({
+        return res.status(INTERNAL_SERVER_ERROR_CODE).json({
             success: false,
             message: error.message
         })
@@ -377,7 +251,7 @@ export const deleteNote = async (req, res) => {
         const note = await notesModel.findById(id)
 
         if (!note) {
-            return res.status(404).json({
+            return res.status(NOT_FOUND_CODE).json({
                 success: false,
                 message: "Note not found"
             })
@@ -385,13 +259,13 @@ export const deleteNote = async (req, res) => {
 
         await note.deleteOne()
 
-        return res.status(200).json({
+        return res.status(SUCCESS_CODE).json({
             success: true,
             message: "Note deleted successfully"
         })
 
     } catch (error) {
-        return res.status(500).json({
+        return res.status(INTERNAL_SERVER_ERROR_CODE).json({
             success: false,
             message: error.message
         })
@@ -408,7 +282,7 @@ export const emptyAll = async (req, res) => {
         })
 
         if (notes.length === 0) {
-            return res.status(404).json({
+            return res.status(NOT_FOUND_CODE).json({
                 success: false,
                 message: "No Notes to delete"
             })
@@ -418,13 +292,141 @@ export const emptyAll = async (req, res) => {
             user: userId
         })
 
-        return res.status(200).json({
+        return res.status(SUCCESS_CODE).json({
             success: true,
             message: "All Notes deleted successfully"
         })
 
     } catch (error) {
-        return res.status(500).json({
+        return res.status(INTERNAL_SERVER_ERROR_CODE).json({
+            success: false,
+            message: error.message
+        })
+    }
+}
+
+//upload note files function
+export const uploadFile = async (req, res) => {
+    try {
+        const file = req.file
+        const noteId = req.params.id
+
+        if (!file) {
+            return res.status(BAD_REQUEST_CODE).json({
+                success: false,
+                message: "No file uploaded"
+            })
+        }
+
+        const note = await notesModel.findById(noteId)
+
+        if (!note) {
+            return res.status(NOT_FOUND_CODE).json({
+                success: false,
+                message: "Note not found"
+            })
+        }
+        else {
+            note.fileUrl = `http://localhost:3000/uploads/notesFile/${file.filename}`
+
+            await note.save()
+
+            return res.status(CREATED_CODE).json({
+                success: true,
+                message: `File uploaded successfully`,
+                fileUrl: note.fileUrl
+            })
+        }
+
+    } catch (error) {
+        return res.status(INTERNAL_SERVER_ERROR_CODE).json({
+            success: false,
+            message: error.message
+        })
+    }
+}
+
+//update the existing file function
+export const updateFile = async (req, res) => {
+    try {
+        const newFile = req.file
+        const noteId = req.params.id
+
+        const note = await notesModel.findById(noteId)
+
+        if (!note) {
+            return res.status(NOT_FOUND_CODE).json({
+                success: false,
+                message: "Note not found"
+            })
+        }
+
+        const existingFile = note.fileUrl.split('/').slice(-3).join('/')
+
+        fs.unlink(existingFile, async (error) => {
+            if (error) {
+                return res.status(BAD_REQUEST_CODE).json({
+                    success: false,
+                    message: error.message
+                })
+            }
+            else {
+                const url = newFile ? newFile.filename : note.fileUrl
+
+                note.fileUrl = `http://localhost:3000/uploads/notesFile/${url}`
+
+                await note.save()
+
+                return res.status(SUCCESS_CODE).json({
+                    success: true,
+                    message: 'File updated successfully'
+                })
+            }
+        })
+
+    } catch (error) {
+        return res.status(INTERNAL_SERVER_ERROR_CODE).json({
+            success: false,
+            message: error.message
+        })
+    }
+}
+
+//delete the file function
+export const deleteFile = async (req, res) => {
+    try {
+        const note = await notesModel.findById(req.params.id)
+
+        if (!note) {
+            return res.status(NOT_FOUND_CODE).json({
+                success: false,
+                message: 'Note not found'
+            })
+        }
+
+        const filePath = note.fileUrl.split('/').slice(-3).join('/')
+
+        fs.unlink(filePath, async (error) => {
+            if (error) {
+                return res.status(BAD_REQUEST_CODE).json({
+                    success: false,
+                    message: error.message
+                })
+            }
+            else {
+                note.fileUrl = ''
+
+                await note.save()
+
+                return res.status(SUCCESS_CODE).json({
+                    success: true,
+                    message: 'File deleted successfully'
+                })
+            }
+        });
+
+    } catch (error) {
+        return res.status(INTERNAL_SERVER_ERROR_CODE).json({
             success: false,
             message: error.message
         })

@@ -26,7 +26,7 @@ export const mailSender = async (token, email) => {
     }));
 
     const mailConfiguration = {
-        from: 'Subhranil Das',
+        from: 'Subhranil Das <subhranil@itobuz.com>',
         to: email,
         subject: 'Email Verification',
         template: 'email',
@@ -38,10 +38,7 @@ export const mailSender = async (token, email) => {
 
     transporter.sendMail(mailConfiguration, (error, res) => {
         if (error) {
-            return res.status(400).json({
-                success: false,
-                message: error.message
-            })
+            throw new Error(error.message);
         }
         else {
             console.log('Email sent successfully')

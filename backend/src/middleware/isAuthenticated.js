@@ -53,7 +53,7 @@ const isAuthenticated = async (req, res, next) => {
                 if (!session) {
                     return res.status(401).json({
                         success: false,
-                        message: "Unauthorize acess. Please login first"
+                        message: "Unauthorize access. Please login first"
                     })
                 }
 

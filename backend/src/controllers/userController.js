@@ -1,32 +1,36 @@
+import fs from 'fs'
+import bcrypt from 'bcryptjs'
+import jwt from 'jsonwebtoken'
+
 import { mailSender } from "../mail/transporter.js"
 import sessionsModel from "../models/sessionSchema.js"
 import userModel from "../models/userModel.js"
 import { passwordRegexValidation, userNameRegexValidation } from "../utils/regexMatch.js"
 import { loginCredValidation, userSchemaValidation } from "../validator/userValidate.js"
-import bcrypt from 'bcryptjs'
-import jwt from 'jsonwebtoken'
-import fs from 'fs'
+import { BAD_REQUEST_CODE, CREATED_CODE, INTERNAL_SERVER_ERROR_CODE, NOT_FOUND_CODE, SUCCESS_CODE, UNAUTHORIZED_CODE } from "../utils/constant.js"
+
 
 //signup function
-export const signUp = async (req, res, obj) => {
+export const signUp = async (req, res) => {
   try {
-    const { userName, email, password, confirmPassword, role } = req.body || obj
-    if (Object.keys(req.body).length > 5)
+    const { userName, email, password, confirmPassword } = req.body
+    if (Object.keys(req.body).length > 4)
       throw new Error("Extra fields");
 
     const userDetails = {
       userName: userName.replace(/\s/g, '').trim(),
       email,
       password: password.replace(/\s/g, '').trim(),
-      role
+      confirmPassword: confirmPassword.replace(/\s/g, '').trim(),
     }
 
-    const validUser = userSchemaValidation.safeParse(userDetails)
+    const validUser = userSchemaValidation.parse(userDetails)
 
     if (!validUser.success) {
-      return res.status(400).json({
+      return res.status(BAD_REQUEST_CODE).json({
         success: false,
-        message: `${validUser.error.issues[0].message} --> ${validUser.error.issues[0].path}`
+        data: validUser.error
+        // message: `${validUser.error.issues[0].message} --> ${validUser.error.issues[0].path}`
       })
     }
 
@@ -34,9 +38,9 @@ export const signUp = async (req, res, obj) => {
     passwordRegexValidation(password.replace(/\s/g, '').trim())
 
     if (password.replace(/\s/g, '').trim() !== confirmPassword.replace(/\s/g, '').trim()) {
-      return res.status(400).json({
+      return res.status(BAD_REQUEST_CODE).json({
         success: false,
-        message: 'password is not maching'
+        message: 'password is not matching'
       })
     }
 
@@ -45,7 +49,7 @@ export const signUp = async (req, res, obj) => {
     })
 
     if (oldUser) {
-      return res.status(400).json({
+      return res.status(BAD_REQUEST_CODE).json({
         success: false,
         message: 'Account is already exists with this email'
       })
@@ -56,18 +60,23 @@ export const signUp = async (req, res, obj) => {
 
     const token = jwt.sign({ data: email }, process.env.SECRET_KEY, { expiresIn: '10m' })
 
-    await mailSender(token, email)
+    try {
+      await mailSender(token, email)
+    } catch (error) {
+      return res.status(INTERNAL_SERVER_ERROR_CODE).json({
+        success: false,
+        message: error.message
+      })
+    }
 
     const user = await userModel.create({
       userName: userName.replace(/\s/g, '').trim(),
       email: email.toLowerCase(),
       password: hashedPassword,
-      role: role,
       verified: false,
-      token: token
     })
 
-    return res.status(201).json({
+    return res.status(CREATED_CODE).json({
       success: true,
       message: 'Account created successfully',
       advice: 'Please verify your email at earliest, you have 10 minuits to verify yourself',
@@ -76,7 +85,7 @@ export const signUp = async (req, res, obj) => {
     })
 
   } catch (error) {
-    return res.status(500).json({
+    return res.status(INTERNAL_SERVER_ERROR_CODE).json({
       success: false,
       message: error.message
     })
@@ -88,7 +97,7 @@ export const verifyUser = async (req, res) => {
   const { authorization } = req.headers
 
   if (!authorization) {
-    return res.status(404).json({
+    return res.status(NOT_FOUND_CODE).json({
       success: false,
       message: "Authorization header not found"
     })
@@ -97,7 +106,7 @@ export const verifyUser = async (req, res) => {
   const token = authorization.split(' ')[1]
 
   if (!token) {
-    return res.status(404).json({
+    return res.status(NOT_FOUND_CODE).json({
       success: false,
       message: "Token not found"
     })
@@ -105,7 +114,7 @@ export const verifyUser = async (req, res) => {
 
   jwt.verify(token, process.env.SECRET_KEY, async (error, decoded) => {
     if (error) {
-      return res.status(400).json({
+      return res.status(BAD_REQUEST_CODE).json({
         success: false,
         message: `${error.name} => ${error.message}`,
       }).send('Email verification problem')
@@ -117,11 +126,10 @@ export const verifyUser = async (req, res) => {
       })
 
       user.verified = true
-      user.token = ''
 
       await user.save()
 
-      res.status(200).json({
+      res.status(SUCCESS_CODE).json({
         success: true,
         message: "Email verified successfully"
       })
@@ -142,28 +150,37 @@ export const resendVerificationLink = async (req, res) => {
     })
 
     if (!user) {
-      return res.status(404).json({
+      return res.status(NOT_FOUND_CODE).json({
         success: false,
         message: "Please register yourself."
       })
     }
 
     if (user.verified) {
-      return res.status(400).json({
+      return res.status(BAD_REQUEST_CODE).json({
         success: false,
         message: "Your are already verified. Please Log in to your account"
       })
     }
 
     const token = jwt.sign({ data: email }, process.env.SECRET_KEY, { expiresIn: '10m' })
-    mailSender(token, email)
 
-    return res.status(200).json({
+    try {
+      await mailSender(token, email)
+    } catch (error) {
+      return res.status(INTERNAL_SERVER_ERROR_CODE).json({
+        success: false,
+        message: error.message
+      })
+    }
+
+    return res.status(SUCCESS_CODE).json({
       success: true,
       message: "Email send successfully"
     })
+
   } catch (error) {
-    return res.status(500).json({
+    return res.status(INTERNAL_SERVER_ERROR_CODE).json({
       success: false,
       message: error.message
     })
@@ -184,7 +201,7 @@ export const login = async (req, res) => {
     })
 
     if (!validCred.success) {
-      return res.status(400).json({
+      return res.status(BAD_REQUEST_CODE).json({
         success: false,
         message: `${validCred.error.issues[0].message} --> ${validCred.error.issues[0].path}`
       })
@@ -192,29 +209,33 @@ export const login = async (req, res) => {
 
     const user = await userModel.findOne({
       email: email.toLowerCase()
-    })
-
+    }, {
+      password: 1,
+      verified: 1,
+      userName: 1
+    }).exec()
 
     if (!user) {
-      return res.status(404).json({
+      return res.status(NOT_FOUND_CODE).json({
         success: false,
-        message: "User not found"
+        message: "Invalid Credential"
       })
     }
 
     const userId = user._id
 
-    const comparePassword = await bcrypt.compare(password.replace(/\s/g, '').trim(), user.password);
+    const comparePassword = await bcrypt.compare(password, user.password);
 
+    console.log('after compare')
     if (!comparePassword) {
-      return res.status(400).json({
+      return res.status(BAD_REQUEST_CODE).json({
         success: false,
         message: "Password is not matching"
       })
     }
 
     if (!user.verified) {
-      return res.status(400).json({
+      return res.status(BAD_REQUEST_CODE).json({
         success: false,
         message: "Please verify your email first"
       })
@@ -227,7 +248,7 @@ export const login = async (req, res) => {
 
     await user.save()
 
-    return res.status(200).json({
+    return res.status(SUCCESS_CODE).json({
       success: true,
       message: `Welcome ${user.userName}`,
       accessToken,
@@ -235,7 +256,7 @@ export const login = async (req, res) => {
     })
 
   } catch (error) {
-    return res.status(500).json({
+    return res.status(INTERNAL_SERVER_ERROR_CODE).json({
       success: false,
       message: error.message
     })
@@ -249,7 +270,7 @@ export const regenerateAccessToken = async (req, res) => {
     const refreshToken = authHeader.split(' ')[1]
 
     if (!refreshToken) {
-      return res.status(400).json({
+      return res.status(UNAUTHORIZED_CODE).json({
         success: false,
         message: "Unauthorized access."
       })
@@ -257,7 +278,7 @@ export const regenerateAccessToken = async (req, res) => {
 
     jwt.verify(refreshToken, process.env.SECRET_KEY, async (error, decoded) => {
       if (error) {
-        return res.status(400).json({
+        return res.status(BAD_REQUEST_CODE).json({
           success: false,
           message: error.message
         })
@@ -267,15 +288,15 @@ export const regenerateAccessToken = async (req, res) => {
         const user = await userModel.findById(userId)
 
         if (!user) {
-          return res.status(404).json({
+          return res.status(NOT_FOUND_CODE).json({
             success: false,
-            message: "User not found"
+            message: "Invalid Credentials"
           })
         }
 
         const accessToken = jwt.sign({ userId }, process.env.SECRET_KEY, { expiresIn: '7d' })
 
-        return res.status(201).json({
+        return res.status(CREATED_CODE).json({
           success: true,
           message: "Access token regenerated",
           accessToken
@@ -283,7 +304,7 @@ export const regenerateAccessToken = async (req, res) => {
       }
     })
   } catch (error) {
-    return res.status(500).json({
+    return res.status(INTERNAL_SERVER_ERROR_CODE).json({
       success: false,
       message: error.message
     })
@@ -296,7 +317,7 @@ export const logout = async (req, res) => {
     const authHeader = req.headers.authorization
 
     if (!authHeader) {
-      return res.status(404).json({
+      return res.status(NOT_FOUND_CODE).json({
         success: false,
         message: "Authorization header not found"
       })
@@ -305,7 +326,7 @@ export const logout = async (req, res) => {
     const accessToken = authHeader.split(' ')[1]
 
     if (!accessToken) {
-      return res.status(404).json({
+      return res.status(NOT_FOUND_CODE).json({
         success: false,
         message: "Token not found"
       })
@@ -313,7 +334,7 @@ export const logout = async (req, res) => {
 
     jwt.verify(accessToken, process.env.SECRET_KEY, async (error, decoded) => {
       if (error) {
-        return res.status(401).json({
+        return res.status(UNAUTHORIZED_CODE).json({
           success: false,
           message: error.message
         })
@@ -323,14 +344,14 @@ export const logout = async (req, res) => {
 
         await sessionsModel.deleteMany({ userId })
 
-        return res.status(200).json({
+        return res.status(SUCCESS_CODE).json({
           success: true,
           message: 'Logout successfully'
         })
       }
     })
   } catch (error) {
-    return res.status(500).json({
+    return res.status(INTERNAL_SERVER_ERROR_CODE).json({
       success: false,
       message: error.message
     })
@@ -343,7 +364,7 @@ export const getUserDetails = async (req, res) => {
     const authHeader = req.headers.authorization
 
     if (!authHeader) {
-      return res.status(400).json({
+      return res.status(BAD_REQUEST_CODE).json({
         success: false,
         message: 'Auth header not found'
       })
@@ -352,7 +373,7 @@ export const getUserDetails = async (req, res) => {
     const accessToken = authHeader.split(' ')[1]
 
     if (!accessToken) {
-      return res.status(404).json({
+      return res.status(NOT_FOUND_CODE).json({
         success: false,
         message: "Token not found"
       })
@@ -360,7 +381,7 @@ export const getUserDetails = async (req, res) => {
 
     jwt.verify(accessToken, process.env.SECRET_KEY, async (error, decoded) => {
       if (error) {
-        return res.status(401).json({
+        return res.status(UNAUTHORIZED_CODE).json({
           success: false,
           message: error.message
         })
@@ -369,15 +390,15 @@ export const getUserDetails = async (req, res) => {
         const userId = decoded.userId
 
         const user = await userModel.findById(userId)
-
+        console.log(user)
         if (!user) {
-          return res.status(404).json({
+          return res.status(NOT_FOUND_CODE).json({
             success: false,
             message: "User not found"
           })
         }
 
-        return res.status(200).json({
+        return res.status(SUCCESS_CODE).json({
           success: true,
           message: "User fetched successfully",
           data: user
@@ -385,7 +406,7 @@ export const getUserDetails = async (req, res) => {
       }
     })
   } catch (error) {
-    return res.status(500).json({
+    return res.status(INTERNAL_SERVER_ERROR_CODE).json({
       success: false,
       message: error.message
     })
@@ -401,12 +422,12 @@ export const updatePassword = async (req, res) => {
     if (Object.keys(req.body).length > 3)
       throw new Error("Extra fields");
 
-    const user = await userModel.findById(userId)
+    const user = await userModel.findById(userId, { password: 1, userName: 1, email: 1 })
 
     const comparePassword = await bcrypt.compare(oldPassword?.replace(/\s/g, '').trim(), user.password);
 
     if (!comparePassword) {
-      return res.status(400).json({
+      return res.status(BAD_REQUEST_CODE).json({
         success: false,
         message: "Old Password is not matching"
       })
@@ -415,7 +436,7 @@ export const updatePassword = async (req, res) => {
     const compareNewPassword = await bcrypt.compare(newPassword?.replace(/\s/g, '').trim(), user.password);
 
     if (compareNewPassword) {
-      return res.status(400).json({
+      return res.status(BAD_REQUEST_CODE).json({
         success: false,
         message: "New password must be different from Old password"
       })
@@ -425,13 +446,12 @@ export const updatePassword = async (req, res) => {
       userName: user.userName,
       email: user.email,
       password: newPassword?.replace(/\s/g, '').trim(),
-      role: user.role
     }
 
     const validUser = userSchemaValidation.safeParse(userDetails)
 
     if (!validUser.success) {
-      return res.status(400).json({
+      return res.status(BAD_REQUEST_CODE).json({
         success: false,
         message: `${validUser.error.issues[0].message} --> ${validUser.error.issues[0].path}`
       })
@@ -440,9 +460,9 @@ export const updatePassword = async (req, res) => {
     passwordRegexValidation(newPassword?.replace(/\s/g, '').trim())
 
     if (newPassword?.replace(/\s/g, '').trim() !== confirmNewPassword?.replace(/\s/g, '').trim()) {
-      return res.status(400).json({
+      return res.status(BAD_REQUEST_CODE).json({
         success: false,
-        message: "New password is not matching with confirm passowrd"
+        message: "New password is not matching with confirm password"
       })
     }
 
@@ -452,13 +472,13 @@ export const updatePassword = async (req, res) => {
     user.password = newHashedPassword
     await user.save()
 
-    return res.status(200).json({
+    return res.status(SUCCESS_CODE).json({
       success: true,
       message: "Password updated successfully"
     })
 
   } catch (error) {
-    return res.status(500).json({
+    return res.status(INTERNAL_SERVER_ERROR_CODE).json({
       success: false,
       message: error.message
     })
@@ -466,27 +486,26 @@ export const updatePassword = async (req, res) => {
 }
 
 //update userName function
-export const updateUserName = async (req, res, newId, name) => {
+export const updateUserName = async (req, res) => {
   try {
-    const userId = newId ? newId : req.id
-    const newUserName = name ? name : req.body.newUserName
+    const userId = req.id
+    const newUserName = req.body.newUserName
 
     if (Object.keys(req.body).length > 1)
       throw new Error("Extra fields");
 
-    const user = await userModel.findById(userId)
+    const user = await userModel.findById(userId, { password: 1, userName: 1, email: 1 })
 
     const userDetails = {
       userName: newUserName.replace(/\s/g, '').trim(),
       email: user.email,
       password: user.password,
-      role: user.role
     }
 
     const validUser = userSchemaValidation.safeParse(userDetails)
 
     if (!validUser.success) {
-      return res.status(400).json({
+      return res.status(BAD_REQUEST_CODE).json({
         success: false,
         message: `${validUser.error.issues[0].message} --> ${validUser.error.issues[0].path}`
       })
@@ -497,12 +516,12 @@ export const updateUserName = async (req, res, newId, name) => {
     user.userName = newUserName.replace(/\s/g, '').trim()
     await user.save()
 
-    return res.status(200).json({
+    return res.status(SUCCESS_CODE).json({
       success: true,
       message: 'Username updated successfully'
     })
   } catch (error) {
-    return res.status(500).json({
+    return res.status(INTERNAL_SERVER_ERROR_CODE).json({
       success: false,
       message: error.message
     })
@@ -516,7 +535,7 @@ export const updateProfilePicture = async (req, res) => {
     const userId = req.id
 
     if (!file) {
-      return res.status(400).json({
+      return res.status(BAD_REQUEST_CODE).json({
         success: false,
         message: "No file uploaded"
       })
@@ -525,7 +544,7 @@ export const updateProfilePicture = async (req, res) => {
     const user = await userModel.findById(userId)
 
     if (!user) {
-      return res.status(404).json({
+      return res.status(NOT_FOUND_CODE).json({
         success: false,
         message: "User not found"
       })
@@ -536,7 +555,7 @@ export const updateProfilePicture = async (req, res) => {
     if (existingProfilePicture !== '') {
       fs.unlink(existingProfilePicture, async (error) => {
         if (error) {
-          return res.status(404).json({
+          return res.status(NOT_FOUND_CODE).json({
             success: false,
             message: error.message
           })
@@ -548,14 +567,14 @@ export const updateProfilePicture = async (req, res) => {
 
     await user.save()
 
-    return res.status(201).json({
+    return res.status(CREATED_CODE).json({
       success: true,
       message: `File uploaded successfully`,
       profilePicture: user.profilePicture
     })
 
   } catch (error) {
-    return res.status(500).json({
+    return res.status(INTERNAL_SERVER_ERROR_CODE).json({
       success: false,
       message: error.message
     })

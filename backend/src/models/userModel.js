@@ -15,21 +15,18 @@ const userSchema = new mongoose.Schema({
   password: {
     type: String,
     required: true,
+    select: false
   },
 
   role: {
     type: String,
     enum: ['admin', 'user'],
-    required: true
+    default: "user"
   },
 
   verified: {
     type: Boolean,
     default: false
-  },
-
-  token: {
-    type: String
   },
 
   profilePicture: {

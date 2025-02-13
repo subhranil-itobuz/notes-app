@@ -7,7 +7,7 @@ export const userSchemaValidation = z.object({
   }).trim().min(4).max(15),
 
   email: z.string({
-    required_error: "Email is requreired",
+    required_error: "Email is required",
     invalid_type_error: "Email must be a string with valid mail format"
   }).email(),
 
@@ -16,15 +16,15 @@ export const userSchemaValidation = z.object({
     invalid_type_error: "Password must be more than 5 characters"
   }).min(5),
 
-  role: z.string({
-    required_error: "Role is requreired",
-    invalid_type_error: "Role must be a string"
-  })
-})
+  confirmPassword: z.string({
+    required_error: "Password required",
+    invalid_type_error: "Password must be more than 5 characters"
+  }).min(5)
+}).strict()
 
 export const loginCredValidation = z.object({
   email: z.string({
-    required_error: "Email is requreired",
+    required_error: "Email is required",
     invalid_type_error: "Email must be a string with valid mail format"
   }).email(),
 

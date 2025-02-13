@@ -1,7 +1,7 @@
 import multer from 'multer'
 import path from 'path'
 
-const fileExtention = ['image/jpeg', 'image/jpg', 'image/png', 'application/pdf']
+const fileExtension = ['image/jpeg', 'image/jpg', 'image/png', 'application/pdf']
 const profilePictureExtension = ['image/jpeg', 'image/jpg', 'image/png']
 
 const notesFileStorage = multer.diskStorage({
@@ -18,9 +18,9 @@ const profilePictureStorage = multer.diskStorage({
   }
 })
 
-const validateFile = (extentions) => {
+const validateFile = (extensions) => {
   return (req, file, cb) => {
-    extentions.includes(file.mimetype) ? cb(null, true) : cb(new Error('Invalid file type'), false)
+    extensions.includes(file.mimetype) ? cb(null, true) : cb(new Error('Invalid file type'), false)
   }
 }
 
@@ -30,7 +30,7 @@ const notesFileUpload = multer({
     fileSize: 1024 * 1024 * 10,
     files: 1
   },
-  fileFilter: validateFile(fileExtention)
+  fileFilter: validateFile(fileExtension)
 })
 
 const profilePictureUpload = multer({
