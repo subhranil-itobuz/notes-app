@@ -15,6 +15,7 @@ import ProtectedRoutes from "./middleware/ProtectedRoutes.jsx";
 import ErrorPage from "./pages/ErrorPage.jsx";
 import AdminPage from "./pages/AdminPage.jsx";
 import AdminProtectedRoute from "./middleware/AdminProtectedRoute.jsx";
+import AllUsersPage from "./pages/AllUsersPage.jsx";
 
 function App() {
 
@@ -54,6 +55,12 @@ function App() {
               <Route path="/admin" element={
                 <AdminProtectedRoute>
                   <AdminPage />
+                </AdminProtectedRoute>
+              } />
+
+              <Route path="/users" element={
+                <AdminProtectedRoute>
+                  <AllUsersPage />
                 </AdminProtectedRoute>
               } />
 

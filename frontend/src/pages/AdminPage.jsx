@@ -1,7 +1,11 @@
-
+import AdminPanel from '../components/AdminPanel'
+import Navbar from '../components/Navbar'
 const AdminPage = () => {
   return (
-    <div>AdminPage</div>
+    <>
+      <Navbar />
+      <AdminPanel />
+    </>
   )
 }
 
