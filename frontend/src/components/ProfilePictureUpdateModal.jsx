@@ -7,7 +7,6 @@ const ProfilePictureUpdateModal = () => {
   const { setOpenProfilePhotoUpdateModal, profilePictureUpdateFunction } = useContext(UserContext)
 
   const handleProfilePictureChange = async (e) => {
-    console.log('profile pic change function in modal')
     const file = e.target.files[0]
     const formData = new FormData()
     formData.append('profilePicture', file)
@@ -15,7 +14,6 @@ const ProfilePictureUpdateModal = () => {
     const res = await profilePictureUpdateFunction(formData)
 
     if (res.data.success) {
-      console.log(res)
       toast.success(res.data.message)
       setOpenProfilePhotoUpdateModal(false)
     }

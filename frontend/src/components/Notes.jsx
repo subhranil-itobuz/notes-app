@@ -7,7 +7,6 @@ import { IoCaretBack } from "react-icons/io5";
 import { FaCaretRight } from "react-icons/fa";
 import { Link } from "react-router-dom";
 
-
 import { NotesContext } from "../contexts/NotesContext";
 import NoteCard from '../components/NoteCard'
 import DeleteModal from "./DeleteModal";
@@ -17,17 +16,15 @@ import FileUpdateModal from "./FileUpdateModal";
 import FileDeleteModal from "./FileDeleteModal";
 
 
-
 const Notes = () => {
-  const { getAllNotesFunction, totalResults, pageNotes, setPageNotes, keyword, setKeyword, debouncedQuary, setDebouncedQuary, page, setPage, limit, openDeleteModal, setOpenDeleteModal, openUpdateModal, setOpenUpdateModal, openFileViewModal, openFileUpdateModal, openFileDeleteModal, setOpenFileDeleteModal, fileUrl } = useContext(NotesContext)
+  const { getAllNotesFunction, totalResults, pageNotes, setPageNotes, keyword, setKeyword, debouncedQuary, setDebouncedQuery, page, setPage, limit, openDeleteModal, setOpenDeleteModal, openUpdateModal, setOpenUpdateModal, openFileViewModal, openFileUpdateModal, openFileDeleteModal, setOpenFileDeleteModal, fileUrl } = useContext(NotesContext)
 
   useEffect(() => {
-    const handleDebouncedQuary = setTimeout(() => {
-      console.log('setting debounced quary after 500ms')
-      setDebouncedQuary(keyword)
+    const handleDebouncedQuery = setTimeout(() => {
+      setDebouncedQuery(keyword)
     }, 700);
 
-    return () => clearTimeout(handleDebouncedQuary)
+    return () => clearTimeout(handleDebouncedQuery)
 
     // eslint-disable-next-line  
   }, [keyword])
@@ -37,12 +34,10 @@ const Notes = () => {
       const res = await getAllNotesFunction(debouncedQuary, page, limit)
 
       if (res?.data.success) {
-        console.log(res)
         setPageNotes(res?.data.data)
       }
 
       else {
-        console.log('useeffect else')
         setPageNotes([])
       }
     }

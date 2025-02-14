@@ -47,7 +47,7 @@ notesInstance.interceptors.response.use(res => res, async (error) => {
             return axios(originalReq)
 
         } catch (error) {
-            console.log(error)
+            console.error(error)
         }
     }
 
@@ -75,7 +75,7 @@ userInstance.interceptors.response.use(res => res, async (error) => {
             return axios(originalReq)
 
         } catch (error) {
-            console.log(error)
+            console.error(error)
         }
     }
 

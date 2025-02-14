@@ -1,6 +1,8 @@
 import { useContext } from "react"
+
 import Modal from "./Modal"
 import { NotesContext } from "../contexts/NotesContext"
+
 
 const FileViewModal = () => {
     const { setOpenFileViewModal, currentFileUrl } = useContext(NotesContext)

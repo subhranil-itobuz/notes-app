@@ -13,13 +13,9 @@ const UserNameChangeModal = ({ userName }) => {
   });
 
   const handleUserNameUpdation = async (data, e) => {
-    console.log('handle updation in modal clicked')
-    console.log(data)
-
     const res = await userNameUpdateFunction(data)
 
     if (res?.data.success) {
-      console.log(res)
       e.target.reset()
       setOpenUserNameUpdateModal(false)
       toast.success(res.data.message)

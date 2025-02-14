@@ -9,12 +9,12 @@ import cross from '../assets/cross.svg'
 import { UserContext } from '../contexts/UserContext';
 import { userInstance } from '../utils/axiosSetup';
 
+
 const Navbar = () => {
   const navigate = useNavigate()
   const [expandNav, setExpandNav] = useState(false)
 
   const { isLoggedIn, logoutFunction, tokenRemoveFunction, role } = useContext(AuthContext)
-  console.log(role)
   const isUser = isLoggedIn || localStorage.getItem('isLoggedIn')
 
   const { user } = useContext(UserContext)
@@ -25,7 +25,6 @@ const Navbar = () => {
       const res = await userInstance.get(`${USER_API_ENDPOINT}/logout`)
 
       if (res.data.success) {
-        console.log(res.data.message)
         logoutFunction()
         tokenRemoveFunction()
         navigate('/')

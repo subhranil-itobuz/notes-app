@@ -16,13 +16,9 @@ const PasswordUpdateModal = () => {
   });
 
   const handlePasswordUpdation = async (data, e) => {
-    console.log('handle updation in modal clicked')
-    console.log(data)
-
     const res = await passwordUpdateFunction(data)
 
     if (res?.data.success) {
-      console.log(res)
       e.target.reset()
       setOpenPasswordUpdateModal(false)
       toast.success(res.data.message)

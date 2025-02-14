@@ -30,7 +30,6 @@ const VerifyEmail = () => {
                     setMessage(jsonData.message)
 
             } catch (error) {
-                console.log(error)
                 setMessage('Verification failed. The link may have expired.');
                 setVerified(false)
                 toast.error(error)

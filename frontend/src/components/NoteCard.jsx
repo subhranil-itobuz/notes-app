@@ -1,14 +1,13 @@
 import { useContext } from "react";
 import { MdDelete, MdModeEdit } from "react-icons/md";
-import { NotesContext } from "../contexts/NotesContext";
 import { toast } from "react-toastify";
 import { FaEye } from "react-icons/fa";
 import { IoMdDownload } from "react-icons/io";
 import { Link } from "react-router-dom";
 import { GrDocumentUpdate } from "react-icons/gr";
+
 import { AuthContext } from "../contexts/AuthContext";
-
-
+import { NotesContext } from "../contexts/NotesContext";
 
 
 const NoteCard = ({ id, author, title, description, tag, fileUrl, createdAt, setOpenDeleteModal, setOpenUpdateModal }) => {
@@ -16,7 +15,6 @@ const NoteCard = ({ id, author, title, description, tag, fileUrl, createdAt, set
   const { setNoteId, setUpdatingNote, uploadFileFunction, setFileUrl, setOpenFileViewModal, setOpenFileUpdateModal, setOpenFileDeleteModal, setCurrentFileUrl } = useContext(NotesContext)
 
   const { role } = useContext(AuthContext)
-
 
   const daysAgoFunction = (mongoDbTime) => {
     const createdAt = new Date(mongoDbTime)
@@ -26,14 +24,11 @@ const NoteCard = ({ id, author, title, description, tag, fileUrl, createdAt, set
   }
 
   const handleDeletion = () => {
-    console.log('deleteIcon clicked')
     setOpenDeleteModal(true)
     setNoteId(id)
   }
 
   const handleUpdation = () => {
-    console.log('edit icon clicked')
-    console.log('note id = ', id, title)
     setNoteId(id)
     setOpenUpdateModal(true)
     setUpdatingNote({
@@ -41,30 +36,20 @@ const NoteCard = ({ id, author, title, description, tag, fileUrl, createdAt, set
       description: description,
       tag: tag
     })
-    console.log(title, description, tag)
   }
 
   const settingId = () => {
-    console.log('note id set to = ', id)
     setNoteId(id)
   }
 
   const handleFileUpload = async (e) => {
-    console.log('file upload change')
-
     const file = e.target.files[0]
-
-    console.log(e.target.files)
-    console.log(file)
-    console.log(file?.name)
-
     const formData = new FormData()
     formData.append('file', file)
 
     const res = await uploadFileFunction(formData)
 
     if (res?.data.success) {
-      console.log(res)
       toast.success(res.data.message)
       setFileUrl(res.data.fileUrl)
       setNoteId()
@@ -72,19 +57,16 @@ const NoteCard = ({ id, author, title, description, tag, fileUrl, createdAt, set
   }
 
   const handleFileView = () => {
-    console.log('file view clicked')
     setOpenFileViewModal(true)
     setCurrentFileUrl(fileUrl)
   }
 
   const handleFileUploadModal = () => {
-    console.log('file update button clicked', id)
     setOpenFileUpdateModal(true)
     setNoteId(id)
   }
 
   const handleFileDelete = () => {
-    console.log('file delete icon clicked')
     setNoteId(id)
     setOpenFileDeleteModal(true)
   }

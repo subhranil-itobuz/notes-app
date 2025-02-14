@@ -16,57 +16,61 @@ import ErrorPage from "./pages/ErrorPage.jsx";
 import AdminPage from "./pages/AdminPage.jsx";
 import AdminProtectedRoute from "./middleware/AdminProtectedRoute.jsx";
 import AllUsersPage from "./pages/AllUsersPage.jsx";
+import { AdminProvider } from "./contexts/AdminContext.jsx";
+
 
 function App() {
-
 
   return (
     <div className="max-w-[1440px] h-[100vh] mx-auto bg-[#16425b]">
       <AuthProvider>
-        <UserProvider>
-          <NotesProvider>
-            <Routes>
+        <AdminProvider>
 
-              <Route path='*' element={<ErrorPage />} />
-              <Route path='/' element={<Home />} />
-              <Route path='/signup' element={<SignupPage />} />
-              <Route path='/verify/:token' element={<VerifyEmail />} />
-              <Route path='/login' element={<LoginPage />} />
-              <Route path='/reverify' element={<ReverifyPage />} />
+          <UserProvider>
+            <NotesProvider>
+              <Routes>
 
-              {/* Protected Routes */}
-              <Route path='/notes/create' element={
-                <ProtectedRoutes>
-                  <CreateNotePage />
-                </ProtectedRoutes>
-              } />
-              <Route path='/notes/view' element={
-                <ProtectedRoutes>
-                  <ViewAllNotesPage />
-                </ProtectedRoutes>
-              } />
-              <Route path='/profile' element={
-                <ProtectedRoutes>
-                  <ProfilePage />
-                </ProtectedRoutes>
-              } />
+                <Route path='*' element={<ErrorPage />} />
+                <Route path='/' element={<Home />} />
+                <Route path='/signup' element={<SignupPage />} />
+                <Route path='/verify/:token' element={<VerifyEmail />} />
+                <Route path='/login' element={<LoginPage />} />
+                <Route path='/reverify' element={<ReverifyPage />} />
 
-              {/* Admin protected route */}
-              <Route path="/admin" element={
-                <AdminProtectedRoute>
-                  <AdminPage />
-                </AdminProtectedRoute>
-              } />
+                {/* Protected Routes */}
+                <Route path='/notes/create' element={
+                  <ProtectedRoutes>
+                    <CreateNotePage />
+                  </ProtectedRoutes>
+                } />
+                <Route path='/notes/view' element={
+                  <ProtectedRoutes>
+                    <ViewAllNotesPage />
+                  </ProtectedRoutes>
+                } />
+                <Route path='/profile' element={
+                  <ProtectedRoutes>
+                    <ProfilePage />
+                  </ProtectedRoutes>
+                } />
 
-              <Route path="/users" element={
-                <AdminProtectedRoute>
-                  <AllUsersPage />
-                </AdminProtectedRoute>
-              } />
+                {/* Admin protected route */}
+                <Route path="/admin" element={
+                  <AdminProtectedRoute>
+                    <AdminPage />
+                  </AdminProtectedRoute>
+                } />
 
-            </Routes>
-          </NotesProvider>
-        </UserProvider>
+                <Route path="/users" element={
+                  <AdminProtectedRoute>
+                    <AllUsersPage />
+                  </AdminProtectedRoute>
+                } />
+
+              </Routes>
+            </NotesProvider>
+          </UserProvider>
+        </AdminProvider>
       </AuthProvider>
     </div>
   )

@@ -17,61 +17,53 @@ const UserProvider = (props) => {
             const res = await userInstance.get(`${USER_API_ENDPOINT}/getUser`)
 
             if (res.data.success) {
-                console.log(res)
-                console.log(res.data.message)
                 setUser(res.data.data)
                 return res.data.data
             }
             else toast.info(res.data.message)
 
         } catch (error) {
-            console.log(error)
+            console.error(error)
             toast.error(error)
         }
     }
 
     const userNameUpdateFunction = async (data) => {
         try {
-            console.log('inside username update function context')
             const res = await userInstance.put(`${USER_API_ENDPOINT}/update/userName`, data)
-            console.log(res)
 
             return res
         } catch (error) {
-            console.log(error)
+            console.error(error)
             toast.error(error.response.data.message)
         }
     }
 
     const passwordUpdateFunction = async (data) => {
         try {
-            console.log('inside pasword change function context')
             const res = await userInstance.put(`${USER_API_ENDPOINT}/update/password`, data)
 
             return res
 
         } catch (error) {
-            console.log(error)
+            console.error(error)
             toast.error(error.response.data.message)
         }
     }
 
     const profilePictureUpdateFunction = async (data) => {
         try {
-            console.log('inside profile picture update function in context')
             const res = await userInstance.post(`${USER_API_ENDPOINT}/update/profilePicture`, data, {
                 headers: {
-                    // 'Authorization': `Bearer ${accessToken}`,
                     'Content-Type': 'multipart/form-data'
                 },
             })
 
             if (res.data.success) {
-                console.log(res)
                 return res
             }
         } catch (error) {
-            console.log(error)
+            console.error(error)
             toast.error(error.response.data.message)
         }
     }

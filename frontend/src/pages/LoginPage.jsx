@@ -26,7 +26,6 @@ const LoginPage = () => {
       const res = await axios.post(`${USER_API_ENDPOINT}/login`, data)
 
       if (res.data.success) {
-        console.log(res.data)
         e.target.reset()
         loginFunction(res.data.role)
         tokenSetFunction(res.data.accessToken, res.data.refreshToken)

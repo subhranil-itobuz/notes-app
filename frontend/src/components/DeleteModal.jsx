@@ -6,19 +6,16 @@ import { MdCancel } from "react-icons/md";
 import Modal from './Modal'
 import { NotesContext } from '../contexts/NotesContext'
 
-const DeleteModal = ({ openDeleteModal, setOpenDeleteModal }) => {
+const DeleteModal = ({ setOpenDeleteModal }) => {
 
-  const { allNotes, totalResults, setTotalResults, page, setPage, setNoteId, deleteNoteFunction } = useContext(NotesContext)
+  const { totalResults, setTotalResults, page, setPage, setNoteId, deleteNoteFunction } = useContext(NotesContext)
 
   const handleDeleteConfirmation = async () => {
-    console.log('deleteConfirmBtn clicked')
     const res = await deleteNoteFunction()
 
     if (res.data.success) {
       toast.success(res.data.message)
-      console.log('open modal value=>', openDeleteModal)
       setOpenDeleteModal(false)
-      console.log(allNotes.length)
 
       totalResults % 6 === 1 && page > 1 ? setPage(page - 1) : ''
       totalResults === 1 ? setTotalResults(0) : ''

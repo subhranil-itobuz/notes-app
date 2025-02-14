@@ -14,13 +14,9 @@ const UpdateModal = ({ setOpenUpdateModal }) => {
   });
 
   const handleNoteUpdation = async (data) => {
-    console.log('this is data of form', data)
-
     const res = await updateNoteFunction(data)
 
     if (res?.data.success) {
-      console.log('inside update if')
-      console.log(res)
       toast.success(res.data.message)
       setOpenUpdateModal(false)
     }

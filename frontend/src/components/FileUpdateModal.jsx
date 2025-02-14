@@ -1,21 +1,21 @@
 import { useContext } from 'react'
-import Modal from './Modal'
-import { NotesContext } from '../contexts/NotesContext'
 import { toast } from 'react-toastify'
 
+import { NotesContext } from '../contexts/NotesContext'
+import Modal from './Modal'
+
+
 const FileUpdateModal = () => {
-    const { setOpenFileUpdateModal, upateFileFunction } = useContext(NotesContext)
+    const { setOpenFileUpdateModal, updateFileFunction } = useContext(NotesContext)
 
     const handleFileUpdate = async (e) => {
-        console.log('inside update modal on change')
         const file = e.target.files[0]
         const formData = new FormData()
         formData.append('file', file)
 
-        const res = await upateFileFunction(formData)
+        const res = await updateFileFunction(formData)
 
         if (res.data.success) {
-            console.log(res)
             toast.success(res.data.message)
             setOpenFileUpdateModal(false)
         }

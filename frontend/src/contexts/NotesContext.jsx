@@ -13,7 +13,7 @@ const NotesProvider = (props) => {
   const [updatingNote, setUpdatingNote] = useState({})
   const [pageNotes, setPageNotes] = useState([])
   const [keyword, setKeyword] = useState('')
-  const [debouncedQuary, setDebouncedQuary] = useState('')
+  const [debouncedQuery, setDebouncedQuery] = useState('')
   const [page, setPage] = useState(1)
   const [limit, setLimit] = useState(6)
   const [allUserNotes, setAllUserNotes] = useState([])
@@ -31,30 +31,23 @@ const NotesProvider = (props) => {
 
   const createNotes = async (data) => {
     try {
-      console.log('inside create note func')
       const res = await notesInstance.post(`${NOTES_API_ENDPOINT}/create`, data)
-      console.log(res)
       if (res.data.success) {
-        console.log(res.data.message)
         setNote(res.data.data)
         setTotalResults(res.data.totalResults)
-        console.log(totalResults)
         return res
       }
     } catch (error) {
-      console.log(error)
+      console.error(error)
       toast.error(error.response.data.message)
     }
   }
 
   const getAllNotesFunction = async (keyword, page, limit) => {
     try {
-      console.log('inside get all notes')
-      console.log(page, limit)
-      const res = await notesInstance.get(`${NOTES_API_ENDPOINT}/getAllNotes?keyword=${debouncedQuary}&page=${page}&limit=${limit}`)
+      const res = await notesInstance.get(`${NOTES_API_ENDPOINT}/getAllNotes?keyword=${debouncedQuery}&page=${page}&limit=${limit}`)
 
       if (res?.data.success) {
-        console.log(res)
         setAllNotes(res?.data.data)
         setTotalResults(res?.data.totalResults)
         return res
@@ -63,32 +56,26 @@ const NotesProvider = (props) => {
         setAllNotes([])
       }
     } catch (error) {
-      console.log('inside error of get all notes')
+      console.error(error)
       setAllNotes([])
-      console.log(error)
     }
   }
 
   const getAllUserNotesFunction = async () => {
     try {
-      console.log('inside all userNotes function in context')
-      console.log(allUserNotes)
-
-      const res = await notesInstance.get(`${NOTES_API_ENDPOINT}/getAllNotes?keyword=${debouncedQuary}&sortBy=${sortBy}&order=${order}&page=0&limit=0`)
+      const res = await notesInstance.get(`${NOTES_API_ENDPOINT}/getAllNotes?keyword=${debouncedQuery}&sortBy=${sortBy}&order=${order}&page=0&limit=0`)
 
       return res
     } catch (error) {
-      console.log(error)
+      console.error(error)
     }
   }
 
   const deleteNoteFunction = async () => {
     try {
-      console.log('inside context delete function')
       const res = await notesInstance.delete(`${NOTES_API_ENDPOINT}/delete/${noteId}`)
 
       if (res.data.success) {
-        console.log(res.data.message)
         setNoteId()
         return res
       }
@@ -101,12 +88,9 @@ const NotesProvider = (props) => {
 
   const updateNoteFunction = async (updatedData) => {
     try {
-      console.log('inside conteext update function')
-      console.log(noteId)
       const res = await notesInstance.put(`${NOTES_API_ENDPOINT}/update/${noteId}`, updatedData)
 
       if (res.data.success) {
-        console.log(res)
         setNoteId()
         return res
       }
@@ -119,75 +103,62 @@ const NotesProvider = (props) => {
 
   const uploadFileFunction = async (data) => {
     try {
-      console.log('inside file upload function')
-      console.log(noteId)
       const res = await notesInstance.post(`${NOTES_API_ENDPOINT}/file/upload/${noteId}`, data, {
         headers: {
-          // 'Authorization': `Bearer ${accessToken}`,
           'Content-Type': 'multipart/form-data'
         },
       })
 
       if (res.data.success) {
-        console.log(res)
         setNoteId()
         return res
       }
 
     } catch (error) {
-      console.log(error)
+      console.error(error)
       toast.error(error.response?.data.message)
     }
   }
 
-  const upateFileFunction = async (data) => {
+  const updateFileFunction = async (data) => {
     try {
-      console.log('inside file update function')
-
       const res = await notesInstance.put(`${NOTES_API_ENDPOINT}/file/update/${noteId}`, data, {
         headers: {
-          // 'Authorization': `Bearer ${accessToken}`,
           'Content-Type': 'multipart/form-data'
         }
       })
 
       if (res.data.success) {
-        console.log(res)
         setNoteId()
         return res
       }
 
     } catch (error) {
-      console.log(error)
+      console.error(error)
       toast.error(error.response?.data.message)
     }
   }
 
   const deleteFileFunction = async () => {
     try {
-      console.log('inside file delete function')
       const res = await notesInstance.delete(`${NOTES_API_ENDPOINT}/file/delete/${noteId}`)
 
       if (res.data.success) {
-        console.log(res)
         setNoteId()
         return res
       }
     } catch (error) {
-      console.log(error)
       toast.error(error.response?.data.message)
     }
   }
 
   const deleteAllNotesFunction = async () => {
     try {
-      console.log('inside context delete all notes func')
       const res = await notesInstance.delete(`${NOTES_API_ENDPOINT}/deleteAll`)
 
       return res
 
     } catch (error) {
-      console.log(error)
       toast.error(error.response.data.message)
     }
 
@@ -208,8 +179,8 @@ const NotesProvider = (props) => {
       setAllUserNotes,
       keyword,
       setKeyword,
-      debouncedQuary,
-      setDebouncedQuary,
+      debouncedQuery,
+      setDebouncedQuery,
       page,
       setPage,
       limit,
@@ -237,7 +208,7 @@ const NotesProvider = (props) => {
       openDeleteAllNotesModal,
       setOpenDeleteAllNotesModal,
       uploadFileFunction,
-      upateFileFunction,
+      updateFileFunction,
       deleteFileFunction,
       deleteAllNotesFunction,
       fileUrl,

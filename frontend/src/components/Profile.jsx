@@ -1,4 +1,4 @@
-import { useContext, useEffect } from 'react'
+import { useContext } from 'react'
 import { UserContext } from '../contexts/UserContext'
 import { NotesContext } from '../contexts/NotesContext'
 
@@ -11,25 +11,19 @@ const Profile = () => {
 
   const { user } = useContext(UserContext)
 
-  useEffect(() => { console.log('use effect called') }, [])
-
   const handleUserNameChange = () => {
-    console.log('username change button clicked')
     setOpenUserNameUpdateModal(true)
   }
 
   const handlePasswordChange = () => {
-    console.log('password change button clicked')
     setOpenPasswordUpdateModal(true)
   }
 
   const handleDeleteAllNotes = () => {
-    console.log('delete all notes button clicked')
     setOpenDeleteAllNotesModal(true)
   }
 
   const handleProfilePictureChange = () => {
-    console.log('change handle profile picture btn clicked')
     setOpenProfilePhotoUpdateModal(true)
   }
 

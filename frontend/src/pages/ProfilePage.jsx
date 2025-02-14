@@ -14,8 +14,7 @@ const ProfilePage = () => {
 
   useEffect(() => {
     const getUserDetails = async () => {
-      const user = await getUser()
-      console.log(user)
+      await getUser()
     }
 
     getUserDetails()

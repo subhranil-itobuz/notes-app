@@ -16,14 +16,13 @@ import { AuthContext } from "../contexts/AuthContext";
 
 
 
-const ViewAllNotesPage = () => {
+const ViewAllNotesPage = ({ user }) => {
     const { getAllUserNotesFunction, allUserNotes, setAllUserNotes, keyword, setKeyword, debouncedQuary, setDebouncedQuary, sortBy, setSortBy, order, sortOrder, openDeleteModal, setOpenDeleteModal, openUpdateModal, setOpenUpdateModal, fileUrl, openFileViewModal, openFileUpdateModal, openFileDeleteModal, setOpenFileDeleteModal } = useContext(NotesContext)
 
     const { role } = useContext(AuthContext)
 
     useEffect(() => {
         const handleDebouncedQuary = setTimeout(() => {
-            console.log('setting debounced quary after 500ms')
             setDebouncedQuary(keyword)
         }, 700);
 
@@ -37,11 +36,9 @@ const ViewAllNotesPage = () => {
             const res = await getAllUserNotesFunction()
 
             if (res?.data.success) {
-                console.log(res)
                 setAllUserNotes(res.data.data)
             }
             else {
-                console.log('inside useEffect else')
                 setAllUserNotes([])
             }
         }
@@ -52,25 +49,20 @@ const ViewAllNotesPage = () => {
     }, [debouncedQuary, sortBy, order, openDeleteModal, openUpdateModal, openFileUpdateModal, openFileDeleteModal, fileUrl])
 
     const handleSearch = (e) => {
-        console.log(e.target.value)
         setKeyword(e.target.value)
     }
 
     const handleSortingBy = (e) => {
-        console.log('inside sorting type function')
-        console.log(e.target.value)
         setSortBy(e.target.value)
     }
 
     const handleSortOrder = async (e) => {
-        console.log('inside sort order func')
-        console.log(e.target.value)
         sortOrder(e.target.value)
     }
 
     return (
         <div className="bg-[#16425b]">
-            <Navbar />
+            <Navbar user={user} />
             <div className="w-full relative py-10 px-4">
                 {
                     role === 'user' &&

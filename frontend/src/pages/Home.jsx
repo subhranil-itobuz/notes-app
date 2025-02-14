@@ -1,10 +1,12 @@
 import { useContext, useEffect, useState } from 'react'
+import { Link } from 'react-router-dom'
+
 import Navbar from '../components/Navbar'
 import { AuthContext } from '../contexts/AuthContext'
 import { UserContext } from '../contexts/UserContext'
 import Notes from '../components/Notes'
-import { Link } from 'react-router-dom'
 import noteIcon from '../assets/noteIcon.png'
+
 
 const Home = () => {
   const { isLoggedIn, role } = useContext(AuthContext)
@@ -14,7 +16,6 @@ const Home = () => {
   useEffect(() => {
     const getUserDetails = async () => {
       const user = await getUser()
-      console.log(user)
       setUser(user)
     }
     isLoggedIn && getUserDetails()
@@ -22,7 +23,7 @@ const Home = () => {
     // eslint-disable-next-line  
   }, [])
   return (
-    <div className='scroll-smooth'>
+    <>
       <Navbar user={user} />
       {
         isLoggedIn && role === 'user' ? <Notes />
@@ -40,7 +41,7 @@ const Home = () => {
             </Link>
           </section>
       }
-    </div>
+    </>
   )
 }
 

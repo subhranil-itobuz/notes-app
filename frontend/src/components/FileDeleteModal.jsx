@@ -1,25 +1,24 @@
 import { useContext } from "react"
+import { toast } from "react-toastify"
 import { MdCancel, MdDelete } from "react-icons/md"
+
 import { NotesContext } from "../contexts/NotesContext"
 import Modal from "./Modal"
-import { toast } from "react-toastify"
+
 
 const FileDeleteModal = () => {
     const { setOpenFileDeleteModal, deleteFileFunction } = useContext(NotesContext)
 
     const handleFileDeleteConfirmation = async () => {
-        console.log('inside delete confirmation for file')
         const res = await deleteFileFunction()
 
         if (res.data.success) {
-            console.log(res)
             toast.success(res.data.message)
             setOpenFileDeleteModal(false)
         }
     }
 
     const handleCancelation = () => {
-        console.log('cancel clicked')
         setOpenFileDeleteModal(false)
     }
     return (

@@ -11,7 +11,7 @@ import { toast } from "react-toastify";
 
 const CreateNotePage = () => {
   const navigate = useNavigate()
-  const { createNotes, note } = useContext(NotesContext)
+  const { createNotes } = useContext(NotesContext)
 
   const { register, handleSubmit, formState: { errors }, } = useForm({
     resolver: yupResolver(createNoteSchema)
@@ -19,9 +19,8 @@ const CreateNotePage = () => {
 
   const handleNotesCreate = async (data, e) => {
     const res = await createNotes(data)
-    console.log(res)
+
     if (res.data.success) {
-      console.log(note)
       e.target.reset()
       toast.success(res.data.message)
       navigate('/')
@@ -32,7 +31,6 @@ const CreateNotePage = () => {
   }
 
   const handleBack = () => {
-    console.log('back button')
     navigate('/')
   }
 

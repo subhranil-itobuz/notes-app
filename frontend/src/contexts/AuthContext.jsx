@@ -6,7 +6,7 @@ const AuthProvider = (props) => {
   const [isLoggedIn, setIsLoggedIn] = useState(localStorage.getItem('isLoggedIn'))
   const [accessToken, setAccessToken] = useState(localStorage.getItem('accessToken'))
   const [refreshToken, setRefreshToken] = useState(localStorage.getItem('refreshToken'))
-  const [role, setRole] = useState()
+  const [role, setRole] = useState(localStorage.getItem('role'))
 
 
   const loginFunction = (role) => {

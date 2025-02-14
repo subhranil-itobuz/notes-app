@@ -32,19 +32,17 @@ const SignupPage = () => {
       const res = await axios.post(`${USER_API_ENDPOINT}/signup`, data)
 
       if (res.data.success) {
-        console.log(res)
         e.target.reset()
         navigate('/login')
         toast.success(res.data.message)
         toast.warning(res.data.advice)
       }
       else {
-        console.log(res)
         toast.info(res.data.message)
       }
 
     } catch (error) {
-      console.log(error)
+      console.error(error)
       console.error(error.response.data.message)
       toast.error(error.response.data.message)
     }

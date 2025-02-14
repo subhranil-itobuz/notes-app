@@ -13,13 +13,9 @@ const ReverifyPage = () => {
 
     const handleReverify = async (data, e) => {
         try {
-            console.log('inside reverify')
-            console.log(data)
-
             const res = await axios.post(`${USER_API_ENDPOINT}/resendEmail`, data)
 
             if (res.data.success) {
-                console.log(res)
                 toast.success(res.data.message)
                 e.target.reset()
                 navigate('/login')
