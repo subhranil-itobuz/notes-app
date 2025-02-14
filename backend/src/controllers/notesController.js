@@ -3,12 +3,14 @@ import notesModel from "../models/notesModel.js";
 import { notesSchemaValidation } from "../validator/notesValidate.js";
 import { BAD_REQUEST_CODE, CREATED_CODE, INTERNAL_SERVER_ERROR_CODE, NOT_FOUND_CODE, SUCCESS_CODE } from '../utils/constant.js';
 
+
 //create note function
 export const createNote = async (req, res) => {
     try {
         const { title, description, tag } = req.body
-
-        let userId = req.id
+        const role = req.role
+        const targetUserId = req.params.id
+        let userId = role === 'user' ? req.id : targetUserId
 
         if (Object.keys(req?.body).length > 3)
             throw new Error("Extra fields");

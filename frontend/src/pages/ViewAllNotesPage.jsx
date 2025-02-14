@@ -17,16 +17,16 @@ import { AuthContext } from "../contexts/AuthContext";
 
 
 const ViewAllNotesPage = ({ user }) => {
-    const { getAllUserNotesFunction, allUserNotes, setAllUserNotes, keyword, setKeyword, debouncedQuary, setDebouncedQuary, sortBy, setSortBy, order, sortOrder, openDeleteModal, setOpenDeleteModal, openUpdateModal, setOpenUpdateModal, fileUrl, openFileViewModal, openFileUpdateModal, openFileDeleteModal, setOpenFileDeleteModal } = useContext(NotesContext)
+    const { getAllUserNotesFunction, allUserNotes, setAllUserNotes, keyword, setKeyword, debouncedQuery, setDebouncedQuery, sortBy, setSortBy, order, sortOrder, openDeleteModal, setOpenDeleteModal, openUpdateModal, setOpenUpdateModal, fileUrl, openFileViewModal, openFileUpdateModal, openFileDeleteModal, setOpenFileDeleteModal } = useContext(NotesContext)
 
     const { role } = useContext(AuthContext)
 
     useEffect(() => {
-        const handleDebouncedQuary = setTimeout(() => {
-            setDebouncedQuary(keyword)
+        const handleDebouncedQuery = setTimeout(() => {
+            setDebouncedQuery(keyword)
         }, 700);
 
-        return () => clearTimeout(handleDebouncedQuary)
+        return () => clearTimeout(handleDebouncedQuery)
 
         // eslint-disable-next-line  
     }, [keyword])
@@ -46,7 +46,7 @@ const ViewAllNotesPage = ({ user }) => {
         getAllUserNotes()
 
         // eslint-disable-next-line  
-    }, [debouncedQuary, sortBy, order, openDeleteModal, openUpdateModal, openFileUpdateModal, openFileDeleteModal, fileUrl])
+    }, [debouncedQuery, sortBy, order, openDeleteModal, openUpdateModal, openFileUpdateModal, openFileDeleteModal, fileUrl])
 
     const handleSearch = (e) => {
         setKeyword(e.target.value)

@@ -11,7 +11,6 @@ const UserProvider = (props) => {
     const [openPasswordUpdateModal, setOpenPasswordUpdateModal] = useState(false)
     const [openProfilePhotoUpdateModal, setOpenProfilePhotoUpdateModal] = useState(false)
 
-
     const getUser = async () => {
         try {
             const res = await userInstance.get(`${USER_API_ENDPOINT}/getUser`)

@@ -2,11 +2,13 @@ import { useContext, useEffect, useState } from "react";
 import { IoIosAddCircleOutline } from "react-icons/io";
 import { MdDelete } from "react-icons/md";
 import { AdminContext } from "../contexts/AdminContext";
+import { useNavigate } from "react-router-dom";
 
 
 const UsersTable = () => {
   const { getAllUsers, setUserId, setOpenUserDeleteModal, openUserDeleteModal } = useContext(AdminContext)
   const [allUser, setAllUser] = useState([])
+  const navigate = useNavigate()
 
   useEffect(() => {
     const fetchUser = async () => {
@@ -27,6 +29,7 @@ const UsersTable = () => {
 
   const handleAddNote = (userId) => {
     setUserId(userId)
+    navigate('/notes/create')
   }
 
   const handleDeleteUser = async (userId) => {

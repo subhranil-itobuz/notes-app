@@ -17,7 +17,7 @@ import FileDeleteModal from "./FileDeleteModal";
 
 
 const Notes = () => {
-  const { getAllNotesFunction, totalResults, pageNotes, setPageNotes, keyword, setKeyword, debouncedQuary, setDebouncedQuery, page, setPage, limit, openDeleteModal, setOpenDeleteModal, openUpdateModal, setOpenUpdateModal, openFileViewModal, openFileUpdateModal, openFileDeleteModal, setOpenFileDeleteModal, fileUrl } = useContext(NotesContext)
+  const { getAllNotesFunction, totalResults, pageNotes, setPageNotes, keyword, setKeyword, debouncedQuery, setDebouncedQuery, page, setPage, limit, openDeleteModal, setOpenDeleteModal, openUpdateModal, setOpenUpdateModal, openFileViewModal, openFileUpdateModal, openFileDeleteModal, setOpenFileDeleteModal, fileUrl } = useContext(NotesContext)
 
   useEffect(() => {
     const handleDebouncedQuery = setTimeout(() => {
@@ -31,7 +31,7 @@ const Notes = () => {
 
   useEffect(() => {
     const getAllNotes = async () => {
-      const res = await getAllNotesFunction(debouncedQuary, page, limit)
+      const res = await getAllNotesFunction(debouncedQuery, page, limit)
 
       if (res?.data.success) {
         setPageNotes(res?.data.data)
@@ -45,7 +45,7 @@ const Notes = () => {
     getAllNotes()
 
     // eslint-disable-next-line  
-  }, [page, debouncedQuary, limit, openDeleteModal, openUpdateModal, openFileUpdateModal, openFileDeleteModal, fileUrl])
+  }, [page, debouncedQuery, limit, openDeleteModal, openUpdateModal, openFileUpdateModal, openFileDeleteModal, fileUrl])
 
   const increasePageNumber = () => setPage(page + 1)
 

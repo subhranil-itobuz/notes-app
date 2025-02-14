@@ -15,7 +15,6 @@ import { Popover } from 'react-tiny-popover'
 
 
 
-
 const SignupPage = () => {
   const [type, setType] = useState('password');
   const [icon, setIcon] = useState(eye);

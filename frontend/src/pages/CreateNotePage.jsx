@@ -7,23 +7,28 @@ import { useContext } from "react";
 import { NotesContext } from "../contexts/NotesContext";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
+import { AuthContext } from "../contexts/AuthContext";
+import { AdminContext } from "../contexts/AdminContext";
 
 
 const CreateNotePage = () => {
+
   const navigate = useNavigate()
   const { createNotes } = useContext(NotesContext)
+  const { role } = useContext(AuthContext)
+  const { userId } = useContext(AdminContext)
 
   const { register, handleSubmit, formState: { errors }, } = useForm({
     resolver: yupResolver(createNoteSchema)
   });
 
   const handleNotesCreate = async (data, e) => {
-    const res = await createNotes(data)
+    const res = await createNotes(data, userId)
 
     if (res.data.success) {
       e.target.reset()
       toast.success(res.data.message)
-      navigate('/')
+      role === 'user' ? navigate('/') : navigate('/users')
     }
     else {
       toast.warning(res.data.message)
@@ -31,7 +36,7 @@ const CreateNotePage = () => {
   }
 
   const handleBack = () => {
-    navigate('/')
+    role === 'user' ? navigate('/') : navigate('/users')
   }
 
   return (

@@ -7,7 +7,7 @@ export const notesSchemaValidation = z.object({
     }).trim().min(4).max(15),
 
     description: z.string({
-        required_error: "Description is requreired",
+        required_error: "Description is required",
         invalid_type_error: "Description must be a string"
     }).trim().min(4),
 

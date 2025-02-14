@@ -16,7 +16,6 @@ const AllUsersPage = () => {
       {
         openUserDeleteModal && <UserDeleteModal openUserDeleteModal={openUserDeleteModal} setOpenUserDeleteModal={setOpenUserDeleteModal} />
       }
-
     </>
   )
 }

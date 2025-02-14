@@ -29,9 +29,10 @@ const NotesProvider = (props) => {
   const [currentFileUrl, setCurrentFileUrl] = useState('')
 
 
-  const createNotes = async (data) => {
+  const createNotes = async (data, targetUser) => {
     try {
-      const res = await notesInstance.post(`${NOTES_API_ENDPOINT}/create`, data)
+      const res = await notesInstance.post(`${NOTES_API_ENDPOINT}/create/${targetUser}`, data)
+
       if (res.data.success) {
         setNote(res.data.data)
         setTotalResults(res.data.totalResults)
