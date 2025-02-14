@@ -13,6 +13,8 @@ import ViewAllNotesPage from "./pages/ViewAllNotesPage.jsx";
 import ProfilePage from './pages/ProfilePage.jsx'
 import ProtectedRoutes from "./middleware/ProtectedRoutes.jsx";
 import ErrorPage from "./pages/ErrorPage.jsx";
+import AdminPage from "./pages/AdminPage.jsx";
+import AdminProtectedRoute from "./middleware/AdminProtectedRoute.jsx";
 
 function App() {
 
@@ -23,6 +25,7 @@ function App() {
         <UserProvider>
           <NotesProvider>
             <Routes>
+
               <Route path='*' element={<ErrorPage />} />
               <Route path='/' element={<Home />} />
               <Route path='/signup' element={<SignupPage />} />
@@ -46,6 +49,14 @@ function App() {
                   <ProfilePage />
                 </ProtectedRoutes>
               } />
+
+              {/* Admin protected route */}
+              <Route path="/admin" element={
+                <AdminProtectedRoute>
+                  <AdminPage />
+                </AdminProtectedRoute>
+              } />
+
             </Routes>
           </NotesProvider>
         </UserProvider>

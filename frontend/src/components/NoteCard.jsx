@@ -14,6 +14,7 @@ const NoteCard = ({ id, title, description, tag, fileUrl, createdAt, setOpenDele
 
   const { setNoteId, setUpdatingNote, uploadFileFunction, setFileUrl, setOpenFileViewModal, setOpenFileUpdateModal, setOpenFileDeleteModal, setCurrentFileUrl } = useContext(NotesContext)
 
+
   const daysAgoFunction = (mongoDbTime) => {
     const createdAt = new Date(mongoDbTime)
     const currentTime = new Date();
@@ -120,7 +121,9 @@ const NoteCard = ({ id, title, description, tag, fileUrl, createdAt, setOpenDele
         }
       </div>
       <div className="flex justify-between items-center px-8 pt-1">
-        <div className="text-sm capitalize text-gray-800">{tag}</div>
+        <div className="text-sm capitalize text-gray-800">
+          {tag}
+        </div>
         <div className="text-right font-mono font-thin text-gray-600 text-sm">{daysAgoFunction(createdAt)} days ago</div>
       </div>
     </div >

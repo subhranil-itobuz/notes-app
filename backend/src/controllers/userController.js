@@ -251,6 +251,7 @@ export const login = async (req, res) => {
     return res.status(SUCCESS_CODE).json({
       success: true,
       message: `Welcome ${user.userName}`,
+      role: user.role,
       accessToken,
       refreshToken
     })
@@ -258,7 +259,7 @@ export const login = async (req, res) => {
   } catch (error) {
     return res.status(INTERNAL_SERVER_ERROR_CODE).json({
       success: false,
-      message: error.message
+      message: error.message,
     })
   }
 }
@@ -446,6 +447,7 @@ export const updatePassword = async (req, res) => {
       userName: user.userName,
       email: user.email,
       password: newPassword?.replace(/\s/g, '').trim(),
+      confirmPassword: confirmNewPassword
     }
 
     const validUser = userSchemaValidation.safeParse(userDetails)
@@ -500,6 +502,7 @@ export const updateUserName = async (req, res) => {
       userName: newUserName.replace(/\s/g, '').trim(),
       email: user.email,
       password: user.password,
+      confirmPassword: user.password
     }
 
     const validUser = userSchemaValidation.safeParse(userDetails)

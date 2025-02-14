@@ -26,11 +26,11 @@ const LoginPage = () => {
       const res = await axios.post(`${USER_API_ENDPOINT}/login`, data)
 
       if (res.data.success) {
-        console.log(res.data.message)
+        console.log(res.data)
         e.target.reset()
-        loginFunction()
+        loginFunction(res.data.role)
         tokenSetFunction(res.data.accessToken, res.data.refreshToken)
-        navigate('/')
+        res.data.role === 'admin' ? navigate('/admin') : navigate('/')
         toast.success(res.data.message)
       }
       else toast.info(res.data.message)
