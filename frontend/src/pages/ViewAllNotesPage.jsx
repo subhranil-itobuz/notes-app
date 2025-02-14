@@ -1,21 +1,25 @@
+import { Link } from "react-router-dom";
 import { FaSearch } from "react-icons/fa";
+import { CgNotes } from "react-icons/cg";
+import { RiStickyNoteAddLine } from "react-icons/ri";
+
 import NoteCard from '../components/NoteCard'
 import { useContext, useEffect, } from "react";
 import { NotesContext } from "../contexts/NotesContext";
-import { CgNotes } from "react-icons/cg";
-import { RiStickyNoteAddLine } from "react-icons/ri";
-import { Link } from "react-router-dom";
 import Navbar from "../components/Navbar";
 import DeleteModal from "../components/DeleteModal";
 import UpdateModal from "../components/UpdateModal";
 import FileViewModal from "../components/FileViewModal";
 import FileUpdateModal from "../components/FileUpdateModal";
 import FileDeleteModal from "../components/FileDeleteModal";
+import { AuthContext } from "../contexts/AuthContext";
 
 
 
 const ViewAllNotesPage = () => {
     const { getAllUserNotesFunction, allUserNotes, setAllUserNotes, keyword, setKeyword, debouncedQuary, setDebouncedQuary, sortBy, setSortBy, order, sortOrder, openDeleteModal, setOpenDeleteModal, openUpdateModal, setOpenUpdateModal, fileUrl, openFileViewModal, openFileUpdateModal, openFileDeleteModal, setOpenFileDeleteModal } = useContext(NotesContext)
+
+    const { role } = useContext(AuthContext)
 
     useEffect(() => {
         const handleDebouncedQuary = setTimeout(() => {
@@ -37,7 +41,7 @@ const ViewAllNotesPage = () => {
                 setAllUserNotes(res.data.data)
             }
             else {
-                console.log('inside useeffect else')
+                console.log('inside useEffect else')
                 setAllUserNotes([])
             }
         }
@@ -68,14 +72,17 @@ const ViewAllNotesPage = () => {
         <div className="bg-[#16425b]">
             <Navbar />
             <div className="w-full relative py-10 px-4">
-                <Link to='/notes/create' className="fixed bottom-5 right-5 z-20">
-                    <div className="rounded-full p-4 bg-blue-300 hover:bg-blue-500 hover:text-white hover:scale-105 transition-all duration-300 ease-in-out">
-                        <button className="flex items-center">
-                            <RiStickyNoteAddLine size={33} />
-                        </button>
-                    </div>
-                </Link>
-                <h1 className="text-3xl text-center font-bold font-mono text-[#eae2b7] ">View Your All Notes Here</h1>
+                {
+                    role === 'user' &&
+                    <Link to='/notes/create' className="fixed bottom-5 right-5 z-20">
+                        <div className="rounded-full p-4 bg-blue-300 hover:bg-blue-500 hover:text-white hover:scale-105 transition-all duration-300 ease-in-out">
+                            <button className="flex items-center">
+                                <RiStickyNoteAddLine size={33} />
+                            </button>
+                        </div>
+                    </Link>
+                }
+                <h1 className="text-3xl text-center font-bold font-mono text-[#eae2b7] ">View All Notes</h1>
 
                 <div className="flex items-center max-w-[900px] mx-auto gap-3 my-10 border border-blue-500 rounded-full px-5 py-3">
                     <span className="w-10 text-white"><FaSearch size={30} /></span>
@@ -87,7 +94,7 @@ const ViewAllNotesPage = () => {
                         <select className="focus:outline-none w-full cursor-pointer bg-transparent text-orange-500" onChange={handleSortingBy}>
                             <option value="" title="default">Sort By</option>
                             <option value="title">Title</option>
-                            <option value="tag">Tag</option>
+                            {role === 'user' && <option value="tag">Tag</option>}
                             <option value="createdAt">Created time</option>
                         </select>
                     </div>
@@ -112,6 +119,7 @@ const ViewAllNotesPage = () => {
                                     <NoteCard
                                         key={element._id}
                                         id={element._id}
+                                        author={element.user}
                                         title={element.title}
                                         description={element.description}
                                         tag={element.tag}

@@ -6,13 +6,16 @@ import { FaEye } from "react-icons/fa";
 import { IoMdDownload } from "react-icons/io";
 import { Link } from "react-router-dom";
 import { GrDocumentUpdate } from "react-icons/gr";
+import { AuthContext } from "../contexts/AuthContext";
 
 
 
 
-const NoteCard = ({ id, title, description, tag, fileUrl, createdAt, setOpenDeleteModal, setOpenUpdateModal }) => {
+const NoteCard = ({ id, author, title, description, tag, fileUrl, createdAt, setOpenDeleteModal, setOpenUpdateModal }) => {
 
   const { setNoteId, setUpdatingNote, uploadFileFunction, setFileUrl, setOpenFileViewModal, setOpenFileUpdateModal, setOpenFileDeleteModal, setCurrentFileUrl } = useContext(NotesContext)
+
+  const { role } = useContext(AuthContext)
 
 
   const daysAgoFunction = (mongoDbTime) => {
@@ -91,7 +94,7 @@ const NoteCard = ({ id, title, description, tag, fileUrl, createdAt, setOpenDele
       <div className="text-2xl text-center h-[14%] font-bold font-serif flex justify-between items-center rounded-t-2xl bg-[#00afb9]">
         <button className="hover:scale-105 ps-2 hover:text-rose-500 transition-all duration-300 ease-in-out" title="Edit Note" onClick={handleUpdation}><MdModeEdit size={25} /></button>
 
-        <h3 className="overflow-x-scroll no-scrollbar pt-1 px-1">{title}</h3>
+        <h3 className="text-xl">{title}</h3>
 
         <button className="hover:scale-105 pe-2 hover:text-red-500 transition-all duration-300 ease-in-out" title="Delete Note" onClick={handleDeletion}><MdDelete size={25} /></button>
       </div>
@@ -121,8 +124,10 @@ const NoteCard = ({ id, title, description, tag, fileUrl, createdAt, setOpenDele
         }
       </div>
       <div className="flex justify-between items-center px-8 pt-1">
-        <div className="text-sm capitalize text-gray-800">
-          {tag}
+        <div className="text-sm  capitalize text-gray-800">
+          {
+            role === 'admin' ? `Author: ${author.userName}` : tag
+          }
         </div>
         <div className="text-right font-mono font-thin text-gray-600 text-sm">{daysAgoFunction(createdAt)} days ago</div>
       </div>

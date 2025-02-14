@@ -7,7 +7,7 @@ import { Link } from 'react-router-dom'
 import noteIcon from '../assets/noteIcon.png'
 
 const Home = () => {
-  const { isLoggedIn } = useContext(AuthContext)
+  const { isLoggedIn, role } = useContext(AuthContext)
   const { getUser } = useContext(UserContext)
   const [user, setUser] = useState()
 
@@ -25,7 +25,7 @@ const Home = () => {
     <div className='scroll-smooth'>
       <Navbar user={user} />
       {
-        isLoggedIn ? <Notes />
+        isLoggedIn && role === 'user' ? <Notes />
           :
           <section className='flex flex-col justify-center items-center gap-3 lg:gap-10'>
             <img src={noteIcon} alt="note icon" />

@@ -1,10 +1,8 @@
-import AdminPanel from '../components/AdminPanel'
-import Navbar from '../components/Navbar'
+import ViewAllNotesPage from './ViewAllNotesPage'
 const AdminPage = () => {
   return (
     <>
-      <Navbar />
-      <AdminPanel />
+      <ViewAllNotesPage />
     </>
   )
 }

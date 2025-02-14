@@ -89,15 +89,12 @@ const Navbar = () => {
                           <Link to='/admin' className='hover:text-blue-400'>Home</Link>
                         </li>
                         <li>
-                          <Link to='/profile' className='hover:text-blue-400'>Profile</Link>
-                        </li>
-                        <li>
                           <Link to='/users' className='hover:text-blue-400'>Users</Link>
                         </li>
                       </ul>
                   }
                   <div className='flex justify-center items-center gap-8'>
-                    <p>Hello, <Link to='/profile'><span className='text-yellow-300 cursor-pointer'>{userName}</span></Link> </p>
+                    <p>Hello,<span className='text-yellow-300 cursor-pointer'> {userName}</span></p>
                     <button className='border border-white rounded-md font-medium px-2 py-2 hover:bg-red-500 transition-colors ease-in-out' onClick={logoutHandler}>Logout</button>
                   </div>
                 </div>
@@ -116,10 +113,7 @@ const Navbar = () => {
                     <Link to='/admin' className='hover:text-blue-400'>Home</Link>
                   </li>
                   <li>
-                    <Link to='/profile' className='hover:text-blue-400'>Profile</Link>
-                  </li>
-                  <li>
-                    <Link to='/notes/view' className='hover:text-blue-400'>Users</Link>
+                    <Link to='/users' className='hover:text-blue-400'>Users</Link>
                   </li>
                 </ul>
                 :
@@ -137,7 +131,7 @@ const Navbar = () => {
             }
 
             <div className='flex flex-wrap justify-center items-center gap-8'>
-              <p>Hello, <Link to='/profile'> <span className='text-green-300 cursor-pointer font-medium'>{userName}</span></Link></p>
+              <p>Hello, <span className='text-green-300 cursor-pointer font-medium'>{userName}</span></p>
               <button className='border border-white rounded-md px-2 py-2 hover:bg-red-500 transition-colors ease-in-out' onClick={logoutHandler}>Logout</button>
             </div>
           </div>
