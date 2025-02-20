@@ -8,6 +8,7 @@ import hamburger from '../assets/hamburger.svg'
 import cross from '../assets/cross.svg'
 import { UserContext } from '../contexts/UserContext';
 import { userInstance } from '../utils/axiosSetup';
+import { ChatContext } from '../contexts/ChatContext';
 
 
 const Navbar = () => {
@@ -18,6 +19,7 @@ const Navbar = () => {
   const isUser = isLoggedIn || localStorage.getItem('isLoggedIn')
 
   const { user } = useContext(UserContext)
+  const { setRoom } = useContext(ChatContext)
   const userName = user?.userName || 'Username'
 
   const logoutHandler = async () => {
@@ -35,6 +37,12 @@ const Navbar = () => {
       console.error(error)
       toast.error(error.response.data.message)
     }
+  }
+
+  const handleRoomSet = () => {
+    console.log(user)
+    console.log('room set to:', user._id)
+    setRoom(user._id)
   }
 
   return (
@@ -81,6 +89,11 @@ const Navbar = () => {
                         <li>
                           <Link to='/notes/view' className='hover:text-blue-400'>Notes</Link>
                         </li>
+                        <li>
+                          <Link to='/chat' className='hover:text-blue-400'>
+                            <button onClick={handleRoomSet}>Chat</button>
+                          </Link>
+                        </li>
                       </ul>
                       :
                       <ul className='flex justify-center items-center gap-10'>
@@ -124,7 +137,12 @@ const Navbar = () => {
                     <Link to='/profile' className='hover:text-blue-400'>profile</Link>
                   </li>
                   <li>
-                    <Link to='/users' className='hover:text-blue-400'>Notes</Link>
+                    <Link to='/notes/view' className='hover:text-blue-400'>Notes</Link>
+                  </li>
+                  <li>
+                    <Link to='/chat' className='hover:text-blue-400'>
+                      <button onClick={handleRoomSet}>Chat</button>
+                    </Link>
                   </li>
                 </ul>
             }

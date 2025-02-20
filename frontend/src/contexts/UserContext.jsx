@@ -7,6 +7,7 @@ const UserContext = React.createContext()
 
 const UserProvider = (props) => {
     const [user, setUser] = useState()
+    const [userId, setUserId] = useState()
     const [openUserNameUpdateModal, setOpenUserNameUpdateModal] = useState(false)
     const [openPasswordUpdateModal, setOpenPasswordUpdateModal] = useState(false)
     const [openProfilePhotoUpdateModal, setOpenProfilePhotoUpdateModal] = useState(false)
@@ -17,6 +18,7 @@ const UserProvider = (props) => {
 
             if (res.data.success) {
                 setUser(res.data.data)
+                setUserId(res.data.data._id)
                 return res.data.data
             }
             else toast.info(res.data.message)
@@ -71,6 +73,8 @@ const UserProvider = (props) => {
         <UserContext.Provider value={{
             getUser,
             user,
+            userId,
+            setUserId,
             openUserNameUpdateModal,
             setOpenUserNameUpdateModal,
             userNameUpdateFunction,
