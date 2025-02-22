@@ -3,20 +3,28 @@ import userModel from "./userModel.js";
 
 const messageSchema = new mongoose.Schema(
   {
-    sender: {
+    roomId: {
       type: Schema.Types.ObjectId,
       ref: userModel,
       required: true
     },
-    receiver: {
+
+    userId: {
       type: Schema.Types.ObjectId,
       ref: userModel,
       required: true
     },
-    message: {
+
+    adminId: {
+      type: Schema.Types.ObjectId,
+      ref: userModel,
+    },
+
+    messages: [{
       type: String,
       required: true
-    },
+    }],
+
   },
   { timestamps: true }
 );

@@ -8,6 +8,7 @@ import { dbConnect } from './src/utils/dbConnect.js'
 import userRoute from './src/routes/userRoute.js'
 import notesRoute from './src/routes/notesRoute.js'
 import adminRoute from './src/routes/adminRoute.js'
+import chatRoute from './src/routes/chatRoute.js'
 
 env.config({})
 
@@ -37,18 +38,25 @@ const port = process.env.PORT || 5000
 app.use('/api/admin', adminRoute)
 app.use('/api/user', userRoute)
 app.use('/api/notes', notesRoute)
+app.use('/api/chat', chatRoute)
 
+dbConnect()
+
+//chat socket io implemented
 io.on("connection", (socket) => {
   console.log(`User Connected: ${socket.id}`);
 
-  socket.on("join_room", (data) => {
+  socket.on("joinRoom", (data) => {
     socket.join(data);
     console.log(`User with ID: ${socket.id} joined room: ${data}`);
   });
 
-  socket.on("send_message", (data) => {
+  socket.on("sendMessage", (data) => {
+    console.log("sending message:", data);
+
     socket.to(data.room).emit("receive_message", data);
-    console.log(data)
+
+    console.log("message sent to room:", data.room);
   });
 
   socket.on("disconnect", () => {
@@ -56,7 +64,6 @@ io.on("connection", (socket) => {
   });
 });
 
-dbConnect()
 
 server.listen(port, () => {
   console.log(`server is running in port ${port}`)
