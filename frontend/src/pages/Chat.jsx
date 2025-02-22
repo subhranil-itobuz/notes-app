@@ -49,25 +49,25 @@ const Chat = () => {
     socket.on("receive_message", (data) => {
       setMessageList((list) => [...list, data]);
     });
-  }, [socket]);
+  }, [messageList]);
 
   return (
     <>
       <Navbar />
-      <div className="px-3">
+      <div className="px-3 max-w-[750px] mx-auto">
         <h1 className="text-3xl text-white text-center font-semibold font-mono py-5">Live Chat</h1>
-        <section className="border border-white shadow shadow-white h-[480px] rounded-xl overflow-auto p-5">
+        <section className="  shadow shadow-white h-[480px] rounded-xl overflow-auto py-5 px-2">
           {messageList.map((messageContent, index) => {
             return (
-              <div key={index} className={`text-${messageContent.role === 'admin' ? 'right text-yellow-400' : 'left text-white'} text-sm border border-black my-2`}
+              <div key={index} className={`flex justify-${messageContent.role === 'admin' ? 'end text-yellow-400' : 'start text-white'} 2xl:text-base my-2`}
               >
-                <div>
-                  <div>
-                    <p>{messageContent.message}</p>
+                <div className="flex flex-col max-w-[90%] md:max-w-[50%]">
+                  <div className="">
+                    <p className={`bg-slate-500 ${messageContent.role === 'admin' ? 'rounded-tl-md rounded-bl-md' : 'rounded-tr-md rounded-br-md'}   px-2 py-1`}>{messageContent.message}</p>
                   </div>
-                  <div>
-                    <p>{messageContent.time}</p>
+                  <div className={`flex justify-${messageContent.role === 'admin' ? 'end' : 'start'} gap-2 text-xs text-gray-400`}>
                     <p>{messageContent.author}</p>
+                    <p>{messageContent.time}</p>
                   </div>
                 </div>
               </div>
