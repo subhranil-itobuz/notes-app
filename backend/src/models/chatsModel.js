@@ -21,8 +21,15 @@ const messageSchema = new mongoose.Schema(
     },
 
     messages: [{
-      type: String,
-      required: true
+      message: {
+        type: String,
+        required: true
+      },
+      author: {
+        type: Schema.Types.ObjectId,
+        ref: userModel,
+        required: true
+      }
     }],
 
   },

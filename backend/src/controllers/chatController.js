@@ -1,6 +1,6 @@
 import chatsModel from "../models/chatsModel.js"
 import userModel from "../models/userModel.js"
-import { BAD_REQUEST_CODE, CREATED_CODE, INTERNAL_SERVER_ERROR_CODE, NOT_FOUND_CODE, SUCCESS_CODE } from "../utils/constant.js"
+import { BAD_REQUEST_CODE, CREATED_CODE, INTERNAL_SERVER_ERROR_CODE, NOT_FOUND_CODE, SUCCESS_CODE, UNAUTHORIZED_CODE } from "../utils/constant.js"
 
 // one to one-chat posting (through id)
 export const sendChat = async (req, res) => {
@@ -30,9 +30,13 @@ export const sendChat = async (req, res) => {
         const roomId = req.role === 'user' ? senderId : receiverId
 
         const chat = await chatsModel.findOne({ roomId: roomId })
+        console.log(chat)
 
-        if (chat.length !== 0) {
-            chat.messages.push(message)
+        if (chat && chat.length !== 0) {
+            chat.messages.push({
+                message: message,
+                author: req.id
+            })
 
             chat.adminId = req.role === 'admin' ? senderId : chat.adminId
 
@@ -49,7 +53,10 @@ export const sendChat = async (req, res) => {
             roomId: roomId,
             userId: req.role === 'user' ? senderId : receiverId,
             adminId: req.role === 'admin' ? senderId : null,
-            messages: message
+            messages: {
+                message: message,
+                author: req.id
+            }
         })
 
         return res.status(CREATED_CODE).json({
@@ -71,7 +78,19 @@ export const getChat = async (req, res) => {
     try {
         const roomId = req.params.roomId
 
-        const chat = await chatsModel.findOne({ roomId }).populate('userId').populate('adminId')
+        if (req.role === 'user' && roomId !== req.id) {
+            return res.status(UNAUTHORIZED_CODE).json({
+                success: false,
+                message: "Unauthorize access"
+            })
+        }
+
+        const chat = await chatsModel.findOne({ roomId })
+            .populate('userId')
+            .populate('adminId').populate({
+                path: 'messages',
+                populate: { path: 'author' }
+            })
 
         if (!chat) {
             return res.status(NOT_FOUND_CODE).json({
