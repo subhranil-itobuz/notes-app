@@ -27,15 +27,18 @@ export const sendChat = async (req, res) => {
             }
         }
 
-        const roomId = req.role === 'user' ? senderId : receiverId
+        const room = req.role === 'user' ? senderId : receiverId
+        const author = await userModel.findById(req.id)
 
-        const chat = await chatsModel.findOne({ roomId: roomId })
-        console.log(chat)
+        const chat = await chatsModel.findOne({ roomId: room })
 
         if (chat && chat.length !== 0) {
             chat.messages.push({
+                room: room,
                 message: message,
-                author: req.id
+                author: author.userName,
+                role: req.role,
+                time: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
             })
 
             chat.adminId = req.role === 'admin' ? senderId : chat.adminId
@@ -45,24 +48,27 @@ export const sendChat = async (req, res) => {
             return res.status(CREATED_CODE).json({
                 success: true,
                 message: "Message send successfully",
-                data: chat
+                data: chat.messages[chat.messages.length - 1]
             })
         }
 
         const data = await chatsModel.create({
-            roomId: roomId,
+            roomId: room,
             userId: req.role === 'user' ? senderId : receiverId,
             adminId: req.role === 'admin' ? senderId : null,
             messages: {
+                room: room,
                 message: message,
-                author: req.id
+                author: author.userName,
+                role: req.role,
+                time: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
             }
         })
 
         return res.status(CREATED_CODE).json({
             success: true,
             message: "Message send successfully",
-            data: data
+            data: data.messages[data.messages.length - 1]
         });
 
     } catch (error) {
@@ -73,24 +79,19 @@ export const sendChat = async (req, res) => {
     }
 }
 
-//one to one chat retrieval through id
+//one to one chat retrieval through roomId
 export const getChat = async (req, res) => {
     try {
-        const roomId = req.params.roomId
+        const room = req.params.room
 
-        if (req.role === 'user' && roomId !== req.id) {
+        if (req.role === 'user' && room !== req.id) {
             return res.status(UNAUTHORIZED_CODE).json({
                 success: false,
                 message: "Unauthorize access"
             })
         }
 
-        const chat = await chatsModel.findOne({ roomId })
-            .populate('userId')
-            .populate('adminId').populate({
-                path: 'messages',
-                populate: { path: 'author' }
-            })
+        const chat = await chatsModel.findOne({ roomId: room }).populate('userId')
 
         if (!chat) {
             return res.status(NOT_FOUND_CODE).json({
@@ -103,7 +104,8 @@ export const getChat = async (req, res) => {
             success: true,
             message: "All messages fetched successfully",
             totalMessages: chat.messages.length,
-            data: chat
+            userName: chat.userId.userName,
+            data: chat.messages
         })
 
     } catch (error) {

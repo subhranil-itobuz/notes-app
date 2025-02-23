@@ -19,6 +19,7 @@ import AllUsersPage from "./pages/AllUsersPage.jsx";
 import { AdminProvider } from "./contexts/AdminContext.jsx";
 import { ChatProvider } from "./contexts/ChatContext.jsx";
 import Chat from "./pages/Chat.jsx";
+import UserChatsPage from "./pages/UserChatsPage.jsx";
 
 
 function App() {
@@ -70,6 +71,7 @@ function App() {
                   } />
 
                   <Route path="/chat" element={<Chat />} />
+                  <Route path="/user/chats" element={<UserChatsPage />} />
 
                 </Routes>
               </ChatProvider>

@@ -46,7 +46,7 @@ const NotesProvider = (props) => {
 
   const getAllNotesFunction = async (keyword, page, limit) => {
     try {
-      const res = await notesInstance.get(`${NOTES_API_ENDPOINT}/getAllNotes?keyword=${debouncedQuery}&page=${page}&limit=${limit}`)
+      const res = await notesInstance.get(`/getAllNotes?keyword=${debouncedQuery}&page=${page}&limit=${limit}`)
 
       if (res?.data.success) {
         setAllNotes(res?.data.data)
@@ -64,7 +64,7 @@ const NotesProvider = (props) => {
 
   const getAllUserNotesFunction = async () => {
     try {
-      const res = await notesInstance.get(`${NOTES_API_ENDPOINT}/getAllNotes?keyword=${debouncedQuery}&sortBy=${sortBy}&order=${order}&page=0&limit=0`)
+      const res = await notesInstance.get(`/getAllNotes?keyword=${debouncedQuery}&sortBy=${sortBy}&order=${order}&page=0&limit=0`)
 
       return res
     } catch (error) {

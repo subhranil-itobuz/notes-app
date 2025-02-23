@@ -5,7 +5,7 @@ import isAuthenticated from '../middleware/isAuthenticated.js';
 const chatRoute = express.Router();
 
 chatRoute.post('/sendMessage/:receiverId', isAuthenticated, sendChat);
-chatRoute.get('/getMessage/:roomId', isAuthenticated, getChat);
+chatRoute.get('/getMessage/:room', isAuthenticated, getChat);
 
 
 export default chatRoute;

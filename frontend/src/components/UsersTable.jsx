@@ -1,6 +1,6 @@
 import { useContext, useEffect, useState } from "react";
 import { IoIosAddCircleOutline } from "react-icons/io";
-import { MdDelete } from "react-icons/md";
+import { MdDelete, MdHistory } from "react-icons/md";
 import { AdminContext } from "../contexts/AdminContext";
 import { useNavigate } from "react-router-dom";
 import { IoChatbubbleEllipsesOutline } from "react-icons/io5";
@@ -40,9 +40,13 @@ const UsersTable = () => {
   }
 
   const handleChatNavigation = (userId) => {
-    console.log(userId)
     setRoom(userId)
     navigate('/chat')
+  }
+
+  const handleGetUserChats = (userId) => {
+    setRoom(userId)
+    navigate('/user/chats')
   }
 
   return (
@@ -56,9 +60,10 @@ const UsersTable = () => {
                 <tr className="text-white uppercase">
                   <th className="p-2 whitespace-nowrap">User Name</th>
                   <th className="p-2 border-x-2 border-x-white whitespace-nowrap">Email</th>
-                  <th className="p-2 border-r-2 border-r-white whitespace-nowrap"> Add note</th>
-                  <th className="p-2 border-r-2 border-r-white whitespace-nowrap"> Chat</th>
-                  <th className="p-3 whitespace-nowrap">Delete user</th>
+                  <th className="p-2 border-r-2 border-r-white whitespace-nowrap">Add note</th>
+                  <th className="p-2 border-r-2 border-r-white whitespace-nowrap">Chat</th>
+                  <th className="p-2 border-r-2 border-r-white whitespace-nowrap">History</th>
+                  <th className="p-2 whitespace-nowrap">Delete user</th>
                 </tr>
               </thead>
               <tbody>
@@ -80,6 +85,11 @@ const UsersTable = () => {
                         <td className="text-center text-white bg-slate-800">
                           <button className="pt-3 hover:scale-105" onClick={() => handleChatNavigation(user._id)}>
                             <IoChatbubbleEllipsesOutline size={25} color="white" />
+                          </button>
+                        </td>
+                        <td className="text-center text-white bg-slate-800">
+                          <button className="pt-3 hover:scale-105" onClick={() => handleGetUserChats(user._id)}>
+                            <MdHistory size={25} color="white" />
                           </button>
                         </td>
                         <td className="text-center text-white bg-slate-800">

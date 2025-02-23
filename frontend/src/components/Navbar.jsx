@@ -40,8 +40,6 @@ const Navbar = () => {
   }
 
   const handleRoomSet = () => {
-    console.log(user)
-    console.log('room set to:', user._id)
     setRoom(user._id)
   }
 

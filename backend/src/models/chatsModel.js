@@ -21,14 +21,29 @@ const messageSchema = new mongoose.Schema(
     },
 
     messages: [{
+      room: {
+        type: Schema.Types.ObjectId,
+        ref: userModel,
+        required: true
+      },
+
       message: {
         type: String,
         required: true
       },
+
       author: {
-        type: Schema.Types.ObjectId,
-        ref: userModel,
+        type: String,
         required: true
+      },
+
+      role: {
+        type: String,
+        required: true
+      },
+
+      time: {
+        type: String,
       }
     }],
 
